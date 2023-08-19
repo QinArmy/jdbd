@@ -10,9 +10,7 @@
     <version>1.0-SNAPSHOT</version><!-- jdbd version find and replace-->
     <modules>
         <module>jdbd-spi</module>
-        <module>jdbd-mysql</module>
         <module>jdbd-vendor</module>
-        <module>jdbd-postgre</module>
     </modules>
 
     <organization>
@@ -61,26 +59,11 @@
                 <artifactId>jdbd-vendor</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.jdbd</groupId>
-                <artifactId>jdbd-mysql</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>${jsr305.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.qinarmy.common</groupId>
-                <artifactId>common-env</artifactId>
-                <version>${qinarmy.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.qinarmy.common</groupId>
-                <artifactId>common-util</artifactId>
-                <version>${qinarmy.common.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.reactivestreams</groupId>
