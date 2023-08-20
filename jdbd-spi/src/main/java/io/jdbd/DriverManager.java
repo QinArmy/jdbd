@@ -4,12 +4,15 @@ import io.jdbd.lang.Nullable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @since 1.0
@@ -20,7 +23,40 @@ abstract class DriverManager {
         throw new UnsupportedOperationException();
     }
 
+    private static SoftReference<ConcurrentMap<Class<?>, Driver>> driverMapHolder;
+
     static Driver findDriver(final String jdbdUrl) throws JdbdException {
+
+        SoftReference<ConcurrentMap<Class<?>, Driver>> reference = DriverManager.driverMapHolder;
+
+        Driver driver = null;
+        ConcurrentMap<Class<?>, Driver> driverMap;
+        if (reference == null || (driverMap = reference.get()) == null) {
+            driverMap = new ConcurrentHashMap<>();
+            DriverManager.driverMapHolder = new SoftReference<>(driverMap);
+        } else {
+            for (Driver cacheDriver : driverMap.values()) {
+                if (cacheDriver.acceptsUrl(jdbdUrl)) {
+                    driver = cacheDriver;
+                    break;
+                }
+            }
+        }
+
+        if (driver == null) {
+            driver = loadDriverMap(jdbdUrl, driverMap);
+        }
+
+        if (driver == null) {
+            throw new JdbdException(String.format("Not found driver for url %s", jdbdUrl));
+        }
+        return driver;
+
+    }
+
+
+    @Nullable
+    private static Driver loadDriverMap(final String jdbdUrl, final ConcurrentMap<Class<?>, Driver> driverMap) {
         try {
             final Enumeration<URL> enumeration;
             enumeration = Thread.currentThread().getContextClassLoader()
@@ -28,36 +64,45 @@ abstract class DriverManager {
 
             Driver driver = null;
             while (enumeration.hasMoreElements()) {
-                driver = loadDriverInstance(enumeration.nextElement(), jdbdUrl);
+                driver = loadDriverInstance(enumeration.nextElement(), jdbdUrl, driverMap);
                 if (driver != null) {
                     break;
                 }
-            }
-
-            if (driver == null) {
-                throw new JdbdException(String.format("Not found driver for url %s", jdbdUrl));
             }
             return driver;
         } catch (Throwable e) {
             //no bug ,never here
             throw new JdbdException(e.getMessage(), e);
         }
-
     }
 
 
     @Nullable
-    private static Driver loadDriverInstance(final URL url, final String jdbdUrl) throws JdbdException {
+    private static Driver loadDriverInstance(final URL url, final String jdbdUrl,
+                                             final ConcurrentMap<Class<?>, Driver> driverMap) throws JdbdException {
         final Charset charset = StandardCharsets.UTF_8;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), charset))) {
+
             String line;
             Driver driver = null;
+            Class<?> driverClass;
             while ((line = reader.readLine()) != null) {
-                driver = getDriverInstance(line);
-                if (driver != null && driver.acceptsUrl(jdbdUrl)) {
+                driverClass = loadClass(line);
+                if (driverClass == null) {
+                    continue;
+                }
+                driver = getDriverInstance(driverClass);
+                if (driver == null) {
+                    continue;
+                }
+
+                driverMap.putIfAbsent(driverClass, driver);
+
+                if (driver.acceptsUrl(jdbdUrl)) {
                     break;
                 }
+                driver = null; // clear
             }
             return driver;
         } catch (Throwable e) {
@@ -68,11 +113,9 @@ abstract class DriverManager {
     }
 
     @Nullable
-    private static Driver getDriverInstance(final String className) {
+    private static Driver getDriverInstance(final Class<?> driverClass) {
         Driver instance;
         try {
-            final Class<?> driverClass;
-            driverClass = Class.forName(className);
             final Method method;
             method = driverClass.getMethod("getInstance");
             final int modifier = method.getModifiers();
@@ -90,6 +133,17 @@ abstract class DriverManager {
             instance = null;
         }
         return instance;
+    }
+
+    @Nullable
+    private static Class<?> loadClass(final String className) {
+        Class<?> driverClass;
+        try {
+            driverClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            driverClass = null;
+        }
+        return driverClass;
     }
 
 

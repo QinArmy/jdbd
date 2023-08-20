@@ -17,6 +17,17 @@ import java.util.Map;
  *  </pre>
  * </p>
  * <p>
+ * For example, suppose the service provider
+ * {@code io.jdbd.mysql.MySQLDriver} is packaged in a JAR file for the
+ * class path. The JAR file will contain a provider-configuration file named:
+ *
+ * <blockquote>{@code META-INF/jdbd/io.jdbd.Driver}</blockquote>
+ * <p>
+ * that contains the line:
+ *
+ * <blockquote>{@code io.jdbd.mysql.MySQLDriver }</blockquote>
+ * </p>
+ * <p>
  * Application/pool developer can get the instance of {@link Driver} by {@link #findDriver(String)}
  * </p>
  *
@@ -71,7 +82,11 @@ public interface Driver {
 
 
     /**
-     * @param url jdbc url
+     * @param url format : jdbd:protocol:[subProtocol:][databaseName][;attributes][?properties] . For example:
+     *            <ul>
+     *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
+     *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
+     *            </ul>
      */
     DatabaseSessionFactory forDeveloper(String url, Map<String, Object> properties) throws JdbdException;
 
@@ -92,7 +107,11 @@ public interface Driver {
      *     <strong>NOTE</strong> : driver developer are not responsible for pooling.
      * </p>
      *
-     * @param url jdbc url
+     * @param url format : jdbd:protocol:[subProtocol:][databaseName][;attributes][?properties] . For example:
+     *            <ul>
+     *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
+     *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
+     *            </ul>
      */
     DatabaseSessionFactory forPoolVendor(String url, Map<String, Object> properties) throws JdbdException;
 
@@ -126,6 +145,14 @@ public interface Driver {
     String toString();
 
 
+    /**
+     * @param url format : jdbd:protocol:[subProtocol:][databaseName][;attributes][?properties] . For example:
+     *            <ul>
+     *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
+     *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
+     *            </ul>
+     * @throws JdbdException throw when not found match driver.
+     */
     static Driver findDriver(String url) throws JdbdException {
         return DriverManager.findDriver(url);
     }
