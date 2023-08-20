@@ -19,7 +19,6 @@ import io.jdbd.vendor.stmt.ParamValue;
 import io.jdbd.vendor.stmt.Stmt;
 import io.jdbd.vendor.stmt.Value;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -33,34 +32,6 @@ public abstract class JdbdExceptions {
         throw new UnsupportedOperationException();
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdbdExceptions.class);
-
-
-    public static final byte XA_RBBASE = 100;
-    public static final byte XA_RBROLLBACK = 100;
-    public static final byte XA_RBCOMMFAIL = 101;
-    public static final byte XA_RBDEADLOCK = 102;
-    public static final byte XA_RBINTEGRITY = 103;
-    public static final byte XA_RBOTHER = 104;
-    public static final byte XA_RBPROTO = 105;
-    public static final byte XA_RBTIMEOUT = 106;
-    public static final byte XA_RBTRANSIENT = 107;
-    public static final byte XA_RBEND = 107;
-    public static final byte XA_NOMIGRATE = 9;
-    public static final byte XA_HEURHAZ = 8;
-    public static final byte XA_HEURCOM = 7;
-    public static final byte XA_HEURRB = 6;
-    public static final byte XA_HEURMIX = 5;
-    public static final byte XA_RETRY = 4;
-    public static final byte XA_RDONLY = 3;
-    public static final byte XAER_ASYNC = -2;
-    public static final byte XAER_RMERR = -3;
-    public static final byte XAER_NOTA = -4;
-    public static final byte XAER_INVAL = -5;
-    public static final byte XAER_PROTO = -6;
-    public static final byte XAER_RMFAIL = -7;
-    public static final byte XAER_DUPID = -8;
-    public static final byte XAER_OUTSIDE = -9;
 
 
     public static JdbdException wrap(Throwable cause) {
@@ -290,13 +261,13 @@ public abstract class JdbdExceptions {
         return e;
     }
 
-    public static void printCompositeException(final JdbdCompositeException ce) {
+    public static void printCompositeException(final JdbdCompositeException ce, Logger logger) {
         Throwable e;
         List<? extends Throwable> list = ce.getErrorList();
         final int size = list.size();
         for (int i = 0; i < size; i++) {
             e = list.get(i);
-            LOG.error("JdbdCompositeException element {} : ", i, e);
+            logger.error("JdbdCompositeException element {} : ", i, e);
         }
 
     }
@@ -667,12 +638,12 @@ public abstract class JdbdExceptions {
         return new XaException("bqual of xid must be null or  have text.", SQLStates.ER_XAER_NOTA, 0, XaException.XAER_NOTA);
     }
 
-    public static JdbdException xaGtridBeyond64Bytes() {
-        return new JdbdException("bytes length of gtrid beyond 64 bytes.", SQLStates.ER_XAER_NOTA, XAER_NOTA);
+    public static XaException xaGtridBeyond64Bytes() {
+        return new XaException("bytes length of gtrid beyond 64 bytes.", SQLStates.ER_XAER_NOTA, 0, XaException.XAER_NOTA);
     }
 
-    public static JdbdException xaBqualBeyond64Bytes() {
-        return new JdbdException("bytes length of bqual beyond 64 bytes.", SQLStates.ER_XAER_NOTA, XAER_NOTA);
+    public static XaException xaBqualBeyond64Bytes() {
+        return new XaException("bytes length of bqual beyond 64 bytes.", SQLStates.ER_XAER_NOTA, 0, XaException.XAER_NOTA);
     }
 
 

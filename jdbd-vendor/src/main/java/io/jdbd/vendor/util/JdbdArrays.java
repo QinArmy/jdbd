@@ -1,15 +1,14 @@
 package io.jdbd.vendor.util;
 
-import io.qinarmy.lang.Nullable;
-import io.qinarmy.util.ArrayUtils;
-import io.qinarmy.util.Pair;
+
+import io.jdbd.lang.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class JdbdArrays extends ArrayUtils {
+public abstract class JdbdArrays {
 
     protected JdbdArrays() {
         throw new UnsupportedOperationException();
@@ -95,27 +94,6 @@ public abstract class JdbdArrays extends ArrayUtils {
         return builder.toString();
     }
 
-    /**
-     * <p>
-     * Get component class and dimension of array.
-     * </p>
-     *
-     * @param arrayClass class of Array.
-     * @return pair, first: component class,second,dimension of array.
-     */
-    public static Pair<Class<?>, Integer> getArrayDimensions(final Class<?> arrayClass) {
-        if (!arrayClass.isArray()) {
-            throw new IllegalArgumentException(String.format("%s isn't Array type.", arrayClass.getName()));
-        }
-        Class<?> componentClass = arrayClass.getComponentType();
-        int dimensions = 1;
-        while (componentClass.isArray()) {
-            dimensions++;
-            componentClass = componentClass.getComponentType();
-
-        }
-        return new Pair<>(componentClass, dimensions);
-    }
 
     public static Class<?> underlyingComponent(final Class<?> arrayType) {
         if (!arrayType.isArray()) {

@@ -94,6 +94,8 @@ import io.jdbd.result.OutResultItem;
  */
 public interface OutParameter extends Parameter {
 
+    String name();
+
 
     /**
      * override {@link Object#hashCode()}

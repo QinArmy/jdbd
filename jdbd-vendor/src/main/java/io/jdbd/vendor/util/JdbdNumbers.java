@@ -1,10 +1,8 @@
 package io.jdbd.vendor.util;
 
-import io.qinarmy.util.NumberUtils;
-
 import java.math.BigDecimal;
 
-public abstract class JdbdNumbers extends NumberUtils {
+public abstract class JdbdNumbers {
 
     protected JdbdNumbers() {
         throw new UnsupportedOperationException();
@@ -22,19 +20,6 @@ public abstract class JdbdNumbers extends NumberUtils {
         return match;
     }
 
-
-    public static short mapToShort(Object nonNull) {
-        short value;
-        if (nonNull instanceof Number) {
-            value = convertNumberToShort((Number) nonNull);
-        } else if (nonNull instanceof String) {
-            value = Short.parseShort((String) nonNull);
-        } else {
-            String m = String.format("Not support java type[%s] to short.", nonNull.getClass().getName());
-            throw new IllegalArgumentException(m);
-        }
-        return value;
-    }
 
 
     public static void writeInt(final int bitSet, final boolean bigEndian, final byte[] wkbArray, final int offset) {

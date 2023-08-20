@@ -11,10 +11,6 @@ public final class ResultStatusConsumerException extends JdbdException {
         return new ResultStatusConsumerException(message, cause);
     }
 
-    @Deprecated
-    public ResultStatusConsumerException(Throwable cause, String messageFormat, Object... args) {
-        super(cause, messageFormat, args);
-    }
 
     public ResultStatusConsumerException(String message, Throwable cause) {
         super(message, cause);

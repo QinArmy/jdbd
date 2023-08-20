@@ -4,6 +4,9 @@ import io.jdbd.type.Point;
 
 public abstract class JdbdSpatials {
 
+    protected JdbdSpatials() {
+        throw new UnsupportedOperationException();
+    }
 
     public static byte[] writePointToWkb(final boolean bigEndian, final Point point) {
         final byte[] wkbArray = new byte[21];

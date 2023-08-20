@@ -26,25 +26,13 @@
         <maven.compiler.target>8</maven.compiler.target>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <reactor.version>3.3.5.RELEASE</reactor.version>
         <jsr305.version>3.0.2</jsr305.version>
 
-        <netty.version>4.1.52.Final</netty.version>
-
-        <qinarmy.common.version>1.0-SNAPSHOT</qinarmy.common.version>
-
-        <jackson.core.version>2.12.5</jackson.core.version>
-        <jackson.module.version>2.11.0</jackson.module.version>
-        <jackson.datatype.version>2.11.0</jackson.datatype.version>
-
-        <mysql.versioin>8.0.33</mysql.versioin>
-        <r2dbc-postgresql.version>0.8.5.RELEASE</r2dbc-postgresql.version>
 
         <slf4.version>1.7.30</slf4.version>
-        <log4j2.version>2.12.1</log4j2.version>
+        <log4j2.version>2.20.0</log4j2.version>
 
-        <testng.version>7.1.0</testng.version>
+        <testng.version>7.8.0</testng.version>
     </properties>
 
     <dependencyManagement>
@@ -52,11 +40,6 @@
             <dependency>
                 <groupId>io.jdbd</groupId>
                 <artifactId>jdbd-spi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.jdbd</groupId>
-                <artifactId>jdbd-vendor</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -73,7 +56,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>2022.0.9</version>
+                <version>2022.0.10</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -89,65 +72,14 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
-                <scope>test</scope>
                 <version>${log4j2.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>${netty.version}</version>
                 <scope>test</scope>
             </dependency>
 
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.core.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-modules-java8</artifactId>
-                <version>2.12.2</version>
-                <type>pom</type>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.firebirdsql.jdbc</groupId>
-                <artifactId>jaybird</artifactId>
-                <version>4.0.5.java8</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>dev.miku</groupId>
-                <artifactId>r2dbc-mysql</artifactId>
-                <version>0.8.2.RELEASE</version>
-                <scope>test</scope>
-            </dependency>
             <dependency>
                 <groupId>io.r2dbc</groupId>
                 <artifactId>r2dbc-spi</artifactId>
                 <version>1.0.0.RELEASE</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.r2dbc</groupId>
-                <artifactId>r2dbc-mssql</artifactId>
-                <version>0.9.0.M2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.r2dbc</groupId>
-                <artifactId>r2dbc-h2</artifactId>
-                <version>0.9.0.M1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.r2dbc</groupId>
-                <artifactId>r2dbc-postgresql</artifactId>
-                <version>${r2dbc-postgresql.version}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -161,57 +93,9 @@
 
 
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.versioin}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.2.20</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.microsoft.sqlserver</groupId>
-                <artifactId>mssql-jdbc</artifactId>
-                <version>9.2.1.jre15</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mariadb.jdbc</groupId>
-                <artifactId>mariadb-java-client</artifactId>
-                <version>2.7.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.oracle.database.jdbc</groupId>
-                <artifactId>ojdbc8</artifactId>
-                <version>21.1.0.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.ibm.db2</groupId>
-                <artifactId>jcc</artifactId>
-                <version>11.5.6.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>1.4.200</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-transport-native-kqueue</artifactId>
-                <version>4.1.59.Final</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webflux</artifactId>
-                <version>5.3.6</version>
+                <version>4.1.96.Final</version>
                 <scope>test</scope>
             </dependency>
 

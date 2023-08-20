@@ -17,35 +17,6 @@ public abstract class JdbdTimes {
         throw new UnsupportedOperationException();
     }
 
-    public static final DateTimeFormatter ISO_LOCAL_TIME_FORMATTER = new DateTimeFormatterBuilder()
-            .appendValue(HOUR_OF_DAY, 2)
-            .appendLiteral(':')
-            .appendValue(MINUTE_OF_HOUR, 2)
-            .optionalStart()
-            .appendLiteral(':')
-            .appendValue(SECOND_OF_MINUTE, 2)
-
-            .optionalStart()
-            .appendFraction(MICRO_OF_SECOND, 0, 6, true)
-            .optionalEnd()
-            .toFormatter(Locale.ENGLISH);
-
-    public static final DateTimeFormatter ISO_LOCAL_DATETIME_FORMATTER = new DateTimeFormatterBuilder()
-            .append(DateTimeFormatter.ISO_LOCAL_DATE)
-            .appendLiteral(' ')
-            .append(ISO_LOCAL_TIME_FORMATTER)
-            .toFormatter(Locale.ENGLISH);
-
-
-    public static final DateTimeFormatter ISO_OFFSET_TIME_FORMATTER = new DateTimeFormatterBuilder()
-            .append(ISO_LOCAL_TIME_FORMATTER)
-            .appendOffset("+HH:MM:ss", "+00:00")
-            .toFormatter(Locale.ENGLISH);
-
-    public static final DateTimeFormatter ISO_OFFSET_DATETIME_FORMATTER = new DateTimeFormatterBuilder()
-            .append(ISO_LOCAL_DATETIME_FORMATTER)
-            .appendOffset("+HH:MM:ss", "+00:00")
-            .toFormatter(Locale.ENGLISH);
 
 
     private static final String PATTERN = "+HH:MM:ss";
@@ -107,11 +78,6 @@ public abstract class JdbdTimes {
             .optionalEnd()
             .toFormatter(Locale.ENGLISH);
 
-
-    @Deprecated
-    public static DateTimeFormatter dateTimeFormatter(String format) {
-        throw new UnsupportedOperationException();
-    }
 
     public static ZoneOffset systemZoneOffset() {
         return ZoneId.systemDefault().getRules().getOffset(Instant.EPOCH);

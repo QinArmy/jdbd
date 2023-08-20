@@ -341,8 +341,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         getLogger().debug("channel channel error.");
         if (!this.connection.channel().isActive()) {
             CommunicationTask task = this.currentTask;
-            final JdbdException exception = JdbdExceptions.wrap(e
-                    , "TCP connection close,cannot execute CommunicationTask.");
+            final JdbdException exception = JdbdExceptions.wrap(e);
             if (task != null) {
                 this.currentTask = null;
                 task.errorEvent(exception);
@@ -355,7 +354,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
             CommunicationTask task = this.currentTask;
             if (task != null) {
                 this.currentTask = null;
-                task.errorEvent(JdbdExceptions.wrap(e, "Channel upstream throw error."));
+                task.errorEvent(JdbdExceptions.wrap(e));
             }
 
         }

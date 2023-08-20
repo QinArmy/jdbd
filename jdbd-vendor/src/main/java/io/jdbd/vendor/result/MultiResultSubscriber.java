@@ -6,10 +6,8 @@ import io.jdbd.vendor.ResultType;
 import io.jdbd.vendor.SubscribeException;
 import io.jdbd.vendor.task.ITaskAdjutant;
 import io.jdbd.vendor.util.JdbdExceptions;
-import io.jdbd.vendor.util.JdbdFunctions;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
@@ -19,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * @see FluxResult
@@ -245,24 +244,21 @@ final class MultiResultSubscriber extends JdbdResultSubscriber {
             });
         }
 
+
         @Override
-        public Flux<ResultRow> nextQuery(final Consumer<ResultStates> statesConsumer) {
-            return Flux.create(sink -> {
-                if (this.adjutant.inEventLoop()) {
-                    this.subscriber.subscribeInEventLoop(new SinkWrapper(sink, statesConsumer));
-                } else {
-                    this.adjutant.execute(() ->
-                            this.subscriber.subscribeInEventLoop(new SinkWrapper(sink, statesConsumer)));
-                }
-            });
+        public Publisher<ResultRow> nextQuery() {
+            return null;
         }
 
         @Override
-        public Flux<ResultRow> nextQuery() {
-            return nextQuery(JdbdFunctions.noActionConsumer());
+        public <R> Publisher<R> nextQuery(Function<CurrentRow, R> function) {
+            return null;
         }
 
-
+        @Override
+        public <R> Publisher<R> nextQuery(Function<CurrentRow, R> function, Consumer<ResultStates> consumer) {
+            return null;
+        }
     }
 
 

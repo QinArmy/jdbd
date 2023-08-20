@@ -119,8 +119,9 @@ public abstract class CommunicationTask {
             } else {
                 addError(e);
                 publishError(this.errorConsumer);
-                throw new TaskStatusException(JdbdExceptions.createException(this.errorList)
-                        , "decode(ByteBuf, Consumer<Object>) method throw exception.");
+
+                throw new TaskStatusException("decode(ByteBuf, Consumer<Object>) method throw exception.",
+                        JdbdExceptions.createException(this.errorList));
             }
         } finally {
             this.methodStack = null;
@@ -376,8 +377,8 @@ public abstract class CommunicationTask {
         } catch (Throwable e) {
             addError(e);
             publishError(this.errorConsumer);
-            throw new TaskStatusException(JdbdExceptions.createException(this.errorList)
-                    , "decode(ByteBuf, Consumer<Object>) method throw exception.");
+            throw new TaskStatusException("decode(ByteBuf, Consumer<Object>) method throw exception.",
+                    JdbdExceptions.createException(this.errorList));
         }
     }
 
