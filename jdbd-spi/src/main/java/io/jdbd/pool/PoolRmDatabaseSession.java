@@ -4,6 +4,8 @@ import io.jdbd.session.DatabaseSessionFactory;
 import io.jdbd.session.RmDatabaseSession;
 import org.reactivestreams.Publisher;
 
+import java.time.Duration;
+
 /**
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory#rmSession()} method.
@@ -17,7 +19,7 @@ public interface PoolRmDatabaseSession extends RmDatabaseSession, PoolDatabaseSe
      * @return Publisher that emit this when success.
      */
     @Override
-    Publisher<PoolRmDatabaseSession> reconnect();
+    Publisher<PoolRmDatabaseSession> reconnect(Duration duration);
 
     /**
      * @return Publisher that emit this when success.
