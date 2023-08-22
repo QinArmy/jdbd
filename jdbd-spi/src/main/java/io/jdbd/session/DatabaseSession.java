@@ -82,6 +82,26 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * </p>
+     *
+     * @throws JdbdException throw when
+     *                        <ul>
+     *                           <li>network error</li>
+     *                           <li>sever response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                           <li>satisfy following all conditions:
+     *                               <ol>
+     *                                   <li>{@link #inTransaction()} return true</li>
+     *                                   <li>you don't use jdbd spi control transaction</li>
+     *                                   <li>you use sql control transaction</li>
+     *                                   <li>database don't support to get current some transaction characteristic,for example:
+     *                                      <ul>
+     *                                          <li>MySQL don't support to get current transaction isolation level and WITH CONSISTENT SNAPSHOT</li>
+     *                                          <li>MySQL don't support to get current xa transaction states,see {@link XaStates}</li>
+     *                                          <li>PostgreSQL don't support to get current xa transaction states,see {@link XaStates}</li>
+     *                                      </ul>
+     *                                   </li>
+     *                               </ol>
+     *                           </li>
+     *                       </ul>
      */
     Publisher<TransactionStatus> transactionStatus();
 
@@ -182,7 +202,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *     </pre>
      * </p>
      *
-     * @see #refCursor(String, Map)
+     * @see #refCursor(String, Function)
      */
     RefCursor refCursor(String name);
 
@@ -248,6 +268,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *     <li>MySQL <a href="https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_eof_packet.html">Protocol::EOF_Packet</a></li>
      *     <li>PostgreSQL <a href="https://www.postgresql.org/docs/current/protocol-message-formats.html">ReadyForQuery (B)</a></li>
      * </ul>
+     * If database client protocol don't support this method ,then {@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null.
      * </p>
      *
      * @return true : when
@@ -261,7 +282,11 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *           after last statement executing.
      *     </li>
      * </ul>
-     * @throws JdbdException throw when session have closed.
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>database client protocol don't support this method. see {@link #valueOf(Option)}</li>
+     *                           <li>session have closed.</li>
+     *                       </ul>
      */
     boolean inTransaction() throws JdbdException;
 
