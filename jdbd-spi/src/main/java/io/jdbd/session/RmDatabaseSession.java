@@ -44,8 +44,8 @@ import java.util.function.Function;
  *         <li>{@link #end(Xid, int, Function)}</li>
  *         <li>{@link #prepare(Xid)}</li>
  *         <li>{@link #prepare(Xid, Function)}</li>
- *         <li>{@link #commit(Xid, boolean)}</li>
- *         <li>{@link #commit(Xid, boolean, Function)}</li>
+ *         <li>{@link #commit(Xid, int)}</li>
+ *         <li>{@link #commit(Xid, int, Function)}</li>
  *         <li>{@link #rollback(Xid)}</li>
  *         <li>{@link #rollback(Xid, Function)}</li>
  *         <li>{@link #forget(Xid)}</li>
@@ -116,10 +116,10 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     int TM_FAIL = 1 << 29;
 
-//    /**
-//     * Caller is using one-phase optimization.
-//     */
-//    int TM_ONE_PHASE = 1 << 30;
+    /**
+     * Caller is using one-phase optimization.
+     */
+    int TM_ONE_PHASE = 1 << 30;
 
     /**
      * The transaction branch has been read-only and has been committed.
@@ -243,7 +243,7 @@ public interface RmDatabaseSession extends DatabaseSession {
     Publisher<Integer> prepare(Xid xid, Function<Option<?>, ?> optionFunc);
 
 
-    Publisher<RmDatabaseSession> commit(Xid xid, boolean onePhase);
+    Publisher<RmDatabaseSession> commit(Xid xid, int flags);
 
     /**
      * <p>
@@ -266,7 +266,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                          <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                     </ul>
      */
-    Publisher<RmDatabaseSession> commit(Xid xid, boolean onePhase, Function<Option<?>, ?> optionFunc);
+    Publisher<RmDatabaseSession> commit(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
 
     Publisher<RmDatabaseSession> rollback(Xid xid);
 
