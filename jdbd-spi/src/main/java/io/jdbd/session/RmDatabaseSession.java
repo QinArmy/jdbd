@@ -398,11 +398,5 @@ public interface RmDatabaseSession extends DatabaseSession {
     Publisher<RmDatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    RmDatabaseSession bindIdentifier(StringBuilder builder, String identifier);
-
 
 }

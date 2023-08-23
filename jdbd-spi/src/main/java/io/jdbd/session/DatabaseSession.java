@@ -335,8 +335,6 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     Publisher<? extends DatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
 
-    DatabaseSession bindIdentifier(StringBuilder builder, String identifier);
-
 
     /**
      * @return true : session have closed.

@@ -218,11 +218,5 @@ public interface LocalDatabaseSession extends DatabaseSession {
     Publisher<LocalDatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    LocalDatabaseSession bindIdentifier(StringBuilder builder, String identifier);
-
 
 }
