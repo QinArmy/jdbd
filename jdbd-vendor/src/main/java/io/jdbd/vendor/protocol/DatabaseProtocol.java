@@ -159,8 +159,6 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
 
     boolean inTransaction();
 
-    void bindIdentifier(StringBuilder builder, String identifier);
-
 
     void addSessionCloseListener(Runnable listener);
 
