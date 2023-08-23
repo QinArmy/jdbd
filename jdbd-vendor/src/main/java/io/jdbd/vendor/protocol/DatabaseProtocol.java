@@ -162,7 +162,9 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     void bindIdentifier(StringBuilder builder, String identifier);
 
 
-    void addCloseListener(Runnable listener);
+    void addSessionCloseListener(Runnable listener);
+
+    void addTransactionEndListener(Runnable listener);
 
     boolean isClosed();
 

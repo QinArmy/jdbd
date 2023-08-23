@@ -21,7 +21,6 @@ public abstract class JdbdNumbers {
     }
 
 
-
     public static void writeInt(final int bitSet, final boolean bigEndian, final byte[] wkbArray, final int offset) {
         final int end = offset + 4;
         if (offset < 0) {
@@ -63,22 +62,23 @@ public abstract class JdbdNumbers {
     }
 
     public static byte[] toBinaryBytes(final int value, final boolean bigEndian) {
-        return toBinaryBytes(value & 0xFFFF_FFFFL, bigEndian);
+        final byte[] bytes = new byte[4];
+        if (bigEndian) {
+            for (int i = 0, bits = 24; i < bytes.length; i++, bits -= 8) {
+                bytes[i] = (byte) (value >> bits);
+            }
+        } else {
+            for (int i = 0, bits = 0; i < bytes.length; i++, bits += 8) {
+                bytes[i] = (byte) (value >> bits);
+            }
+        }
+        return bytes;
     }
 
     public static byte[] toBinaryBytes(final long value, final boolean bigEndian) {
-//        long bitSite = (0xFFL << 56);
-//        int byteLength = 8;
-//        while ((value & bitSite) == 0) {
-//            bitSite >>>= 8;
-//            byteLength--;
-//            if (byteLength == 1) {
-//                break;
-//            }
-//        }
         final byte[] bytes = new byte[8];
         if (bigEndian) {
-            for (int i = 0, bits = (bytes.length - 1) << 3; i < bytes.length; i++, bits -= 8) {
+            for (int i = 0, bits = 56; i < bytes.length; i++, bits -= 8) {
                 bytes[i] = (byte) (value >> bits);
             }
         } else {
