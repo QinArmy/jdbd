@@ -45,7 +45,7 @@ import java.util.function.Function;
  *
  * @since 1.0
  */
-public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, Closeable {
+public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, OptionSpec, Closeable {
 
     /**
      * @see DatabaseSessionFactory#name()
@@ -197,7 +197,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <pre>
      *         <code><br/>
      *             // session is instance of DatabaseSession
-     *             session.refCursor(name,Collections.emptyMap()) ;
+     *             session.refCursor(name,option -> null) ;
      *         </code>
      *     </pre>
      * </p>
@@ -267,6 +267,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *     <li>MySQL <a href="https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_ok_packet.html">Protocol::OK_Packet</a> </li>
      *     <li>MySQL <a href="https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_eof_packet.html">Protocol::EOF_Packet</a></li>
      *     <li>PostgreSQL <a href="https://www.postgresql.org/docs/current/protocol-message-formats.html">ReadyForQuery (B)</a></li>
+     *     <li>Micro SQL server transactional state</li>
      * </ul>
      * If database client protocol don't support this method ,then {@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null.
      * </p>

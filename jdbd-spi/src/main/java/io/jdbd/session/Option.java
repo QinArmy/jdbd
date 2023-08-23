@@ -237,6 +237,13 @@ public final class Option<T> {
     public static final Option<XaStates> XA_STATES = Option.from("XA STATES", XaStates.class);
 
     /**
+     * <p>
+     * representing the xa flags option of {@link TransactionStatus#valueOf(Option)} from {@link RmDatabaseSession}.
+     * </p>
+     */
+    public static final Option<Integer> XA_FLAGS = Option.from("XA FLAGS", Integer.class);
+
+    /**
      * @see io.jdbd.result.ServerException#valueOf(Option)
      * @see io.jdbd.result.Warning#valueOf(Option)
      */

@@ -15,7 +15,7 @@ import io.jdbd.meta.DatabaseMetaData;
  *
  * @since 1.0
  */
-public interface DatabaseMetaSpec extends OptionSpec {
+public interface DatabaseMetaSpec {
 
     /**
      * @throws JdbdException throw when session have closed.

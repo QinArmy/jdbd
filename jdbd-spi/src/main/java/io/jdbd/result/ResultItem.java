@@ -46,6 +46,15 @@ public interface ResultItem {
         return item instanceof OutResultItem;
     }
 
+    static boolean isRowOrStatesItem(ResultItem item) {
+        return !(item instanceof ResultRowMeta);
+    }
+
+    static boolean isRowItem(ResultItem item) {
+        return item instanceof ResultRow;
+    }
+
+
     /**
      * <p>
      * This interface just is base interface of following :

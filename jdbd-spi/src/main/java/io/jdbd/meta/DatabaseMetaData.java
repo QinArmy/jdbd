@@ -3,6 +3,7 @@ package io.jdbd.meta;
 import io.jdbd.DriverVersion;
 import io.jdbd.session.DatabaseMetaSpec;
 import io.jdbd.session.Option;
+import io.jdbd.session.OptionSpec;
 import org.reactivestreams.Publisher;
 
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
  *
  * @since 1.0
  */
-public interface DatabaseMetaData extends DatabaseMetaSpec {
+public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
 
     Option<String> TABLE_NAME_PATTERN = Option.from("TABLE NAME PATTERN", String.class);
 

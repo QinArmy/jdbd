@@ -157,25 +157,17 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     ServerVersion serverVersion();
 
 
-    Mono<ResultStates> startTransaction(TransactionOption option, HandleMode mode);
-
-    Mono<ResultStates> setTransactionCharacteristics(TransactionOption option);
-
-    Mono<TransactionStatus> transactionStatus();
-
     boolean inTransaction();
 
-    Mono<ResultStates> commit(Function<Option<?>, ?> optionFunc);
+    void bindIdentifier(StringBuilder builder, String identifier);
 
-    Mono<ResultStates> rollback(Function<Option<?>, ?> optionFunc);
 
+    void addCloseListener(Runnable listener);
 
     boolean isClosed();
 
     @Override
     <T> Mono<T> close();
-
-    void bindIdentifier(StringBuilder builder, String identifier);
 
 
 }

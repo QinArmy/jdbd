@@ -629,6 +629,10 @@ public abstract class JdbdExceptions {
         return new XaException(m, SQLStates.ER_XAER_INVAL, 0, XaException.XAER_INVAL);
     }
 
+    public static XaException xaBusyOnOtherTransaction() {
+        return new XaException("session is busy with another transaction", XaException.XAER_PROTO);
+    }
+
 
     public static XaException xaGtridNoText() {
         return new XaException("gtrid of xid must have text.", SQLStates.ER_XAER_NOTA, 0, XaException.XAER_NOTA);
@@ -648,7 +652,11 @@ public abstract class JdbdExceptions {
 
 
     public static XaException xidIsNull() {
-        return new XaException("xid must not be null", SQLStates.ER_XAER_INVAL, 0, XaException.XAER_INVAL);
+        return new XaException("xid must be non-null", SQLStates.ER_XAER_INVAL, 0, XaException.XAER_INVAL);
+    }
+
+    public static XaException xaTransactionOptionIsNull() {
+        return new XaException("xid must be non-null", SQLStates.ER_XAER_INVAL, 0, XaException.XAER_INVAL);
     }
 
     public static XaException xaNonCurrentTransaction(@Nullable Xid xid) {
