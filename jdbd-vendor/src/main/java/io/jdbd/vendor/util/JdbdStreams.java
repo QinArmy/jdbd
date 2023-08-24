@@ -1,8 +1,5 @@
 package io.jdbd.vendor.util;
-
-import io.qinarmy.lang.Nullable;
-import io.qinarmy.util.DigestUtils;
-import io.qinarmy.util.StringUtils;
+import io.jdbd.lang.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +14,7 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public abstract class JdbdStreams {
 
@@ -29,7 +27,7 @@ public abstract class JdbdStreams {
 
     public static Charset fileEncodingOrUtf8() {
         String fileEncoding = System.getProperty("file.encoding");
-        return StringUtils.hasText(fileEncoding) ? Charset.forName(fileEncoding) : StandardCharsets.UTF_8;
+        return JdbdStrings.hasText(fileEncoding) ? Charset.forName(fileEncoding) : StandardCharsets.UTF_8;
     }
 
     public static String readAsString(final Path path) throws IOException {
@@ -100,7 +98,7 @@ public abstract class JdbdStreams {
             , final boolean deleteTargetIfError) throws IOException {
 
         byte[] md5Bytes;
-        md5Bytes = doCopyFromChanel(targetPath, needBytes, in, deleteTargetIfError, DigestUtils.createMd5Digest());
+        md5Bytes = doCopyFromChanel(targetPath, needBytes, in, deleteTargetIfError, createMd5Digest());
         assert md5Bytes != null;
         return md5Bytes;
     }
@@ -163,4 +161,20 @@ public abstract class JdbdStreams {
         }
         return digest == null ? null : digest.digest();
     }
+
+    public static MessageDigest createMd5Digest() {
+        return createDigest("MD5");
+    }
+
+
+    protected static MessageDigest createDigest(String algorithm) throws IllegalArgumentException {
+        try {
+            return MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new IllegalArgumentException(
+                    String.format("Could not find MessageDigest with algorithm '%s'", algorithm), ex);
+        }
+    }
+
+
 }

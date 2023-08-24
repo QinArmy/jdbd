@@ -1,9 +1,11 @@
 package io.jdbd.type;
 
 
+import io.jdbd.result.BigColumnValue;
+
 import java.nio.file.Path;
 
-public interface BlobPath extends PathParameter {
+public interface BlobPath extends PathParameter, BigColumnValue {
 
 
     static BlobPath from(boolean deleteOnClose, Path path) {

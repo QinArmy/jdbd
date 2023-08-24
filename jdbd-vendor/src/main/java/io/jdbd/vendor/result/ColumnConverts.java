@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.BitSet;
+import java.util.Locale;
 
 public abstract class ColumnConverts {
 
@@ -104,15 +105,24 @@ public abstract class ColumnConverts {
         } else if (source instanceof Long) {
             value = ((Number) source).longValue() != 0;
         } else if (source instanceof String) {
-            final String v = (String) source;
-            if (v.equalsIgnoreCase("TRUE")
-                    || v.equalsIgnoreCase("T")) {
-                value = true;
-            } else if (v.equalsIgnoreCase("FALSE")
-                    || v.equalsIgnoreCase("F")) {
-                value = false;
-            } else {
-                throw JdbdExceptions.cannotConvertColumnValue(meta, source, Boolean.class, null);
+            switch (((String) source).toUpperCase(Locale.ROOT)) {
+                case "TRUE":
+                case "T":
+                case "YES":
+                case "ON":
+                case "1":
+                    value = true;
+                    break;
+                case "FALSE":
+                case "F":
+                case "NO":
+                case "OFF":
+                case "0":
+                    value = false;
+                    break;
+                default:
+                    throw JdbdExceptions.cannotConvertColumnValue(meta, source, Boolean.class, null);
+
             }
         } else if (source instanceof BigDecimal) {
             value = BigDecimal.ZERO.compareTo((BigDecimal) source) != 0;

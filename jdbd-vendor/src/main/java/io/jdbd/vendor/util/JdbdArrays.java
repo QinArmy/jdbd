@@ -1,11 +1,13 @@
 package io.jdbd.vendor.util;
 
 
+import io.jdbd.lang.NonNull;
 import io.jdbd.lang.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class JdbdArrays {
@@ -28,6 +30,22 @@ public abstract class JdbdArrays {
             Collections.addAll(set, elements);
         }
         return set;
+    }
+
+    @SafeVarargs
+    @SuppressWarnings("varargs")
+    @NonNull
+    public static <T> List<T> unmodifiableListOf(T first, T... rest) {
+        final List<T> list;
+        if (rest.length == 0) {
+            list = Collections.singletonList(first);
+        } else {
+            final List<T> temp = JdbdCollections.arrayList(1 + rest.length);
+            temp.add(first);
+            Collections.addAll(temp, rest);
+            list = Collections.unmodifiableList(temp);
+        }
+        return list;
     }
 
 

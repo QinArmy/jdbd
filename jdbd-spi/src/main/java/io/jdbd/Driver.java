@@ -119,7 +119,7 @@ public interface Driver {
     /**
      * @return database product name,For example :  MySQL , PostgreSQL.
      */
-    String productName();
+    String productFamily();
 
     DriverVersion version();
 
@@ -136,7 +136,7 @@ public interface Driver {
      * @return driver info, contain : <ol>
      * <li>implementation class name</li>
      * <li>{@link #vendor()}</li>
-     * <li>{@link #productName()}</li>
+     * <li>{@link #productFamily()}</li>
      * <li>{@link #version()}</li>
      * <li>{@link System#identityHashCode(Object)}</li>
      * </ol>

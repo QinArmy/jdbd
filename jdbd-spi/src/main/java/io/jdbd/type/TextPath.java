@@ -1,10 +1,12 @@
 package io.jdbd.type;
 
 
+import io.jdbd.result.BigColumnValue;
+
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-public interface TextPath extends PathParameter {
+public interface TextPath extends PathParameter, BigColumnValue {
 
     Charset charset();
 

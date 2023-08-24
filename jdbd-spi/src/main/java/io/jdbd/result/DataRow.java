@@ -6,6 +6,7 @@ import org.reactivestreams.Publisher;
 
 import java.nio.file.CopyOption;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,6 +61,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     boolean isBigColumn(int indexBasedZero) throws JdbdException;
 
     /**
+     * @throws JdbdException throw when indexBasedZero error
+     */
+    boolean isNull(int indexBasedZero) throws JdbdException;
+
+    /**
      * <p>
      * Get the value of output of column.
      * </p>
@@ -86,15 +92,33 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
 
     <T> List<T> getList(int indexBasedZero, Class<T> elementClass) throws JdbdException;
 
+    /**
+     * @return <ul>
+     * <li>null : always {@link Collections#emptyList()}</li>
+     * <li>the instance that constructor return</li>
+     * </ul>
+     */
     <T> List<T> getList(int indexBasedZero, Class<T> elementClass, IntFunction<List<T>> constructor) throws JdbdException;
 
     <T> Set<T> getSet(int indexBasedZero, Class<T> elementClass) throws JdbdException;
 
+    /**
+     * @return <ul>
+     * <li>null : always {@link Collections#emptySet()}</li>
+     * <li>the instance that constructor return</li>
+     * </ul>
+     */
     <T> Set<T> getSet(int indexBasedZero, Class<T> elementClass, IntFunction<Set<T>> constructor) throws JdbdException;
 
 
     <K, V> Map<K, V> getMap(int indexBasedZero, Class<K> keyClass, Class<V> valueClass) throws JdbdException;
 
+    /**
+     * @return <ul>
+     * <li>null : always {@link Collections#emptyMap()}</li>
+     * <li>the instance that constructor return</li>
+     * </ul>
+     */
     <K, V> Map<K, V> getMap(int indexBasedZero, Class<K> keyClass, Class<V> valueClass, IntFunction<Map<K, V>> constructor) throws JdbdException;
 
 
@@ -102,6 +126,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
 
 
     boolean isBigColumn(String columnLabel);
+
+    /**
+     * @throws JdbdException throw when columnLabel error
+     */
+    boolean isNull(String columnLabel) throws JdbdException;
 
     /**
      * <p>
@@ -163,7 +192,6 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     <K, V> Map<K, V> getMap(String columnLabel, Class<K> keyClass, Class<V> valueClass, IntFunction<Map<K, V>> constructor) throws JdbdException;
 
     <T> Publisher<T> getPublisher(String columnLabel, Class<T> valueClass) throws JdbdException;
-
 
 
 }

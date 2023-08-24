@@ -63,7 +63,7 @@ public abstract class JdbdStrings /*extends StringUtils*/ {
         }
     }
 
-    public static boolean isEmpty(@io.qinarmy.lang.Nullable Object str) {
+    public static boolean isEmpty(@Nullable Object str) {
         return str == null || str.equals("");
     }
 

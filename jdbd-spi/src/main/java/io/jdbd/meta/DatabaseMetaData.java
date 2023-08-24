@@ -6,7 +6,7 @@ import io.jdbd.session.Option;
 import io.jdbd.session.OptionSpec;
 import org.reactivestreams.Publisher;
 
-import java.util.Map;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -59,11 +59,13 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </p>
      *
      * @return database product family name. For example : MySQL , PostgreSQL , SQL Server .
+     * @see #productName()
      */
     String productFamily();
 
     /**
-     * @return database product name,For example :  MySQL , PostgreSQL .
+     * @return database product name,For example :  MySQL , PostgreSQL ,MySQL-ENTERPRISE, PostgreSQL-ENTERPRISE
+     * @see #productFamily()
      */
     String productName();
 
@@ -87,7 +89,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </ul>
      * </p>
      */
-    Publisher<DatabaseTableMetaData> tableOfSchema(DatabaseSchemaMetaData schemaMeta, Map<Option<?>, ?> optionPairMap);
+    Publisher<DatabaseTableMetaData> tableOfSchema(DatabaseSchemaMetaData schemaMeta, Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -97,7 +99,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </ul>
      * </p>
      */
-    Publisher<TableColumnMetaData> columnOfTable(DatabaseTableMetaData tableMeta, Map<Option<?>, ?> optionPairMap);
+    Publisher<TableColumnMetaData> columnOfTable(DatabaseTableMetaData tableMeta, Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -108,7 +110,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </ul>
      * </p>
      */
-    Publisher<TableIndexMetaData> indexOfTable(DatabaseTableMetaData tableMeta, Map<Option<?>, ?> optionPairMap);
+    Publisher<TableIndexMetaData> indexOfTable(DatabaseTableMetaData tableMeta, Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -119,7 +121,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </ul>
      * </p>
      */
-    Publisher<DatabaseTableMetaData> tables(Map<Option<?>, ?> optionPairMap);
+    Publisher<DatabaseTableMetaData> tables(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -129,7 +131,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </ul>
      * </p>
      */
-    Publisher<TableColumnMetaData> columns(Map<Option<?>, ?> optionPairMap);
+    Publisher<TableColumnMetaData> columns(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -140,7 +142,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, OptionSpec {
      * </ul>
      * </p>
      */
-    Publisher<TableIndexMetaData> indexes(Map<Option<?>, ?> optionPairMap);
+    Publisher<TableIndexMetaData> indexes(Function<Option<?>, ?> optionFunc);
 
 
     /**

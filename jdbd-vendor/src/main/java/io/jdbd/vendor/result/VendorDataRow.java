@@ -86,6 +86,11 @@ public abstract class VendorDataRow implements DataRow {
     }
 
     @Override
+    public final boolean isNull(String columnLabel) throws JdbdException {
+        return this.isNull(getRowMeta().getColumnIndex(columnLabel));
+    }
+
+    @Override
     public final int getColumnIndex(String columnLabel) throws JdbdException {
         return this.getRowMeta().getColumnIndex(columnLabel);
     }

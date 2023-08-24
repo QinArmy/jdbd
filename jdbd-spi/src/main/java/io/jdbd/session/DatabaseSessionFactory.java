@@ -95,7 +95,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
     /**
      * @return database product name,For example :  MySQL , PostgreSQL.
      */
-    String productName();
+    String productFamily();
 
 
     /**

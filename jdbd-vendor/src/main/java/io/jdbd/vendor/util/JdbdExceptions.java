@@ -12,6 +12,7 @@ import io.jdbd.statement.InOutParameter;
 import io.jdbd.statement.PreparedStatement;
 import io.jdbd.statement.Statement;
 import io.jdbd.type.PathParameter;
+import io.jdbd.type.TextPath;
 import io.jdbd.vendor.JdbdCompositeException;
 import io.jdbd.vendor.result.ColumnMeta;
 import io.jdbd.vendor.stmt.NamedValue;
@@ -437,6 +438,34 @@ public abstract class JdbdExceptions {
                 source.getClass().getName(),
                 valueMsg,
                 targetClass.getName(),
+                meta.getColumnIndex(),
+                meta.getColumnLabel(),
+                meta.getDataType().typeName()
+        );
+
+        final JdbdException e;
+        if (cause == null) {
+            e = new JdbdException(m);
+        } else {
+            e = new JdbdException(m, cause);
+        }
+        return e;
+    }
+
+    public static JdbdException cannotConvertElementColumnValue(ColumnMeta meta, Object source, Class<?> targetClass,
+                                                                Class<?> elementClass, @Nullable Throwable cause) {
+        final String valueMsg;
+        if (source instanceof String || source instanceof TextPath) {
+            valueMsg = "${text}"; // for information safe
+        } else {
+            valueMsg = source.toString();
+        }
+        String m;
+        m = String.format("couldn't convert %s[%s] to %s<%s> for column[index:%s,label:%s,typeName:%s]",
+                source.getClass().getName(),
+                valueMsg,
+                targetClass.getName(),
+                elementClass.getName(),
                 meta.getColumnIndex(),
                 meta.getColumnLabel(),
                 meta.getDataType().typeName()
