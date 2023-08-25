@@ -11,7 +11,6 @@ import io.jdbd.vendor.task.PrepareTask;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -143,8 +142,6 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     Mono<Void> ping(int timeSeconds);
 
     Mono<Void> reset();
-
-    Mono<Void> reconnect(Duration duration);
 
     boolean supportMultiStmt();
 

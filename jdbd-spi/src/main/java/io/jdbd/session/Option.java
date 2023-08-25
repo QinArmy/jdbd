@@ -284,11 +284,6 @@ public final class Option<T> {
      */
     public static final Option<Boolean> BINARY_HEX_ESCAPES = Option.from("BINARY HEX ESCAPES", Boolean.class);
 
-    /**
-     * @see Driver#AUTO_RECONNECT
-     */
-    public static final Option<Boolean> AUTO_RECONNECT = Option.from("AUTO RECONNECT", Boolean.class);
-
 
     /**
      * <p>

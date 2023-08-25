@@ -368,7 +368,6 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <p>
      * The implementation of this method always support :
      * <ul>
-     *     <li>{@link Option#AUTO_RECONNECT}</li>
      *     <li>{@link Option#PREPARE_THRESHOLD}</li>
      * </ul>
      * </p>

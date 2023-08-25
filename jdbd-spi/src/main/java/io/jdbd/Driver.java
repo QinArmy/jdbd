@@ -63,14 +63,6 @@ public interface Driver {
 
     String CLIENT_INFO = "clientInfo";
 
-    /**
-     * <p>
-     * Optional , driver perhaps support.
-     * </p>
-     *
-     * @see io.jdbd.session.Option#AUTO_RECONNECT
-     */
-    String AUTO_RECONNECT = "autoReconnect";
 
 
     /**
