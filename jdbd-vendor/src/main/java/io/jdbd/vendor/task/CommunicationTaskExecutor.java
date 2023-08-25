@@ -38,11 +38,11 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
     protected final T taskAdjutant;
 
-    protected Connection connection;
+    protected final Connection connection;
 
-    protected EventLoop eventLoop;
+    protected final EventLoop eventLoop;
 
-    protected ByteBufAllocator allocator;
+    protected final ByteBufAllocator allocator;
 
     private final Queue<CommunicationTask> taskQueue;
 
