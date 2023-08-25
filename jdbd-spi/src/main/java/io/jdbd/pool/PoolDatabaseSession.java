@@ -4,8 +4,6 @@ import io.jdbd.session.DatabaseSession;
 import io.jdbd.session.DatabaseSessionFactory;
 import org.reactivestreams.Publisher;
 
-import java.time.Duration;
-
 /**
  * <p>
  * This interface representing {@link DatabaseSession} than can be pooled.
@@ -29,10 +27,6 @@ import java.time.Duration;
  */
 public interface PoolDatabaseSession extends DatabaseSession {
 
-    /**
-     * @return {@link Publisher} that emit <strong>this</strong> when success.
-     */
-    Publisher<? extends PoolDatabaseSession> reconnect(Duration duration);
 
     /**
      * @return {@link Publisher} that emit <strong>this</strong> when success.

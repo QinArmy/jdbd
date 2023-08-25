@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class VendorResultRowMeta<M extends ColumnMeta> implements ResultRowMeta {
+public abstract class VendorResultRowMeta implements ResultRowMeta {
 
 
     public final int resultNo;

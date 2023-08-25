@@ -4,8 +4,6 @@ import io.jdbd.session.DatabaseSessionFactory;
 import io.jdbd.session.LocalDatabaseSession;
 import org.reactivestreams.Publisher;
 
-import java.time.Duration;
-
 /**
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory#localSession()} method.
@@ -15,11 +13,6 @@ import java.time.Duration;
  */
 public interface PoolLocalDatabaseSession extends PoolDatabaseSession, LocalDatabaseSession {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Publisher<PoolLocalDatabaseSession> reconnect(Duration duration);
 
     /**
      * {@inheritDoc}

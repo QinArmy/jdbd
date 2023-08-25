@@ -84,7 +84,7 @@ public interface Driver {
     /**
      * @param url format :jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
-     *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
+     *              <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
      *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
      *            </ul>
      */
@@ -109,7 +109,7 @@ public interface Driver {
      *
      * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
-     *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
+     *              <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
      *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
      *            </ul>
      */
@@ -117,7 +117,7 @@ public interface Driver {
 
 
     /**
-     * @return database product name,For example :  MySQL , PostgreSQL.
+     * @return database product family,For example :  MySQL , PostgreSQL.
      */
     String productFamily();
 
@@ -148,7 +148,7 @@ public interface Driver {
     /**
      * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
-     *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
+     *              <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
      *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
      *            </ul>
      * @throws JdbdException throw when not found match driver.

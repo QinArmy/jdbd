@@ -36,13 +36,13 @@ import java.util.function.Consumer;
 public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> implements CoreSubscriber<ByteBuf>,
         TaskExecutor<T> {
 
-    protected final Connection connection;
-
-    protected final EventLoop eventLoop;
-
-    protected final ByteBufAllocator allocator;
-
     protected final T taskAdjutant;
+
+    protected Connection connection;
+
+    protected EventLoop eventLoop;
+
+    protected ByteBufAllocator allocator;
 
     private final Queue<CommunicationTask> taskQueue;
 
@@ -214,6 +214,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
     protected void onChannelClosed() {
         // for sub-class
     }
+
 
 
     /*################################## blow private method ##################################*/

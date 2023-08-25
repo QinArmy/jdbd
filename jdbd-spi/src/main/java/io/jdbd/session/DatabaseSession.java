@@ -404,6 +404,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <li>{@link #driverVendor()}</li>
      * <li>server version string</li>
      * <li>driver version string</li>
+     * <li>cache current transaction  if exists</li>
      * <li>{@link System#identityHashCode(Object)}</li>
      * </ol>
      */
