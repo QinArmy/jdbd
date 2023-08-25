@@ -1,6 +1,5 @@
 package io.jdbd.statement;
 
-import io.jdbd.lang.Nullable;
 import io.jdbd.type.*;
 
 /**
@@ -8,7 +7,6 @@ import io.jdbd.type.*;
  * This interface representing some special parameter.
  * This interface is base interface of following :
  *     <ul>
- *         <li>{@link InOutParameter}</li>
  *         <li>{@link Blob}</li>
  *         <li>{@link Clob}</li>
  *         <li>{@link Text}</li>
@@ -25,7 +23,6 @@ public interface ValueParameter extends Parameter {
     /**
      * @return parameter value.
      */
-    @Nullable
     Object value();
 
 }

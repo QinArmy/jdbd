@@ -2,7 +2,6 @@ package io.jdbd.vendor.util;
 
 import io.jdbd.JdbdException;
 import io.jdbd.meta.SQLType;
-import io.jdbd.type.Interval;
 import io.jdbd.type.PathParameter;
 import io.jdbd.vendor.stmt.ParamValue;
 import io.jdbd.vendor.stmt.Value;
@@ -184,7 +183,7 @@ public abstract class JdbdBinds {
 
 
     public static boolean bindToBoolean(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final boolean value;
         if (nonNull instanceof Boolean) {
             value = (Boolean) nonNull;
@@ -219,7 +218,7 @@ public abstract class JdbdBinds {
     }
 
     public static String bindToBit(final int batchIndex, final Value paramValue, final int maxLength) {
-        final Object value = paramValue.getValue();
+        final Object value = paramValue.get();
         final String bitValue;
 
         if (value instanceof Long) {
@@ -250,7 +249,7 @@ public abstract class JdbdBinds {
 
     public static int bindToIntUnsigned(final int batchIndex, final Value paramValue, final int maxvalue)
             throws JdbdException, IllegalArgumentException {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final int value;
         if (nonNull instanceof Integer) {
             value = (Integer) nonNull;
@@ -296,7 +295,7 @@ public abstract class JdbdBinds {
 
     public static int bindToInt(final int batchIndex, final Value paramValue, final int minValue, int maxValue)
             throws JdbdException {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final int value;
         if (nonNull instanceof Integer
                 || nonNull instanceof Short
@@ -329,7 +328,7 @@ public abstract class JdbdBinds {
 
     public static long bindToLong(final int batchIndex, final Value paramValue, final long minValue, final long maxValue)
             throws JdbdException {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final long value;
         if (nonNull instanceof Long
                 || nonNull instanceof Integer
@@ -357,7 +356,7 @@ public abstract class JdbdBinds {
 
     public static long bindToLongUnsigned(final int batchIndex, final Value paramValue, final long maxValue)
             throws JdbdException, IllegalArgumentException {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final long value;
         if (nonNull instanceof Integer || nonNull instanceof Long) {
             value = ((Number) nonNull).longValue();
@@ -388,7 +387,7 @@ public abstract class JdbdBinds {
     }
 
     public static BigInteger bindToBigInteger(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
 
         final BigInteger value;
         if (nonNull instanceof BigInteger) {
@@ -412,7 +411,7 @@ public abstract class JdbdBinds {
     }
 
     public static BigDecimal bindToDecimal(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
 
         final BigDecimal value;
         if (nonNull instanceof BigDecimal) {
@@ -437,7 +436,7 @@ public abstract class JdbdBinds {
     }
 
     public static float bindToFloat(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final float value;
         if (nonNull instanceof Float) {
             value = (Float) nonNull;
@@ -455,7 +454,7 @@ public abstract class JdbdBinds {
 
 
     public static double bindToDouble(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final double value;
         if (nonNull instanceof Float
                 || nonNull instanceof Double
@@ -474,7 +473,7 @@ public abstract class JdbdBinds {
     }
 
     public static String bindToString(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final String value;
 
         if (nonNull instanceof String) {
@@ -509,7 +508,7 @@ public abstract class JdbdBinds {
      * @return {@link Number} or {@link String}
      */
     public static Object bindToJson(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final Object value;
 
         if (nonNull instanceof String || nonNull instanceof Number) {
@@ -522,7 +521,7 @@ public abstract class JdbdBinds {
 
 
     public static LocalDate bindToLocalDate(final int batchIndex, final Value paramValue) {
-        final Object source = paramValue.getValue();
+        final Object source = paramValue.get();
         final LocalDate value;
         if (source instanceof LocalDate) {
             value = (LocalDate) source;
@@ -543,7 +542,7 @@ public abstract class JdbdBinds {
     }
 
     public static LocalTime bindToLocalTime(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final LocalTime value;
         if (nonNull instanceof LocalTime) {
             value = (LocalTime) nonNull;
@@ -556,7 +555,7 @@ public abstract class JdbdBinds {
     }
 
     public static LocalDateTime bindToLocalDateTime(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final LocalDateTime value;
         if (nonNull instanceof LocalDateTime) {
             value = (LocalDateTime) nonNull;
@@ -569,7 +568,7 @@ public abstract class JdbdBinds {
     }
 
     public static OffsetTime bindToOffsetTime(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final OffsetTime value;
         if (nonNull instanceof OffsetTime) {
             value = (OffsetTime) nonNull;
@@ -582,7 +581,7 @@ public abstract class JdbdBinds {
     }
 
     public static OffsetDateTime bindToOffsetDateTime(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
+        final Object nonNull = paramValue.get();
         final OffsetDateTime value;
         if (nonNull instanceof OffsetDateTime) {
             value = (OffsetDateTime) nonNull;
@@ -597,26 +596,6 @@ public abstract class JdbdBinds {
     }
 
 
-    public static String bindToInterval(final int batchIndex, final Value paramValue) {
-        final Object nonNull = paramValue.getValue();
-        final String value;
-        if (nonNull instanceof Period) {
-            value = nonNull.toString();
-        } else if (nonNull instanceof Duration) {
-            value = Interval.of((Duration) nonNull).toString(true);
-        } else {
-            final Interval v;
-            if (nonNull instanceof String) {
-                v = Interval.parse((String) nonNull);
-            } else if (nonNull instanceof Interval) {
-                v = (Interval) nonNull;
-            } else {
-                throw JdbdExceptions.nonSupportBindSqlTypeError(batchIndex, paramValue);
-            }
-            value = v.toString(true);
-        }
-        return value;
-    }
 
 
 

@@ -3,7 +3,6 @@ package io.jdbd.statement;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
-import io.jdbd.result.OutResultItem;
 import io.jdbd.session.ChunkOption;
 import io.jdbd.session.Option;
 import io.jdbd.type.*;

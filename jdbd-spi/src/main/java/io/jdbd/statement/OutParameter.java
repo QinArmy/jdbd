@@ -1,15 +1,12 @@
 package io.jdbd.statement;
 
 import io.jdbd.meta.DataType;
-import io.jdbd.result.OutResultItem;
+import io.jdbd.result.ResultStates;
 
 /**
  * <p>
- * This interface representing OUT parameter of stored procedure/function.
+ * This interface representing OUT (<strong>NOTE</strong>: is OUT not INOUT) parameter of stored procedure/function.
  * You create instance of {@link OutParameter} by {@link OutParameter#out(String)}.
- * </p>
- * <p>
- * <strong>NOTE</strong> : this interface isn't the base interface of {@link InOutParameter}.
  * </p>
  * <p>
  * OUT parameter is usually supported by following statement :
@@ -17,6 +14,10 @@ import io.jdbd.result.OutResultItem;
  *         <li>{@link PreparedStatement}</li>
  *         <li>{@link BindStatement}</li>
  *     </ul>
+ * </p>
+ * <p>
+ *     <strong>NOTE</strong>: If procedure produce multi-result in single statement ,then out parameter usually present in last result,
+ *     see {@link ResultStates#hasMoreResult()} is false.
  * </p>
  * <p>
  * For example :
@@ -36,11 +37,10 @@ import io.jdbd.result.OutResultItem;
  *        LocalDatabaseSession session;
  *        BindStatement stmt = session.bindStatement("CALL my_test_procedure( ? , ? , ?)");
  *        stmt.bind(0,JdbdType.INTEGER,1);
- *        stmt.bind(1,JdbdType.INTEGER,OutParameter.out("my_out")); //  must be non-null {@link String}. <strong>NOTE</strong>: empty is allowed by some database ,For example : MySQL ,PostgreSQL,because these database don't need.
- *        stmt.bind(2,JdbdType.INTEGER,InOutParameter.inout("my_inout",6666)); // <strong>NOTE</strong>: empty(INOUT parameter name) is allowed by some database ,For example : MySQL ,PostgreSQL,because these database don't need.
+ *        stmt.bind(1,JdbdType.INTEGER,OutParameter.out("my_out")); //  must be non-null
+ *        stmt.bind(2,JdbdType.INTEGER,6666);
  *
  *        Flux.from(stmt.executeQuery())
- *              //.filter(ResultItem::isOutResultItem) // actually , here don't need filter,  because the sql produce just one result.
  *              .map(this::handleOutParameter)
  *
  *       private Map&lt;String, Integer> handleOutParameter(final ResultRow row) {
@@ -54,7 +54,7 @@ import io.jdbd.result.OutResultItem;
  * </p>
  *
  * <p>
- * <strong>NOTE</strong>: this interface can use in function, but don't guarantee that produce {@link io.jdbd.result.OutResultItem}.
+ * <strong>NOTE</strong>: this interface can use in function..
  * For example :
  * <pre>
  *     <code><br/>
@@ -72,10 +72,10 @@ import io.jdbd.result.OutResultItem;
  *        LocalDatabaseSession session;
  *        BindStatement stmt = session.bindStatement("SELECT t.* FROM my_test_function(? , ? , ?) AS t");
  *        stmt.bind(0,JdbdType.INTEGER,1);
- *        stmt.bind(1,JdbdType.INTEGER,OutParameter.out("my_out")); //  must be non-null {@link String}. <strong>NOTE</strong>: empty is allowed by some database ,For example : MySQL ,PostgreSQL,because these database don't need.
- *        stmt.bind(2,JdbdType.INTEGER,InOutParameter.inout("my_inout",6666)); // <strong>NOTE</strong>: empty(INOUT parameter name) is allowed by some database ,For example : MySQL ,PostgreSQL,because these database don't need.
+ *        stmt.bind(1,JdbdType.INTEGER,OutParameter.out("my_out")); //  must be non-null {@link String}.
+ *        stmt.bind(2,JdbdType.INTEGER,6666);
  *
- *        Flux.from(stmt.executeQuery()) // <strong>NOTE:</strong>  due to not procedure (CALL command) ,so don't guarantee that produce {@link io.jdbd.result.OutResultItem}.
+ *        Flux.from(stmt.executeQuery())
  *              .map(this::handleOutParameter)
  *
  *       private Map&lt;String, Integer> handleOutParameter(final ResultRow row) {
@@ -89,7 +89,6 @@ import io.jdbd.result.OutResultItem;
  * </p>
  *
  * @see ParametrizedStatement#bind(int, DataType, Object)
- * @see OutResultItem
  * @since 1.0
  */
 public interface OutParameter extends Parameter {

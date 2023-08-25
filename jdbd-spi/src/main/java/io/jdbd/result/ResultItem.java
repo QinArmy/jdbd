@@ -22,7 +22,6 @@ import io.jdbd.JdbdException;
  *         <li>{@link ResultRow}</li>
  *         <li>{@link ResultStates}</li>
  *         <li>{@link CurrentRow}</li>
- *         <li>{@link OutResultItem}</li>
  *     </ul>
  * </p>
  *
@@ -36,15 +35,6 @@ public interface ResultItem {
      */
     int getResultNo();
 
-
-    /**
-     * <p>
-     * This method is designed for the filter(java.util.function.Predicate) method.
-     * </p>
-     */
-    static boolean isOutResultItem(ResultItem item) {
-        return item instanceof OutResultItem;
-    }
 
     static boolean isRowOrStatesItem(ResultItem item) {
         return !(item instanceof ResultRowMeta);

@@ -1,7 +1,5 @@
 package io.jdbd.type;
 
-import io.jdbd.lang.NonNull;
-
 import java.nio.file.Path;
 
 /**
@@ -23,7 +21,6 @@ public interface PathParameter extends LongParameter {
     boolean isDeleteOnClose();
 
 
-    @NonNull
     @Override
     Path value();
 

@@ -42,30 +42,6 @@ public interface Value {
     Object getNonNull() throws NullPointerException;
 
     /**
-     * @return <ul>
-     * <li>null</li>
-     * <li>non-{@link Parameter} instance</li>
-     * </ul>
-     */
-    @Nullable
-    Object getValue();
-
-    /**
-     * @return non-{@link Parameter} instance
-     * @throws NullPointerException throw when <ul>
-     *                              <li>param is null</li>
-     *                              <li>{@link Parameter#value()} is null</li>
-     *                              </ul>
-     */
-    Object getNonNullValue() throws NullPointerException;
-
-    /**
-     * @return true : if {@link #getValue()} is {@link org.reactivestreams.Publisher} or {@link java.nio.file.Path}.
-     */
-    boolean isLongData();
-
-
-    /**
      * @return sql type of bind value.
      */
     DataType getType();
