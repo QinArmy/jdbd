@@ -1,7 +1,6 @@
 package io.jdbd.vendor.task;
 
 import io.jdbd.JdbdException;
-import io.jdbd.session.SessionCloseException;
 import io.jdbd.vendor.TaskQueueOverflowException;
 import io.jdbd.vendor.env.JdbdHost;
 import io.jdbd.vendor.util.JdbdExceptions;
@@ -21,7 +20,6 @@ import reactor.core.publisher.MonoSink;
 import reactor.netty.Connection;
 import reactor.netty.NettyPipeline;
 import reactor.netty.tcp.SslProvider;
-import reactor.util.annotation.Nullable;
 import reactor.util.concurrent.Queues;
 
 import java.net.InetSocketAddress;
@@ -51,7 +49,8 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
     private final TaskSignal taskSignal;
 
     private final Consumer<Object> updateServerStatusFunc = this::updateServerStatus;
-    ;
+
+    private final Logger logger;
 
     // non-volatile ,all modify in netty EventLoop
     private ByteBuf cumulateBuffer;
@@ -85,6 +84,8 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
                 .retain() // for cumulate
                 .subscribe(this);
 
+        this.logger = getLogger();
+
     }
 
 
@@ -105,10 +106,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         if (this.eventLoop.inEventLoop()) {
             doOnNextInEventLoop(byteBufFromPeer);
         } else {
-            final Logger LOG = getLogger();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("{} onNext(),current thread not in EventLoop.", this);
-            }
+            this.logger.debug("{} onNext(),current thread not in EventLoop.", this);
             this.eventLoop.execute(() -> doOnNextInEventLoop(byteBufFromPeer));
         }
     }
@@ -118,10 +116,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         if (this.eventLoop.inEventLoop()) {
             doOnErrorInEventLoop(t);
         } else {
-            final Logger LOG = getLogger();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("{} onError(Throwable),current thread not in EventLoop.", this);
-            }
+            this.logger.debug("{} onError(Throwable),current thread not in EventLoop.", this);
             this.eventLoop.execute(() -> doOnErrorInEventLoop(t));
         }
     }
@@ -131,10 +126,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         if (this.eventLoop.inEventLoop()) {
             doOnCompleteInEventLoop();
         } else {
-            final Logger LOG = getLogger();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("{} onComplete(),current thread not in EventLoop.", this);
-            }
+            this.logger.debug("{} onComplete(),current thread not in EventLoop.", this);
             this.eventLoop.execute(this::doOnCompleteInEventLoop);
         }
     }
@@ -214,9 +206,13 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
      */
     protected abstract boolean clearChannel(ByteBuf cumulateBuffer, Class<? extends CommunicationTask> taskClass);
 
-    @Nullable
+
     protected void urgencyTaskIfNeed() {
 
+    }
+
+    protected void onChannelClosed() {
+        // for sub-class
     }
 
 
@@ -240,7 +236,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
             throw new IllegalArgumentException(message);
         }
         if (!this.connection.channel().isActive()) {
-            throw new SessionCloseException("Session closed");
+            throw JdbdExceptions.sessionHaveClosed();
 
         }
         if (this.urgencyTask && this.currentTask == null) {
@@ -260,7 +256,6 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
      * @see #onNext(ByteBuf)
      */
     private void doOnNextInEventLoop(final ByteBuf byteBufFromPeer) {
-        final Logger LOG = getLogger();
 
         //1. merge  cumulate Buffer
         ByteBuf cumulateBuffer = this.cumulateBuffer;
@@ -368,9 +363,13 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
      * must invoke in {@link #eventLoop}
      */
     private void doOnCompleteInEventLoop() {
-        final Logger LOG = getLogger();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Connection close.");
+        this.logger.debug("Connection close.");
+
+        try {
+            onChannelClosed();
+        } catch (Throwable e) {
+            // no bug,never here
+            this.logger.error("onChannelClosed throw error.", e);
         }
         CommunicationTask task = this.currentTask;
         if (task != null) {

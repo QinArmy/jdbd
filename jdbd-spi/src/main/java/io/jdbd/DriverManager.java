@@ -26,7 +26,7 @@ abstract class DriverManager {
     private static SoftReference<ConcurrentMap<Class<?>, Driver>> driverMapHolder;
 
     static Driver findDriver(final String jdbdUrl) throws JdbdException {
-
+        // https://docs.oracle.com/javase/tutorial/jdbc/basics/connecting.html
         SoftReference<ConcurrentMap<Class<?>, Driver>> reference = DriverManager.driverMapHolder;
 
         Driver driver = null;
@@ -61,7 +61,6 @@ abstract class DriverManager {
             final Enumeration<URL> enumeration;
             enumeration = Thread.currentThread().getContextClassLoader()
                     .getResources("META-INF/jdbd/io.jdbd.Driver");
-
             Driver driver = null;
             while (enumeration.hasMoreElements()) {
                 driver = loadDriverInstance(enumeration.nextElement(), jdbdUrl, driverMap);

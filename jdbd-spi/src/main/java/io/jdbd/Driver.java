@@ -82,7 +82,7 @@ public interface Driver {
 
 
     /**
-     * @param url format : jdbd:protocol:[subProtocol:][databaseName][;attributes][?properties] . For example:
+     * @param url format :jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
      *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
      *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
@@ -107,7 +107,7 @@ public interface Driver {
      *     <strong>NOTE</strong> : driver developer are not responsible for pooling.
      * </p>
      *
-     * @param url format : jdbd:protocol:[subProtocol:][databaseName][;attributes][?properties] . For example:
+     * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
      *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
      *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
@@ -146,7 +146,7 @@ public interface Driver {
 
 
     /**
-     * @param url format : jdbd:protocol:[subProtocol:][databaseName][;attributes][?properties] . For example:
+     * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
      *              <li>jdbd:mysql://localhost:33060/army_test?sslMode=require</li>
      *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>

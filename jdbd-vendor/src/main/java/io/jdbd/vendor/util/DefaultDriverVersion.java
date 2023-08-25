@@ -26,12 +26,16 @@ public final class DefaultDriverVersion implements DriverVersion {
                 major = Integer.parseInt(version.substring(0, pointIndex1));
 
                 pointIndex2 = version.indexOf('.', pointIndex1 + 1);
+                if (pointIndex2 < 0) {
+                    hyphenIndex = version.indexOf('-', pointIndex1 + 1);
+                    minor = Integer.parseInt(version.substring(pointIndex1 + 1, hyphenIndex));
+                    subMinor = 0;
+                } else {
+                    minor = Integer.parseInt(version.substring(pointIndex1 + 1, pointIndex2));
+                    hyphenIndex = version.indexOf('-', pointIndex2 + 1);
+                    subMinor = Integer.parseInt(version.substring(pointIndex2 + 1, hyphenIndex));
+                }
 
-                minor = Integer.parseInt(version.substring(pointIndex1 + 1, pointIndex2));
-
-                hyphenIndex = version.indexOf('-', pointIndex2 + 1);
-
-                subMinor = Integer.parseInt(version.substring(pointIndex2 + 1, hyphenIndex));
                 driverVersion = new DefaultDriverVersion(name, version, major, minor, subMinor);
             } catch (RuntimeException e) {
                 throw new JdbdException(String.format("unknown version format %s", version), e);
