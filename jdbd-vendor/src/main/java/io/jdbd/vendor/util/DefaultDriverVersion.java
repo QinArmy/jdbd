@@ -2,8 +2,8 @@ package io.jdbd.vendor.util;
 
 import io.jdbd.Driver;
 import io.jdbd.DriverVersion;
+import io.jdbd.JdbdException;
 import io.jdbd.session.Option;
-import reactor.util.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -11,16 +11,31 @@ public final class DefaultDriverVersion implements DriverVersion {
 
 
     public static DefaultDriverVersion from(final String name, final Class<? extends Driver> driverClass) {
+        // https://maven.apache.org/shared/maven-archiver/
         final String version = driverClass.getPackage().getImplementationVersion();
         final DefaultDriverVersion driverVersion;
         if (version == null) {
             // here, driverClass run in  module test environment.
-            driverVersion = new DefaultDriverVersion(name, "0.0.0", 0, 0);
+            driverVersion = new DefaultDriverVersion(name, "0.0.0", 0, 0, 0);
         } else {
-            final int major, minor;
-            major = getMajorVersion(version);
-            minor = getMinorVersion(version);
-            driverVersion = new DefaultDriverVersion(name, version, major, minor);
+            try {
+                final int major, minor, subMinor;
+                final int pointIndex1, pointIndex2, hyphenIndex;
+
+                pointIndex1 = version.indexOf('.');
+                major = Integer.parseInt(version.substring(0, pointIndex1));
+
+                pointIndex2 = version.indexOf('.', pointIndex1 + 1);
+
+                minor = Integer.parseInt(version.substring(pointIndex1 + 1, pointIndex2));
+
+                hyphenIndex = version.indexOf('-', pointIndex2 + 1);
+
+                subMinor = Integer.parseInt(version.substring(pointIndex2 + 1, hyphenIndex));
+                driverVersion = new DefaultDriverVersion(name, version, major, minor, subMinor);
+            } catch (RuntimeException e) {
+                throw new JdbdException(String.format("unknown version format %s", version), e);
+            }
         }
         return driverVersion;
     }
@@ -33,11 +48,15 @@ public final class DefaultDriverVersion implements DriverVersion {
 
     private final int minor;
 
-    private DefaultDriverVersion(String name, String version, int major, int minor) {
+    private final int subMinor;
+
+
+    private DefaultDriverVersion(String name, String version, int major, int minor, int subMinor) {
         this.name = name;
         this.version = version;
         this.major = major;
         this.minor = minor;
+        this.subMinor = subMinor;
     }
 
     @Override
@@ -62,8 +81,7 @@ public final class DefaultDriverVersion implements DriverVersion {
 
     @Override
     public int getSubMinor() {
-        //TODO
-        throw new UnsupportedOperationException();
+        return this.subMinor;
     }
 
     @Override
@@ -80,7 +98,7 @@ public final class DefaultDriverVersion implements DriverVersion {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), this.version, this.major, this.minor);
+        return Objects.hash(this.name, this.version, this.major, this.minor, this.subMinor);
     }
 
     @Override
@@ -88,59 +106,27 @@ public final class DefaultDriverVersion implements DriverVersion {
         final boolean match;
         if (obj == this) {
             match = true;
-        } else if (obj instanceof DriverVersion) {
-            final DriverVersion o = (DriverVersion) obj;
-            match = getName().equals(o.getName())
-                    && this.version.equals(o.getVersion())
-                    && this.major == o.getMajor()
-                    && this.minor == o.getMinor();
+        } else if (obj instanceof DefaultDriverVersion) {
+            final DefaultDriverVersion o = (DefaultDriverVersion) obj;
+            match = o.name.equals(this.name)
+                    && o.version.equals(this.version)
+                    && o.major == this.major
+                    && o.minor == this.minor
+                    && o.subMinor == this.subMinor;
         } else {
             match = false;
         }
         return match;
     }
 
-
-    private static int getMajorVersion(final String version) {
-        try {
-            return Integer.parseInt(version.substring(0, getMajorVersionIndex(version)));
-        } catch (NumberFormatException e) {
-            throw createPacketWithErrorWay();
-        }
-    }
-
-    private static int getMinorVersion(final String version) {
-        final int majorIndex = getMajorVersionIndex(version);
-        final int minorIndex = version.indexOf('-', majorIndex);
-        if (minorIndex < 0) {
-            throw createPacketWithErrorWay();
-        }
-        try {
-            return Integer.parseInt(version.substring(majorIndex + 1, minorIndex));
-        } catch (NumberFormatException e) {
-            throw createPacketWithErrorWay();
-        }
-    }
-
-    /**
-     * @see #getMinorVersion(String)
-     */
-    private static int getMajorVersionIndex(@Nullable String version) {
-
-        if (version == null) {
-            // here run in  project test environment.
-            throw createPacketWithErrorWay();
-        }
-        final int index = version.indexOf('.');
-        if (index < 0) {
-            throw createPacketWithErrorWay();
-        }
-        return index;
-    }
-
-
-    private static IllegalStateException createPacketWithErrorWay() {
-        return new IllegalStateException("jdbd-postgre packet with error way.");
+    @Override
+    public String toString() {
+        return String.format("%s[ name : %s , version : %s , hash : %s]",
+                getClass().getName(),
+                this.name,
+                this.version,
+                System.identityHashCode(this)
+        );
     }
 
 

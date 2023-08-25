@@ -26,7 +26,7 @@ final class QueryResultSubscriber<R> extends JdbdResultSubscriber {
         } else if (stateConsumer == null) {
             flux = Flux.error(JdbdExceptions.statesConsumerIsNull());
         } else {
-            flux = Flux.create(sink -> FluxResult.create(callback)
+            flux = Flux.create(sink -> FluxResult.create(callback, false)
                     .subscribe(new QueryResultSubscriber<>(function, sink, stateConsumer))
             );
         }

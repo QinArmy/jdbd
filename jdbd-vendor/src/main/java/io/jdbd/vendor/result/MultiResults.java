@@ -67,7 +67,7 @@ public abstract class MultiResults {
     }
 
     public static OrderedFlux asFlux(Consumer<ResultSink> consumer) {
-        return FluxResult.create(consumer);
+        return FluxResult.create(consumer, true);
     }
 
 

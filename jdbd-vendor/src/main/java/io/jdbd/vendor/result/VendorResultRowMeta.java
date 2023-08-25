@@ -5,12 +5,20 @@ import io.jdbd.meta.*;
 import io.jdbd.result.FieldType;
 import io.jdbd.result.ResultRowMeta;
 import io.jdbd.session.Option;
+import io.jdbd.vendor.util.JdbdCollections;
 
-public abstract class VendorResultRowMeta implements ResultRowMeta {
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+public abstract class VendorResultRowMeta<M extends ColumnMeta> implements ResultRowMeta {
 
 
     public final int resultNo;
 
+
+    // don't need volatile
+    private List<String> labelList;
 
     protected VendorResultRowMeta(int resultNo) {
         this.resultNo = resultNo;
@@ -111,6 +119,52 @@ public abstract class VendorResultRowMeta implements ResultRowMeta {
     @Override
     public final <T> T getNonNullOf(String columnLabel, Option<T> option) throws JdbdException, NullPointerException {
         return getNonNullOf(this.getColumnIndex(columnLabel), option);
+    }
+
+    @Override
+    public final List<String> getColumnLabelList() {
+        List<String> labelList = this.labelList;
+        if (labelList != null) {
+            return labelList;
+        }
+        final ColumnMeta[] columnMetaArray = getColumnMetaArray();
+        if (columnMetaArray.length == 1) {
+            labelList = Collections.singletonList(columnMetaArray[0].getColumnLabel());
+        } else {
+            labelList = JdbdCollections.arrayList(columnMetaArray.length);
+            for (ColumnMeta meta : columnMetaArray) {
+                labelList.add(meta.getColumnLabel());
+            }
+            labelList = Collections.unmodifiableList(labelList);
+        }
+        this.labelList = labelList;
+        return labelList;
+    }
+
+
+    protected abstract ColumnMeta[] getColumnMetaArray();
+
+    /**
+     * @return a unmodifiable map
+     */
+    protected static Map<String, Integer> createLabelToIndexMap(final ColumnMeta[] columnMetaArray) {
+        final Map<String, Integer> map;
+        if (columnMetaArray.length == 1) {
+            map = Collections.singletonMap(columnMetaArray[0].getColumnLabel(), 0);
+        } else {
+            Map<String, Integer> tempMap = JdbdCollections.hashMap((int) (columnMetaArray.length / 0.75f));
+            for (int i = 0; i < columnMetaArray.length; i++) {
+                tempMap.put(columnMetaArray[i].getColumnLabel(), i); // override , if duplication
+            }
+            map = Collections.unmodifiableMap(tempMap);
+        }
+        return map;
+    }
+
+
+    protected static JdbdException createNotFoundIndexException(final String columnLabel) {
+        String m = String.format("Not found column index for column label[%s]", columnLabel);
+        return new JdbdException(m);
     }
 
 

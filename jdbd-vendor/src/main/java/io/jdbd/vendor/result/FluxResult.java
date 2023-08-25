@@ -1,5 +1,6 @@
 package io.jdbd.vendor.result;
 
+import io.jdbd.result.CurrentRow;
 import io.jdbd.result.OrderedFlux;
 import io.jdbd.result.ResultItem;
 import io.jdbd.vendor.util.JdbdExceptions;
@@ -18,19 +19,22 @@ import java.util.function.Consumer;
  */
 final class FluxResult implements OrderedFlux {
 
-    static FluxResult create(Consumer<ResultSink> callBack) {
-        return new FluxResult(callBack);
+    static FluxResult create(Consumer<ResultSink> callBack, boolean applicationDeveloper) {
+        return new FluxResult(callBack, applicationDeveloper);
     }
 
     private final Consumer<ResultSink> callBack;
 
-    private FluxResult(Consumer<ResultSink> callBack) {
+    private final boolean applicationDeveloper;
+
+    private FluxResult(Consumer<ResultSink> callBack, boolean applicationDeveloper) {
         this.callBack = callBack;
+        this.applicationDeveloper = applicationDeveloper;
     }
 
     @Override
     public void subscribe(Subscriber<? super ResultItem> actual) {
-        ResultSinkImpl sink = new ResultSinkImpl(actual);
+        ResultSinkImpl sink = new ResultSinkImpl(actual, this.applicationDeveloper);
         actual.onSubscribe(sink.subscription);
 
         try {
@@ -46,10 +50,13 @@ final class FluxResult implements OrderedFlux {
 
         private final Subscriber<? super ResultItem> subscriber;
 
+        private final boolean applicationDeveloper;
+
         private final SubscriptionImpl subscription;
 
-        private ResultSinkImpl(Subscriber<? super ResultItem> subscriber) {
+        private ResultSinkImpl(Subscriber<? super ResultItem> subscriber, boolean applicationDeveloper) {
             this.subscriber = subscriber;
+            this.applicationDeveloper = applicationDeveloper;
             this.subscription = new SubscriptionImpl();
         }
 
@@ -73,9 +80,13 @@ final class FluxResult implements OrderedFlux {
         }
 
         @Override
-        public void next(ResultItem result) {
+        public void next(final ResultItem result) {
             // this method invoker in EventLoop
-            this.subscriber.onNext(result);
+            if (result instanceof CurrentRow && this.applicationDeveloper) {
+                this.subscriber.onNext(((CurrentRow) result).asResultRow());
+            } else {
+                this.subscriber.onNext(result);
+            }
         }
 
     }

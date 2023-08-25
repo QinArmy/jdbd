@@ -35,8 +35,8 @@ import java.util.function.Consumer;
  * @param <T> {@link ITaskAdjutant} type.
  * @see CommunicationTask
  */
-public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> implements CoreSubscriber<ByteBuf>
-        , TaskExecutor<T> {
+public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> implements CoreSubscriber<ByteBuf>,
+        TaskExecutor<T> {
 
     protected final Connection connection;
 
@@ -49,6 +49,9 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
     private final Queue<CommunicationTask> taskQueue;
 
     private final TaskSignal taskSignal;
+
+    private final Consumer<Object> updateServerStatusFunc = this::updateServerStatus;
+    ;
 
     // non-volatile ,all modify in netty EventLoop
     private ByteBuf cumulateBuffer;
@@ -138,6 +141,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
     /*################################## blow protected method ##################################*/
 
+
     /**
      * must invoke in {@link #eventLoop}
      *
@@ -169,7 +173,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         this.packetIndex = cumulateBuffer.readerIndex();
         //2. decode packet from database server.
         final boolean taskEnd;
-        taskEnd = currentTask.decodeMessage(cumulateBuffer, this::updateServerStatus);
+        taskEnd = currentTask.decodeMessage(cumulateBuffer, this.updateServerStatusFunc);
         if (taskEnd && currentTask instanceof ConnectionTask) {
             ConnectionTask connectionTask = (ConnectionTask) currentTask;
             if (connectionTask.disconnect()) {

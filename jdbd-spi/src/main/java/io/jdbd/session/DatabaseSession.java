@@ -335,7 +335,6 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     Publisher<? extends DatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
 
-
     /**
      * @return true : session have closed.
      */
@@ -393,6 +392,23 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     @Nullable
     @Override
     <T> T valueOf(Option<T> option) throws JdbdException;
+
+    /**
+     * override {@link Object#toString()}
+     *
+     * @return driver info, contain : <ol>
+     * <li>class name</li>
+     * <li>session identifier</li>
+     * <li>factory name</li>
+     * <li>{@link #factoryVendor()}</li>
+     * <li>{@link #driverVendor()}</li>
+     * <li>server version string</li>
+     * <li>driver version string</li>
+     * <li>{@link System#identityHashCode(Object)}</li>
+     * </ol>
+     */
+    @Override
+    String toString();
 
 
 }

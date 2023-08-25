@@ -20,6 +20,11 @@ public final class SimpleEnvironment implements Environment {
         this.sourceMap = Collections.unmodifiableMap(JdbdCollections.hashMap(sourceMap));
     }
 
+    @Override
+    public Map<String, Object> sourceMap() {
+        return this.sourceMap;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T get(final Key<T> key) throws JdbdException {

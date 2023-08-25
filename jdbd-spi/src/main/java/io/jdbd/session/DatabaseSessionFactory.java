@@ -122,7 +122,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * <li>{@link #name()}</li>
      * <li>{@link #factoryVendor()}</li>
      * <li>{@link #driverVersion()}</li>
-     * <li>{@link #productName()}</li>
+     * <li>{@link #productFamily()}</li>
      * <li>{@link #driverVersion()}</li>
      * <li>{@link System#identityHashCode(Object)}</li>
      * </ol>

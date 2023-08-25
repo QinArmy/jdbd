@@ -22,7 +22,7 @@ final class BatchUpdateResultSubscriber extends JdbdResultSubscriber {
             } catch (Throwable e) {
                 sink.error(JdbdExceptions.wrap(e));
             }
-        });
+        }, false);
         return Flux.create(sink -> result.subscribe(new BatchUpdateResultSubscriber(sink)));
     }
 

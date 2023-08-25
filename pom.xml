@@ -171,7 +171,7 @@
                 <version>3.2.0</version>
                 <configuration>
                     <archive>
-                        <manifest>
+                        <manifest>  <!-- https://maven.apache.org/shared/maven-archiver/ -->
                             <addBuildEnvironmentEntries>true</addBuildEnvironmentEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>

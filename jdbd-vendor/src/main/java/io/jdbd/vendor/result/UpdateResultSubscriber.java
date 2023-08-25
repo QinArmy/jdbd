@@ -22,7 +22,7 @@ final class UpdateResultSubscriber extends JdbdResultSubscriber {
             } catch (Throwable e) {
                 sink.error(JdbdExceptions.wrap(e));
             }
-        });
+        }, false);
         return Mono.create(sink -> result.subscribe(new UpdateResultSubscriber(sink)));
     }
 

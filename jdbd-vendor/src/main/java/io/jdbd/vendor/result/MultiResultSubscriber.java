@@ -32,7 +32,7 @@ final class MultiResultSubscriber extends JdbdResultSubscriber {
             } catch (Throwable e) {
                 sink.error(JdbdExceptions.wrap(e));
             }
-        });
+        }, false);
         return new ReactorMultiResultImpl(adjutant, result);
     }
 
