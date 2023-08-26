@@ -139,14 +139,14 @@ public interface Statement extends OptionSpec {
      * Set statement timeout seconds,if timeout driver will kill query.
      * </p>
      *
-     * @param seconds <ul>
-     *                <li>0 : no limit,this is default value</li>
-     *                <li>positive : timeout seconds</li>
-     *                <li>negative : error</li>
-     *                </ul>
+     * @param millSeconds <ul>
+     *                    <li>0 : no limit,this is default value</li>
+     *                    <li>positive : timeout seconds</li>
+     *                    <li>negative : error</li>
+     *                    </ul>
      * @throws IllegalArgumentException throw when seconds is negative.
      */
-    Statement setTimeout(int seconds);
+    Statement setTimeout(int millSeconds);
 
 
     /**

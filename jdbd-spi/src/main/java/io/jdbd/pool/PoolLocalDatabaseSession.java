@@ -18,7 +18,7 @@ public interface PoolLocalDatabaseSession extends PoolDatabaseSession, LocalData
      * {@inheritDoc}
      */
     @Override
-    Publisher<PoolLocalDatabaseSession> ping(int timeoutSeconds);
+    Publisher<PoolLocalDatabaseSession> ping(int timeoutMills);
 
     /**
      * {@inheritDoc}

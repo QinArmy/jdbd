@@ -24,6 +24,9 @@ import java.util.function.Function;
  */
 public interface StmtOption {
 
+    /**
+     * @return millSeconds
+     */
     int getTimeout();
 
     int getFetchSize();

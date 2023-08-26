@@ -139,7 +139,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     Mono<PrepareTask> prepare(String sql);
 
 
-    Mono<Void> ping(int timeSeconds);
+    Mono<Void> ping(int timeoutMills);
 
     Mono<Void> reset();
 

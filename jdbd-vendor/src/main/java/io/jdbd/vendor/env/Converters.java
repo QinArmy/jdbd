@@ -7,6 +7,7 @@ import io.jdbd.vendor.util.JdbdNumbers;
 import reactor.netty.resources.ConnectionProvider;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
@@ -62,7 +63,7 @@ public abstract class Converters {
         consumer.accept(UUID.class, Converters::toUUID);
         consumer.accept(ZoneOffset.class, Converters::toZoneOffset);
 
-        consumer.accept(ConnectionProvider.class, Converters::createInstanceFromGetInstanceMethod);
+        consumer.accept(ConnectionProvider.class, Converters::createInstanceFromSupplier);
 
     }
 
@@ -87,6 +88,59 @@ public abstract class Converters {
             throw new JdbdException(m);
         }
         return (BiFunction<Class<T>, String, T>) convertor;
+    }
+
+    public static Object createInstanceFromSupplier(final Class<?> interfaceClass, final String supplierRef) {
+
+        try {
+            final int colonIndex;
+            colonIndex = supplierRef.indexOf("::");
+
+            final Class<?> implClass;
+            implClass = Class.forName(supplierRef.substring(0, colonIndex));
+
+            final String methodName;
+            methodName = supplierRef.substring(colonIndex + 2);
+
+            final Object instance;
+            if ("NEW".equals(methodName)) {
+                instance = implClass.getConstructor().newInstance();
+            } else {
+                instance = invokeSupplierMethod(interfaceClass, implClass.getMethod(methodName), supplierRef);
+            }
+            return instance;
+        } catch (IndexOutOfBoundsException e) {
+            String m = String.format("supplier function %s error", supplierRef);
+            throw new JdbdException(m, e);
+        } catch (JdbdException e) {
+            throw e;
+        } catch (Throwable e) {
+            throw convertFailure(supplierRef, interfaceClass, e);
+        }
+
+    }
+
+    /**
+     * @see #createInstanceFromSupplier(Class, String)
+     */
+    private static Object invokeSupplierMethod(final Class<?> interfaceClass, final Method method,
+                                               final String supplierRef)
+            throws InvocationTargetException, IllegalAccessException {
+
+        final int modifier;
+        modifier = method.getModifiers();
+
+        final boolean match;
+        match = Modifier.isPublic(modifier)
+                && Modifier.isStatic(modifier)
+                && method.getParameterCount() == 0
+                && interfaceClass.isAssignableFrom(method.getReturnType());
+
+        if (!match) {
+            String m = String.format("%s not public static factory supplier method.", supplierRef);
+            throw new JdbdException(m);
+        }
+        return method.invoke(null);
     }
 
 
@@ -274,39 +328,6 @@ public abstract class Converters {
             targetType = targetType.getSuperclass();
         }
         return targetType;
-    }
-
-
-    public static Object createInstanceFromGetInstanceMethod(final Class<?> interfaceClass, final String source) {
-
-        try {
-            final Class<?> implClass;
-            implClass = Class.forName(source);
-
-            final String methodName = "getInstance";
-            final Method method;
-            method = implClass.getMethod(methodName);
-
-            final int modifier;
-            modifier = method.getModifiers();
-
-            final boolean match;
-            match = Modifier.isPublic(modifier)
-                    && Modifier.isStatic(modifier)
-                    && method.getParameterCount() == 0
-                    && interfaceClass.isAssignableFrom(method.getReturnType());
-
-            if (!match) {
-                String m = String.format("%s no public static factory method %s()", source, methodName);
-                throw new JdbdException(m);
-            }
-            return method.invoke(null);
-        } catch (JdbdException e) {
-            throw e;
-        } catch (Exception e) {
-            throw convertFailure(source, interfaceClass, e);
-        }
-
     }
 
 

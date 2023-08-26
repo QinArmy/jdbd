@@ -31,7 +31,7 @@ public interface PoolDatabaseSession extends DatabaseSession {
     /**
      * @return {@link Publisher} that emit <strong>this</strong> when success.
      */
-    Publisher<? extends PoolDatabaseSession> ping(int timeoutSeconds);
+    Publisher<? extends PoolDatabaseSession> ping(int timeoutMills);
 
 
     /**
