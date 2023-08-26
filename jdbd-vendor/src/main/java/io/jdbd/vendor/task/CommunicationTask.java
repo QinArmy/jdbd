@@ -398,7 +398,7 @@ public abstract class CommunicationTask {
     }
 
 
-    private void updateSubmitResult(Void v) {
+    private void updateSubmitResult() {
         if (this.taskPhase != null) {
             throw new IllegalStateException(String.format("this.taskPhase[%s] isn't null", this.taskPhase));
         }

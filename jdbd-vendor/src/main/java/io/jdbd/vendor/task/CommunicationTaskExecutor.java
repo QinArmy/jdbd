@@ -228,7 +228,8 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         }
     }
 
-    private void syncPushTask(final CommunicationTask task, final Consumer<Void> consumer) {
+    private void syncPushTask(final CommunicationTask task, final Runnable successCallBack)
+            throws JdbdException {
         if (!this.eventLoop.inEventLoop()) {
             throw new IllegalStateException("Current thread not in EventLoop.");
         }
@@ -236,15 +237,17 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
             String message = String.format("%s TaskPhase[%s] isn't null.", task, task.getTaskPhase());
             throw new IllegalArgumentException(message);
         }
-        if (!this.connection.channel().isActive()) {
-            throw JdbdExceptions.sessionHaveClosed();
 
+        final CommunicationTask currentTask = this.currentTask;
+
+        if (currentTask instanceof DisposeTask || !this.connection.isDisposed()) {
+            throw JdbdExceptions.sessionHaveClosed();
         }
-        if (this.urgencyTask && this.currentTask == null) {
+        if (this.urgencyTask && currentTask == null) {
             this.currentTask = task;
-            consumer.accept(null);
+            successCallBack.run();
         } else if (this.taskQueue.offer(task)) {
-            consumer.accept(null);
+            successCallBack.run();
             startHeadIfNeed();
         } else {
             throw new TaskQueueOverflowException("Communication task queue overflow,cant' execute task.");
@@ -612,6 +615,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         START_NULL
     }
 
+
     protected static abstract class JdbdTaskAdjutant implements ITaskAdjutant {
 
         private final CommunicationTaskExecutor<?> taskExecutor;
@@ -631,8 +635,8 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         }
 
         @Override
-        public void syncSubmitTask(CommunicationTask task, Consumer<Void> errorConsumer) {
-            this.taskExecutor.syncPushTask(task, errorConsumer);
+        public void syncSubmitTask(CommunicationTask task, Runnable successCallBack) {
+            this.taskExecutor.syncPushTask(task, successCallBack);
         }
 
 

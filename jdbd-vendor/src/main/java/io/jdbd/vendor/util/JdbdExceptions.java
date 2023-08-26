@@ -97,7 +97,7 @@ public abstract class JdbdExceptions {
         return new JdbdException(String.format("%s don't support %s[%s]", database, DataType.class.getName(), dataType));
     }
 
-    public static JdbdException sessionHaveClosed() {
+    public static SessionCloseException sessionHaveClosed() {
         return new SessionCloseException("session have closed");
     }
 
