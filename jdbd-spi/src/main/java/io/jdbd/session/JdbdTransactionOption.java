@@ -164,7 +164,11 @@ final class JdbdTransactionOption implements TransactionStatus {
 
         @Override
         public <T> Builder option(final Option<T> key, final @Nullable T value) {
-            this.optionMap.put(key, value);
+            if (value == null) {
+                this.optionMap.remove(key);
+            } else {
+                this.optionMap.put(key, value);
+            }
             return this;
         }
 
@@ -185,13 +189,13 @@ final class JdbdTransactionOption implements TransactionStatus {
             isolation = (Isolation) optionMap.get(Option.ISOLATION);
 
             TransactionOption option;
-            if (optionMap.size() > 2) {
-                option = new DynamicTransactionOption(this);
-            } else {
+            if (isolation != null && optionMap.size() == 2) {
                 option = JdbdTransactionOption.fromInner(isolation, readOnly);
                 if (option == null) {
                     option = new DynamicTransactionOption(this);
                 }
+            } else {
+                option = new DynamicTransactionOption(this);
             }
             return option;
         }

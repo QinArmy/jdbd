@@ -34,5 +34,7 @@ public interface Closeable {
      */
     <T> Publisher<T> close();
 
+    boolean isClosed();
+
 
 }
