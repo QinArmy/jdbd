@@ -2,6 +2,13 @@ package io.jdbd.vendor.env;
 
 import io.jdbd.lang.Nullable;
 
+/**
+ * <p>
+ * This interface representing database server host from jdbd url.
+ * </p>
+ *
+ * @since 1.0
+ */
 public interface JdbdHost {
 
     String DEFAULT_HOST = "localhost";
@@ -17,6 +24,7 @@ public interface JdbdHost {
 
 
     interface HostInfo extends JdbdHost {
+
         String user();
 
         @Nullable
@@ -25,8 +33,9 @@ public interface JdbdHost {
         @Nullable
         String dbName();
 
-
         Environment properties();
+
+        boolean isUnixDomainSocket();
 
 
     }

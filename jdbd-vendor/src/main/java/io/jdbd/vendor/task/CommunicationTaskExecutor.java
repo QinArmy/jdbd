@@ -166,12 +166,12 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         //2. decode packet from database server.
         final boolean taskEnd;
         taskEnd = currentTask.decodeMessage(cumulateBuffer, this.updateServerStatusFunc);
-        if (taskEnd && currentTask instanceof ConnectionTask) {
-            ConnectionTask connectionTask = (ConnectionTask) currentTask;
-            if (connectionTask.disconnect()) {
-                disconnection();
-                return;
-            }
+        if (taskEnd &&
+                (currentTask instanceof DisposeTask
+                        || (currentTask instanceof ConnectionTask
+                        && ((ConnectionTask) currentTask).disconnect()))) {
+            this.connection.dispose();
+            return;
         }
 
         final Publisher<ByteBuf> bufPublisher = currentTask.moreSendPacket();
@@ -423,15 +423,11 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
      */
     private void disconnection() {
         if (this.currentTask instanceof ConnectionTask) {
-            Logger LOG = getLogger();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Task[{}] disconnect.", this.currentTask);
-            }
-            this.connection.channel()
-                    .close();
+            this.logger.trace("Task[{}] disconnect.", this.currentTask);
+            this.connection.dispose();
         } else {
-            throw new IllegalStateException(String.format("Current %s[%s] isn't %s,reject disconnect."
-                    , CommunicationTask.class.getName(), this.currentTask, ConnectionTask.class.getName()));
+            throw new IllegalStateException(String.format("Current %s[%s] isn't %s,reject disconnect.",
+                    CommunicationTask.class.getName(), this.currentTask, ConnectionTask.class.getName()));
         }
     }
 
