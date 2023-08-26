@@ -240,7 +240,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
         final CommunicationTask currentTask = this.currentTask;
 
-        if (currentTask instanceof DisposeTask || !this.connection.isDisposed()) {
+        if (currentTask instanceof DisposeTask || this.connection.isDisposed()) {
             throw JdbdExceptions.sessionHaveClosed();
         }
         if (this.urgencyTask && currentTask == null) {
