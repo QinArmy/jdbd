@@ -44,7 +44,7 @@ public interface ParametrizedStatement extends Statement {
      *
      * @param indexBasedZero parameter placeholder index based zero, the first value is 0 .
      * @param dataType       parameter type is following type : <ul>
-     *                       <li>{@link io.jdbd.meta.JdbdType} generic sql type,this method convert {@link io.jdbd.meta.JdbdType} to appropriate {@link io.jdbd.meta.SQLType},if fail throw {@link  JdbdException},<strong>NOTE</strong>:{@link io.jdbd.meta.JdbdType#OUT} representing OUT(not INOUT) parameter.</li>
+     *                       <li>{@link io.jdbd.meta.JdbdType} generic sql type,this method convert {@link io.jdbd.meta.JdbdType} to appropriate {@link io.jdbd.meta.SQLType},if fail throw {@link  JdbdException}</li>
      *                       <li>{@link io.jdbd.meta.SQLType} driver have known database build-in data type. It is defined by driver developer.</li>
      *                       <li>the {@link DataType} that application developer define type and it's {@link DataType#typeName()} is supported by database.
      *                             <ul>
@@ -60,8 +60,7 @@ public interface ParametrizedStatement extends Statement {
      *                          <li>{@link Point} spatial point type</li>
      *                          <li>{@link Parameter} :
      *                              <ol>
-     *                                  <li>{@link OutParameter} that representing OUT parameter of stored procedure/function,see {@link  OutResultItem}</li>
-     *                                  <li>{@link InOutParameter} that representing INOUT parameter of stored procedure/function,see {@link  OutResultItem}</li>
+     *                                  <li>{@link OutParameter} that representing OUT parameter of stored procedure/function</li>
      *                                  <li>{@link Blob} long binary</li>
      *                                  <li>{@link Clob} long string</li>
      *                                  <li>{@link Text} long text</li>
@@ -82,7 +81,6 @@ public interface ParametrizedStatement extends Statement {
      *                                     </ol>
      *                                     ,so you don't need to reuse statement instance.
      *                              </li>
-     *                              <li>value is {@link InOutParameter} type and {@link #isSupportOutParameter()} return false.</li>
      *                              <li>indexBasedZero error</li>
      *                              <li>dataType is one of following :
      *                                     <ul>

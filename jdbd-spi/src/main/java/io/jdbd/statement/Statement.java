@@ -65,7 +65,6 @@ public interface Statement extends OptionSpec {
      *                 <ul>
      *                    <li>generic java type,for example : {@link Boolean} , {@link Integer} , {@link String} , {@code byte[]},{@code Integer[]} ,{@link java.time.LocalDateTime} , {@link java.time.Duration} ,{@link java.time.YearMonth} ,{@link java.util.BitSet},{@link java.util.List}</li>
      *                    <li>{@link Point} spatial point type</li>
-     *                    <li>{@link Interval} the composite of {@link java.time.Period} and {@link java.time.Duration}</li>
      *                    <li>{@link Parameter} :
      *                        <ol>
      *                            <li>{@link Blob} long binary</li>
@@ -144,6 +143,7 @@ public interface Statement extends OptionSpec {
      *                    <li>positive : timeout seconds</li>
      *                    <li>negative : error</li>
      *                    </ul>
+     * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when seconds is negative.
      */
     Statement setTimeout(int millSeconds);
@@ -164,21 +164,24 @@ public interface Statement extends OptionSpec {
      * </p>
      *
      * @param fetchSize <ul>
-     *                                                                                      <li>0 : fetch all, this is default value</li>
-     *                                                                                      <li>positive : fetch size</li>
-     *                                                                                      <li>negative : error</li>
+     *                                                                         <li>0 : fetch all, this is default value</li>
+     *                                                                         <li>positive : fetch size</li>
+     *                                                                         <li>negative : error</li>
      *                                                                     </ul>
+     * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when fetchSize is negative.
      */
     Statement setFetchSize(int fetchSize) throws JdbdException;
 
     /**
+     * @return <strong>this</strong>
      * @throws JdbdException throw when driver don't this method.
      */
     Statement setImportPublisher(Function<ChunkOption, Publisher<byte[]>> function) throws JdbdException;
 
 
     /**
+     * @return <strong>this</strong>
      * @throws JdbdException throw when driver don't this method.
      */
     Statement setExportSubscriber(Function<ChunkOption, Subscriber<byte[]>> function) throws JdbdException;
@@ -214,10 +217,13 @@ public interface Statement extends OptionSpec {
     @Override
     <T> T valueOf(Option<T> option);
 
-
+    /**
+     * @return the {@link DatabaseSession} that create this statement instance.
+     */
     DatabaseSession getSession();
 
     /**
+     * @return the {@link DatabaseSession} that create this statement instance.
      * @throws ClassCastException throw when cast error
      */
     <T extends DatabaseSession> T getSession(Class<T> sessionClass);

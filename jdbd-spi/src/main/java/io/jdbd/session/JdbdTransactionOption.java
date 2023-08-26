@@ -154,6 +154,16 @@ final class JdbdTransactionOption implements TransactionStatus {
             return (T) value;
         }
 
+
+        @Override
+        public String toString() {
+            return String.format("%s[inTransaction:false,isolation:null,readOnly:%s].",
+                    JdbdTransactionOption.class.getName(),
+                    this.readOnly
+            );
+        }
+
+
     }//DefaultTransactionOption
 
 

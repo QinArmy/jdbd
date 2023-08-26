@@ -29,6 +29,10 @@ import java.util.Map;
 public interface DatabaseSessionFactory extends OptionSpec, Closeable {
 
     /**
+     * <p>
+     * This method return factory name ,if you don't specified then return 'unnamed' .
+     * </p>
+     *
      * @return factory name. see {@link io.jdbd.Driver#FACTORY_NAME}
      */
     String name();
@@ -93,7 +97,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
 
 
     /**
-     * @return database product name,For example :  MySQL , PostgreSQL.
+     * @return database product family,For example :  MySQL , PostgreSQL.
      */
     String productFamily();
 

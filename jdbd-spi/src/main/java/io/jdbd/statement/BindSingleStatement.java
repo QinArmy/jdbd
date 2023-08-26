@@ -47,8 +47,11 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
 
 
     /**
-     * @see BindStatement#addBatch()
-     * @see PreparedStatement#addBatch()
+     * <p>
+     * Add current parameter group to batch item list.
+     * </p>
+     *
+     * @return <strong>this</strong>
      */
     BindSingleStatement addBatch() throws JdbdException;
 
