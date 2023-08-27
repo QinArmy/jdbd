@@ -1,13 +1,13 @@
 package io.jdbd.vendor.result;
 
 import io.jdbd.JdbdException;
+import io.jdbd.lang.Nullable;
 import io.jdbd.result.*;
 import io.jdbd.vendor.JdbdCompositeException;
-import io.jdbd.vendor.ResultType;
-import io.jdbd.vendor.SubscribeException;
 import io.jdbd.vendor.protocol.DatabaseProtocol;
 import io.jdbd.vendor.stmt.Stmts;
 import io.jdbd.vendor.task.ITaskAdjutant;
+import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -16,10 +16,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
-import reactor.util.concurrent.Queues;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Consumer;
@@ -57,9 +55,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
     private final ITaskAdjutant adjutant;
 
-    private Queue<ResultItem> resultItemQueue;
+    private final Queue<DownstreamSink> sinkQueue;
 
-    private Queue<DownstreamSink> sinkQueue;
+    private final Queue<ResultItem> resultItemQueue;
 
     private Subscription subscription;
 
@@ -69,6 +67,11 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
     private Throwable error;
 
+
+    private int sinkNo = 1; // from 1
+
+    private int itemCount = 0;
+
     private boolean disposable;
 
     private boolean receiveItem;
@@ -77,8 +80,8 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
     private MultiResultSubscriber(OrderedFlux source, ITaskAdjutant adjutant) {
         this.source = source;
         this.adjutant = adjutant;
-        //this.resultItemQueue = Queues.<ResultItem>unbounded(20).get();
-        // this.sinkQueue = Queues.<DownstreamSink>unbounded(10).get();
+        this.sinkQueue = JdbdCollections.linkedList();
+        this.resultItemQueue = JdbdCollections.linkedList();
     }
 
 
@@ -90,220 +93,212 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
 
     @Override
-    public void onNext(final ResultItem result) {
+    public void onNext(final ResultItem upstreamItem) {
         // this method invoker in EventLoop
-        if (this.disposable) {
+        if (this.done || this.disposable) {
             return;
         }
 
         if (!this.receiveItem) {
             this.receiveItem = true;
         }
+
+        final Queue<ResultItem> resultItemQueue = this.resultItemQueue;
         DownstreamSink currentSink = this.currentSink;
         if (currentSink == null) {
-            Queue<DownstreamSink> sinkQueue = this.sinkQueue;
-            if (sinkQueue == null) {
-                this.sinkQueue = sinkQueue = Queues.<DownstreamSink>unbounded(10).get();
+            this.currentSink = currentSink = this.sinkQueue.poll();
+        }
+        // drain queue
+        for (ResultItem queueItem; currentSink != null && (queueItem = resultItemQueue.poll()) != null; ) {
+
+            if (queueItem.getResultNo() != currentSink.resultNo) {
+                String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
+                        currentSink.resultNo, queueItem.getResultNo());
+                this.handleError(new JdbdException(m));
+                break;
             }
-            this.currentSink = currentSink = sinkQueue.poll();
+
+            currentSink.next(queueItem);
+            if (queueItem instanceof ResultStates) {
+                currentSink.complete();
+                this.currentSink = currentSink = this.sinkQueue.poll();
+            }
+
+        }
+
+        if (this.error != null) {
+            this.currentSink = currentSink;
+            return;
         }
 
         if (currentSink == null) {
-
+            final ResultItem actualItem;
+            if (upstreamItem instanceof CurrentRow) {
+                actualItem = ((VendorDataRow) upstreamItem).copyCurrentRowIfNeed();
+            } else {
+                actualItem = upstreamItem;
+            }
+            if (!resultItemQueue.offer(actualItem)) {
+                // no bug, never here
+                throw new IllegalStateException("capacity error");
+            }
+        } else {
+            currentSink.next(upstreamItem);
+            if (upstreamItem instanceof ResultStates) {
+                currentSink = null;
+            }
         }
+
+        this.currentSink = currentSink;
+
     }
 
     @Override
-    public void onError(Throwable t) {
+    public void onError(final Throwable t) {
         // this method invoker in EventLoop
+        if (this.done) {
+            return;
+        }
+        this.done = true;
+
+        final Throwable error = this.error;
+        if (error == null) {
+            drainError(JdbdExceptions.wrapIfNonJvmFatal(t));
+        } else {
+            drainError(new JdbdCompositeException(Arrays.asList(t, error)));
+        }
     }
 
     @Override
     public void onComplete() {
         // this method invoker in EventLoop
+        if (this.done) {
+            return;
+        }
+        this.done = true;
+        final Throwable error = this.error;
+        if (error != null) {
+            drainError(JdbdExceptions.wrapIfNonJvmFatal(error));
+        } else if (this.receiveItem) {
+            DownstreamSink currentSink = this.currentSink;
+            this.currentSink = null;
+
+            if (currentSink != null) {
+                currentSink.complete();
+            }
+            String m;
+            while ((currentSink = this.sinkQueue.poll()) != null) {
+                m = String.format("expected resultNo[%s],but no more result.", currentSink.resultNo);
+                currentSink.error(new NoMoreResultException(m));
+            }
+
+        } else {
+            drainError(MultiResults.noReceiveAnyItem());
+        }
+    }
+
+
+    private void handleError(Throwable error) {
+        this.disposable = true;
+        this.error = error;
+
+        this.subscription.cancel();
+        this.resultItemQueue.clear();
+    }
+
+
+    private void drainError(final Throwable error) {
+        DownstreamSink currentSink = this.currentSink;
+        this.currentSink = null;
+
+        if (currentSink != null) {
+            currentSink.error(error);
+        }
+
+        while ((currentSink = this.sinkQueue.poll()) != null) {
+            currentSink.error(error);
+        }
 
     }
 
 
-    private void drainError() {
-        final List<Throwable> errorList = this.errorList;
-        if (errorList == null || errorList.isEmpty()) {
-            throw new IllegalStateException("No error");
-        }
-        final Queue<SinkWrapper> sinkQueue = this.sinkQueue;
-        if (!sinkQueue.isEmpty()) {
-            final JdbdException error = JdbdExceptions.createException(errorList);
-            SinkWrapper sink;
-            while ((sink = sinkQueue.poll()) != null) {
-                sink.error(error);
-            }
-        }
-        if (!this.resultItemQueue.isEmpty()) {
-            this.resultItemQueue.clear();
-        }
-    }
+    private <R> Flux<R> addQuerySubscriber(final Function<CurrentRow, R> function,
+                                           final Consumer<ResultStates> statesConsumer) {
 
-
-    private void drainResult() {
-        if (hasError()) {
-            throw new IllegalStateException("has error ,reject drain result.");
-        }
-        final Queue<SinkWrapper> sinkQueue = this.sinkQueue;
-        final Queue<ResultItem> resultQueue = this.resultItemQueue;
-
-        SinkWrapper sink;
-        ResultItem currentResult;
-        ResultType nonExpectedType = null;
-
-        while ((sink = sinkQueue.peek()) != null) {
-            currentResult = resultQueue.poll();
-            if (currentResult == null) {
-                break;
-            }
-            if (currentResult instanceof ResultRow) {
-                final FluxSink<ResultRow> fluxSink = sink.fluxSink;
-                if (fluxSink == null) {
-                    nonExpectedType = ResultType.QUERY;
-                    break;
-                } else {
-                    fluxSink.next((ResultRow) currentResult);
-                }
-            } else if (currentResult instanceof ResultStates) {
-                final ResultStates state = (ResultStates) currentResult;
-                sinkQueue.poll();
-                if (state.hasColumn()) {
-                    final FluxSink<ResultRow> fluxSink = sink.fluxSink;
-                    if (fluxSink == null) {
-                        nonExpectedType = ResultType.QUERY;
-                        break;
-                    } else {
-                        final Consumer<ResultStates> stateConsumer = sink.stateConsumer;
-                        assert stateConsumer != null;
-                        if (fluxSinkComplete(fluxSink, stateConsumer, state)) {
-                            break;
-                        }
-                    }
-                } else {
-                    final MonoSink<ResultStates> monoSink = sink.updateSink;
-                    if (monoSink == null) {
-                        nonExpectedType = ResultType.UPDATE;
-                        break;
-                    } else {
-                        monoSink.success(state);
-                    }
-                }
+        return Flux.create(sink -> {
+            if (this.adjutant.inEventLoop()) {
+                addQuerySubscriberInEventLoop(sink, function, statesConsumer);
             } else {
-                throw JdbdResultSubscriber.createUnknownTypeError(currentResult);
+                this.adjutant.execute(() -> addQuerySubscriberInEventLoop(sink, function, statesConsumer));
             }
-
-        }
-
-        if (nonExpectedType != null) {
-            addMultiResultSubscribeError(nonExpectedType);
-        }
-
-    }
-
-    private <R> Flux<R> addQuerySubscriber(Function<CurrentRow, R> function, Consumer<ResultStates> statesConsumer) {
-        return Flux.empty();
+        });
     }
 
     private OrderedFlux addQueryFluxSubscriber() {
-        return null;
+        final boolean applicationDeveloper = true;
+        return FluxResult.create(sink -> {
+            if (this.adjutant.inEventLoop()) {
+                addQueryFluxSubscriberInEventLoop(sink);
+            } else {
+                this.adjutant.execute(() -> addQueryFluxSubscriberInEventLoop(sink));
+            }
+        }, applicationDeveloper); // application developer subscribing ,so auto invoke io.jdbd.result.CurrentRow.asResultRow().
     }
 
     private Mono<ResultStates> addUpdateSubscriber() {
-        return Mono.empty();
-    }
-
-    private void addMultiResultSubscribeError(final ResultType nonExpectedType) {
-        final List<Throwable> errorList = this.errorList;
-        if (errorList != null) {
-            for (Throwable e : errorList) {
-                if (e instanceof SubscribeException) {
-                    return;
-                }
-            }
-        }
-        switch (nonExpectedType) {
-            case QUERY: {
-                addError(new SubscribeException(ResultType.UPDATE, nonExpectedType));
-            }
-            break;
-            case UPDATE: {
-                addError(new SubscribeException(ResultType.QUERY, nonExpectedType));
-            }
-            break;
-            default:
-                throw new IllegalArgumentException(String.format("nonExpectedType[%s]", nonExpectedType));
-        }
-
-    }
-
-
-    private void subscribeInEventLoop(SinkWrapper sink) {
-        if (hasError()) {
-            this.sinkQueue.add(sink);
-            drainError();
-        } else if (this.done && this.resultItemQueue.isEmpty()) {
-            sink.error(new NoMoreResultException("No more result."));
-        } else {
-            this.sinkQueue.add(sink);
-            if (this.subscription == null) {
-                // first subscribe
-                this.source.subscribe(this);
+        return Mono.create(sink -> {
+            if (this.adjutant.inEventLoop()) {
+                addUpdateSubscriberInEventLoop(sink);
             } else {
-                drainResult();
+                this.adjutant.execute(() -> addUpdateSubscriberInEventLoop(sink));
             }
-
-        }
+        });
     }
 
 
-    private static final class ReactorMultiResultImpl implements MultiResult {
-
-        private final ITaskAdjutant adjutant;
-
-        private final MultiResultSubscriber subscriber;
-
-        private ReactorMultiResultImpl(ITaskAdjutant adjutant, Publisher<ResultItem> source) {
-            this.adjutant = adjutant;
-            this.subscriber = new MultiResultSubscriber(source);
+    /**
+     * @see #addQuerySubscriber(Function, Consumer)
+     */
+    private <R> void addQuerySubscriberInEventLoop(FluxSink<R> sink, @Nullable Function<CurrentRow, R> func,
+                                                   @Nullable Consumer<ResultStates> consumer) {
+        final int nextSinkNo = this.sinkNo++;
+        if (this.done) {
+            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
+            sink.error(new NoMoreResultException(m));
+        } else if (func == null) {
+            this.handleError(JdbdExceptions.queryMapFuncIsNull());
+        } else if (consumer == null) {
+            this.handleError(JdbdExceptions.statesConsumerIsNull());
+        } else {
+            this.sinkQueue.offer(new QuerySink<>(nextSinkNo, sink, func, consumer));
         }
+    }
 
-        @Override
-        public Mono<ResultStates> nextUpdate() {
-            return Mono.create(sink -> {
-                if (this.adjutant.inEventLoop()) {
-                    this.subscriber.subscribeInEventLoop(new SinkWrapper(sink));
-                } else {
-                    this.adjutant.execute(() -> this.subscriber.subscribeInEventLoop(new SinkWrapper(sink)));
-                }
-            });
+    /**
+     * @see #addUpdateSubscriber()
+     */
+    private void addUpdateSubscriberInEventLoop(MonoSink<ResultStates> sink) {
+        final int nextSinkNo = this.sinkNo++;
+        if (this.done) {
+            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
+            sink.error(new NoMoreResultException(m));
+        } else {
+            this.sinkQueue.offer(new UpdateSink(nextSinkNo, sink));
         }
+    }
 
-
-        @Override
-        public Publisher<ResultRow> nextQuery() {
-            return null;
+    /**
+     * @see #addQueryFluxSubscriber()
+     */
+    private void addQueryFluxSubscriberInEventLoop(ResultSink sink) {
+        final int nextSinkNo = this.sinkNo++;
+        if (this.done) {
+            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
+            sink.error(new NoMoreResultException(m));
+        } else {
+            this.sinkQueue.offer(new OrderedFluxSink(nextSinkNo, sink));
         }
-
-        @Override
-        public <R> Publisher<R> nextQuery(Function<CurrentRow, R> function) {
-            return null;
-        }
-
-        @Override
-        public <R> Publisher<R> nextQuery(Function<CurrentRow, R> function, Consumer<ResultStates> consumer) {
-            return null;
-        }
-
-        @Override
-        public OrderedFlux nextQueryFlux() {
-            return null;
-        }
-
-    }// ReactorMultiResultImpl
+    }
 
 
     private static abstract class DownstreamSink {
@@ -314,13 +309,11 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             this.resultNo = resultNo;
         }
 
-        abstract boolean isCanceled();
+        abstract void next(ResultItem item);
 
-        abstract void onNext(ResultItem item);
+        abstract void error(Throwable t);
 
-        abstract void onError(Throwable t);
-
-        abstract void onComplete();
+        abstract void complete();
 
 
     }//DownstreamSink
@@ -339,13 +332,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             this.sink = sink;
         }
 
-        @Override
-        boolean isCanceled() {
-            return this.error != null;
-        }
 
         @Override
-        void onNext(final ResultItem item) {
+        void next(final ResultItem item) {
             // this method invoker in EventLoop
             if (this.error != null) {
                 return;
@@ -364,7 +353,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         }
 
         @Override
-        void onError(final Throwable t) {
+        void error(final Throwable t) {
             // this method invoker in EventLoop
             final Throwable error = this.error;
             if (error == null) {
@@ -375,7 +364,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         }
 
         @Override
-        void onComplete() {
+        void complete() {
             // this method invoker in EventLoop
             final Throwable error = this.error;
             final ResultStates resultStates = this.resultStates;
@@ -413,14 +402,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             this.statesConsumer = statesConsumer;
         }
 
-        @Override
-        boolean isCanceled() {
-            // this method invoker in EventLoop
-            return this.disposable || this.sink.isCancelled();
-        }
 
         @Override
-        void onNext(final ResultItem item) {
+        void next(final ResultItem item) {
             // this method invoker in EventLoop
             if (this.disposable) {
                 return;
@@ -465,7 +449,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         }
 
         @Override
-        void onError(final Throwable t) {
+        void error(final Throwable t) {
             // this method invoker in EventLoop
             final Throwable error = this.error;
             if (error == null) {
@@ -476,7 +460,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         }
 
         @Override
-        void onComplete() {
+        void complete() {
             // this method invoker in EventLoop
             final Throwable error = this.error;
             if (error != null) {
@@ -499,9 +483,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
     private static final class OrderedFluxSink extends DownstreamSink {
 
-        private final Subscriber<? super ResultItem> subscriber;
-
-        private final OrderedSubscription subscription;
+        private final ResultSink sink;
 
         private boolean disposable;
 
@@ -509,21 +491,14 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
         private boolean receiveItem;
 
-        private OrderedFluxSink(int resultNo, Subscriber<? super ResultItem> subscriber,
-                                OrderedSubscription subscription) {
+
+        private OrderedFluxSink(int resultNo, ResultSink sink) {
             super(resultNo);
-            this.subscriber = subscriber;
-            this.subscription = subscription;
+            this.sink = sink;
         }
 
         @Override
-        boolean isCanceled() {
-            // this method invoker in EventLoop
-            return this.disposable || (this.disposable = this.subscription.canceled != 0);
-        }
-
-        @Override
-        void onNext(final ResultItem item) {
+        void next(final ResultItem item) {
             // this method invoker in EventLoop
             if (this.disposable) {
                 return;
@@ -536,38 +511,32 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
                 String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
                         this.resultNo, item.getResultNo());
                 this.handleError(new JdbdException(m));
-            } else if (item instanceof CurrentRow) {
-                this.subscriber.onNext(((CurrentRow) item).asResultRow());
-            } else if (item instanceof ResultStates || item instanceof ResultRowMeta) {
-                this.subscriber.onNext(item);
             } else {
-                // no bug ,never here
-                String m = String.format("unexpected %s %s", ResultItem.class.getName(), item);
-                this.handleError(new JdbdException(m));
+                this.sink.next(item);
             }
 
         }
 
         @Override
-        void onError(final Throwable t) {
+        void error(final Throwable t) {
             // this method invoker in EventLoop
             final Throwable error = this.error;
             if (error == null) {
-                this.subscriber.onError(t);
+                this.sink.error(t);
             } else {
-                this.subscriber.onError(new JdbdCompositeException(Arrays.asList(t, error)));
+                this.sink.error(new JdbdCompositeException(Arrays.asList(t, error)));
             }
         }
 
         @Override
-        void onComplete() {
+        void complete() {
             final Throwable error = this.error;
             if (error != null) {
-                this.subscriber.onError(error);
+                this.sink.error(error);
             } else if (this.receiveItem) {
-                this.subscriber.onComplete();
+                this.sink.complete();
             } else {
-                this.subscriber.onError(MultiResults.noReceiveAnyItem());
+                this.sink.error(MultiResults.noReceiveAnyItem());
             }
         }
 
