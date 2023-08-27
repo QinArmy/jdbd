@@ -1,19 +1,22 @@
 package io.jdbd.vendor.result;
 
-import io.jdbd.result.*;
-import io.jdbd.vendor.ResultType;
+import io.jdbd.JdbdException;
+import io.jdbd.result.OrderedFlux;
+import io.jdbd.result.ResultItem;
+import io.jdbd.result.ResultStates;
 import io.jdbd.vendor.util.JdbdExceptions;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * @see FluxResult
  */
-final class BatchUpdateResultSubscriber extends JdbdResultSubscriber {
+@SuppressWarnings("all")
+final class BatchUpdateResultSubscriber implements Subscriber<ResultItem> {
 
     static Flux<ResultStates> create(Consumer<ResultSink> callback) {
         final OrderedFlux result = FluxResult.create(sink -> {
@@ -28,7 +31,15 @@ final class BatchUpdateResultSubscriber extends JdbdResultSubscriber {
 
     private final FluxSink<ResultStates> sink;
 
+    private Subscription subscription;
+
+    private NonBatchUpdateException error;
+
     private boolean receiveResult;
+
+    private int itemCount = 0;
+
+    private boolean disposable;
 
     private BatchUpdateResultSubscriber(FluxSink<ResultStates> sink) {
         this.sink = sink;
@@ -41,59 +52,58 @@ final class BatchUpdateResultSubscriber extends JdbdResultSubscriber {
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.sink.isCancelled();
-    }
-
-    @Override
     public void onNext(final ResultItem result) {
         // this method invoker in EventLoop
-        if (hasError()) {
+        if (this.disposable) {
             return;
         }
-        if (result instanceof ResultRow) {
-            addSubscribeError(ResultType.QUERY);
-        } else if (result instanceof ResultStates) {
-            final ResultStates state = (ResultStates) result;
-            if (state.hasColumn()) {
-                addSubscribeError(ResultType.QUERY);
-            } else {
-                if (!this.receiveResult) {
-                    this.receiveResult = true;
-                }
-                this.sink.next(state);
-            }
-        } else {
-            throw createUnknownTypeError(result);
+        if (!(result instanceof ResultStates)) {
+            this.disposable = true;
+            this.error = new NonBatchUpdateException("subscribe batch update , but server response contain query result.");
+            return;
         }
+
+        if (!this.receiveResult) {
+            this.receiveResult = true;
+        }
+
+        if ((((++this.itemCount) & 31) != 0)) {
+            this.sink.next((ResultStates) result);
+        } else if (this.sink.isCancelled()) {
+            this.disposable = true;
+            this.subscription.cancel();
+        } else {
+            this.sink.next((ResultStates) result);
+        }
+
+
     }
 
     @Override
-    public void onError(Throwable t) {
+    public void onError(final Throwable t) {
         // this method invoker in EventLoop
-        this.sink.error(t);
+        final NonBatchUpdateException error = this.error;
+        if (error == null) {
+            this.sink.error(t);
+        } else {
+            // subscribe error precedence
+            this.sink.error(error);
+        }
+
     }
 
     @Override
     public void onComplete() {
         // this method invoker in EventLoop
-        if (this.sink.isCancelled()) {
-            return;
-        }
-        final List<Throwable> errorList = this.errorList;
-        if (errorList != null && !errorList.isEmpty()) {
-            this.sink.error(JdbdExceptions.createException(errorList));
+        final NonBatchUpdateException error = this.error;
+        if (error != null) {
+            this.sink.error(error);
         } else if (this.receiveResult) {
             this.sink.complete();
         } else {
-            this.sink.error(new NoMoreResultException("No receive any result from upstream."));
+            this.sink.error(new JdbdException("don't receive any result"));
         }
 
-    }
-
-    @Override
-    ResultType getSubscribeType() {
-        return ResultType.BATCH_UPDATE;
     }
 
 

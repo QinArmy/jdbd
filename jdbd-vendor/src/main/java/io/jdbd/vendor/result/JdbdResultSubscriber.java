@@ -12,6 +12,7 @@ import reactor.core.publisher.FluxSink;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Deprecated
 abstract class JdbdResultSubscriber implements ResultSubscriber {
 
     List<Throwable> errorList;

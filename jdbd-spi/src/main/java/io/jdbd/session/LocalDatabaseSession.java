@@ -19,7 +19,7 @@ import java.util.function.Function;
  * The instance of this interface is created by {@link DatabaseSessionFactory#localSession()} method.
  * </p>
  * <p>
- *     Application developer can create statement by following methods :
+ * Application developer can create statement by following methods :
  *     <ul>
  *         <li>{@link #statement()} ,create static statement.</li>
  *         <li>{@link #prepareStatement(String)} , create server-prepare statement</li>
@@ -31,6 +31,7 @@ import java.util.function.Function;
  * <p>
  * Application developer can control local transaction by following :
  *     <ul>
+ *         <li>{@link #startTransaction()}</li>
  *         <li>{@link #startTransaction(TransactionOption)}</li>
  *         <li>{@link #startTransaction(TransactionOption, HandleMode)}</li>
  *         <li>{@link #setTransactionCharacteristics(TransactionOption)}</li>
@@ -53,6 +54,22 @@ import java.util.function.Function;
  * @since 1.0
  */
 public interface LocalDatabaseSession extends DatabaseSession {
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link LocalDatabaseSession}
+     *             session.startTransaction(TransactionOption.option(null,false),HandleMode.ERROR_IF_EXISTS) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #startTransaction(TransactionOption, HandleMode)
+     */
+    Publisher<LocalDatabaseSession> startTransaction();
 
 
     /**
@@ -216,7 +233,6 @@ public interface LocalDatabaseSession extends DatabaseSession {
      */
     @Override
     Publisher<LocalDatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
-
 
 
 }

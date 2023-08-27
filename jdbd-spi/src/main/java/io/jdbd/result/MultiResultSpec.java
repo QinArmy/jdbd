@@ -58,4 +58,7 @@ public interface MultiResultSpec {
     <R> Publisher<R> nextQuery(Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
 
+    OrderedFlux nextQueryFlux();
+
+
 }

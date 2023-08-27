@@ -94,7 +94,7 @@ final class MultiResultSubscriber extends JdbdResultSubscriber {
     }
 
     @Override
-    final ResultType getSubscribeType() {
+    ResultType getSubscribeType() {
         return ResultType.MULTI_RESULT;
     }
 
@@ -259,7 +259,13 @@ final class MultiResultSubscriber extends JdbdResultSubscriber {
         public <R> Publisher<R> nextQuery(Function<CurrentRow, R> function, Consumer<ResultStates> consumer) {
             return null;
         }
-    }
+
+        @Override
+        public OrderedFlux nextQueryFlux() {
+            return null;
+        }
+
+    }// ReactorMultiResultImpl
 
 
     private static final class SinkWrapper {

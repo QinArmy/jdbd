@@ -1,21 +1,24 @@
 package io.jdbd.vendor.result;
 
-import io.jdbd.result.*;
-import io.jdbd.vendor.ResultType;
+import io.jdbd.JdbdException;
+import io.jdbd.result.OrderedFlux;
+import io.jdbd.result.ResultItem;
+import io.jdbd.result.ResultStates;
 import io.jdbd.vendor.util.JdbdExceptions;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
  * @see FluxResult
  */
-final class UpdateResultSubscriber extends JdbdResultSubscriber {
+@SuppressWarnings("all")
+final class UpdateResultSubscriber implements Subscriber<ResultItem> {
 
-    static Mono<ResultStates> create(Consumer<ResultSink> callback) {
+    static Mono<ResultStates> create(final Consumer<ResultSink> callback) {
         final OrderedFlux result = FluxResult.create(sink -> {
             try {
                 callback.accept(sink);
@@ -29,79 +32,61 @@ final class UpdateResultSubscriber extends JdbdResultSubscriber {
 
     private final MonoSink<ResultStates> sink;
 
-    private ResultStates state;
+    private Subscription subscription;
+
+    private ResultStates resultStates;
+
+    private NonUpdateException error;
+
 
     private UpdateResultSubscriber(MonoSink<ResultStates> sink) {
         this.sink = sink;
     }
 
     @Override
-    public final void onSubscribe(Subscription s) {
+    public void onSubscribe(Subscription s) {
         this.subscription = s;
         s.request(Long.MAX_VALUE);
     }
 
     @Override
-    public final boolean isCancelled() {
-        return false;
-    }
-
-    @Override
-    public final void onNext(final ResultItem result) {
+    public void onNext(final ResultItem item) {
         // this method invoker in EventLoop
-        if (hasError()) {
+        if (this.error != null) {
             return;
         }
-        if (result.getResultNo() != 0) {
-            addSubscribeError(ResultType.MULTI_RESULT);
-        } else if (result instanceof ResultRow) {
-            addSubscribeError(ResultType.QUERY);
-        } else if (result instanceof ResultStates) {
-            final ResultStates state = (ResultStates) result;
-            if (state.hasColumn()) {
-                addSubscribeError(ResultType.QUERY);
-            } else if (this.state == null) {
-                this.state = state;
-            } else {
-                throw createDuplicationResultState(state);
-            }
-        } else {
-            throw createUnknownTypeError(result);
+        if (!(item instanceof ResultStates) || ((ResultStates) item).hasColumn() || item.getResultNo() != 1) {
+            this.error = new NonUpdateException("subscribe update,but server response non-update result");
+            this.subscription.cancel();
+            return;
         }
+        this.resultStates = (ResultStates) item;
     }
 
     @Override
-    public final void onError(Throwable t) {
+    public void onError(final Throwable t) {
         // this method invoker in EventLoop
-        final List<Throwable> errorList = this.errorList;
-        if (errorList == null || errorList.isEmpty()) {
+        final NonUpdateException error = this.error;
+        if (error == null) {
             this.sink.error(t);
         } else {
-            this.sink.error(JdbdExceptions.createException(errorList));
+            // subscribe error precedence
+            this.sink.error(error);
         }
-
     }
 
     @Override
-    public final void onComplete() {
+    public void onComplete() {
         // this method invoker in EventLoop
-        final List<Throwable> errorList = this.errorList;
-        if (errorList == null || errorList.isEmpty()) {
-            final ResultStates state = this.state;
-            if (state == null) {
-                this.sink.error(new NoMoreResultException("No receive any result from upstream."));
-            } else {
-                this.sink.success(state);
-            }
+        final NonUpdateException error = this.error;
+        final ResultStates resultStates = this.resultStates;
+        if (error != null) {
+            this.sink.error(error);
+        } else if (resultStates == null) {
+            this.sink.error(new JdbdException("don't receive any result"));
         } else {
-            this.sink.error(JdbdExceptions.createException(errorList));
+            this.sink.success(resultStates);
         }
-    }
-
-
-    @Override
-    final ResultType getSubscribeType() {
-        return ResultType.UPDATE;
     }
 
 

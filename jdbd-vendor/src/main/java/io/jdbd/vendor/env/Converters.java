@@ -43,6 +43,8 @@ public abstract class Converters {
 
     public static final BiFunction<Class<?>, String, ?> TEXT_ENUM_CONVERTOR = Converters::toTextEnum;
 
+    public static final BiFunction<Class<?>, String, ?> SUPPLIER_FUNC_CONVERTOR = Converters::createInstanceFromSupplier;
+
     public static void registerDefaultConverter(final BiConsumer<Class<?>, BiFunction<Class<?>, String, ?>> consumer) {
 
         consumer.accept(String.class, Converters::stringToString);
@@ -63,7 +65,7 @@ public abstract class Converters {
         consumer.accept(UUID.class, Converters::toUUID);
         consumer.accept(ZoneOffset.class, Converters::toZoneOffset);
 
-        consumer.accept(ConnectionProvider.class, Converters::createInstanceFromSupplier);
+        consumer.accept(ConnectionProvider.class, SUPPLIER_FUNC_CONVERTOR);
 
     }
 
@@ -103,7 +105,7 @@ public abstract class Converters {
             methodName = supplierRef.substring(colonIndex + 2);
 
             final Object instance;
-            if ("NEW".equals(methodName)) {
+            if ("new".equals(methodName)) {
                 instance = implClass.getConstructor().newInstance();
             } else {
                 instance = invokeSupplierMethod(interfaceClass, implClass.getMethod(methodName), supplierRef);

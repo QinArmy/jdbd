@@ -3,7 +3,9 @@ package io.jdbd.vendor.result;
 import io.jdbd.lang.Nullable;
 import io.jdbd.result.*;
 import io.jdbd.vendor.ResultType;
+import io.jdbd.vendor.stmt.Stmts;
 import io.jdbd.vendor.util.JdbdExceptions;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
@@ -15,7 +17,7 @@ import java.util.function.Function;
 /**
  * @see FluxResult
  */
-final class QueryResultSubscriber<R> extends JdbdResultSubscriber {
+final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
 
     static <R> Flux<R> create(final @Nullable Function<CurrentRow, R> function,
                               final @Nullable Consumer<ResultStates> stateConsumer,
@@ -37,15 +39,19 @@ final class QueryResultSubscriber<R> extends JdbdResultSubscriber {
 
     private final FluxSink<R> sink;
 
-    private final Consumer<ResultStates> stateConsumer;
+    private final Consumer<ResultStates> statesConsumer;
 
-    private ResultStates state;
+    private Subscription subscription;
+
+    private NonQueryResultException error;
+
+    private ResultStates resultStates;
 
     private QueryResultSubscriber(Function<CurrentRow, R> function, FluxSink<R> sink,
-                                  Consumer<ResultStates> stateConsumer) {
+                                  Consumer<ResultStates> statesConsumer) {
         this.function = function;
         this.sink = sink;
-        this.stateConsumer = stateConsumer;
+        this.statesConsumer = statesConsumer;
     }
 
     @Override
@@ -55,43 +61,41 @@ final class QueryResultSubscriber<R> extends JdbdResultSubscriber {
     }
 
     @Override
-    public boolean isCancelled() {
-        return this.sink.isCancelled();
-    }
-
-    @Override
     public void onNext(final ResultItem result) {
         // this method invoker in EventLoop
         if (hasError()) {
             return;
         }
 
-        if (result.getResultNo() != 0) {
+        if (result.getResultNo() != 1) {
             addSubscribeError(ResultType.MULTI_RESULT);
         } else if (result instanceof CurrentRow) {
             try {
                 final R row;
                 row = this.function.apply((CurrentRow) result);
-                if (row == null || row == result) {
+                if (row == null || row instanceof CurrentRow) {
                     this.addError(JdbdExceptions.queryMapFuncError(this.function));
                 } else {
                     this.sink.next(row);
                 }
             } catch (Throwable e) {
-                this.addError(e);
+                this.addError(JdbdExceptions.wrapIfNonJvmFatal(e));
             }
         } else if (result instanceof ResultStates) {
+            final Consumer<ResultStates> statesConsumer = this.statesConsumer;
             final ResultStates state = (ResultStates) result;
             if (!state.hasColumn()) {
                 addSubscribeError(ResultType.UPDATE);
+            } else if (statesConsumer == Stmts.IGNORE_RESULT_STATES) {
+                //no-op
             } else if (state.hasMoreFetch()) {
                 try {
-                    this.stateConsumer.accept(state);
+                    statesConsumer.accept(state);
                 } catch (Throwable e) {
-                    addError(ResultStatusConsumerException.create(this.stateConsumer, e));
+                    addError(ResultStatusConsumerException.create(statesConsumer, e));
                 }
-            } else if (this.state == null) {
-                this.state = state;
+            } else if (this.resultStates == null) {
+                this.resultStates = state;
             } else {
                 throw createDuplicationResultState(state);
             }
@@ -114,15 +118,17 @@ final class QueryResultSubscriber<R> extends JdbdResultSubscriber {
         }
         final List<Throwable> errorList = this.errorList;
 
-        if (errorList == null || errorList.isEmpty()) {
-            final ResultStates state = this.state;
-            if (state == null) {
-                this.sink.error(new NoMoreResultException("No receive terminator query ResultState from upstream."));
-            } else {
-                fluxSinkComplete(this.sink, stateConsumer, state);
-            }
-        } else {
+        final ResultStates state;
+        final Consumer<ResultStates> stateConsumer = this.statesConsumer;
+        if (errorList != null && errorList.size() > 0) {
             this.sink.error(JdbdExceptions.createException(errorList));
+        } else if (stateConsumer == Stmts.IGNORE_RESULT_STATES) {
+            this.sink.complete();
+        } else if ((state = this.resultStates) == null) {
+            // no bug,never here
+            this.sink.error(new NoMoreResultException("No receive terminator query ResultState from upstream."));
+        } else {
+            fluxSinkComplete(this.sink, stateConsumer, state);
         }
     }
 

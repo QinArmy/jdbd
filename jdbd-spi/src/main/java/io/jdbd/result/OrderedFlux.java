@@ -13,6 +13,9 @@ import java.util.List;
  * The interface representing the {@link ResultItem} stream of the result of sql statement.
  * </p>
  * <p>
+ * <strong>NOTE</strong>: never {@link CurrentRow} in {@link OrderedFlux}.
+ * </p>
+ * <p>
  * <ul>
  *     <li>The update result always is represented by just one {@link ResultStates} instance.</li>
  *     <li>The query result is represented by following sequence :
