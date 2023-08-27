@@ -1,5 +1,6 @@
 package io.jdbd.vendor.result;
 
+import io.jdbd.JdbdException;
 import io.jdbd.result.*;
 import io.jdbd.vendor.task.ITaskAdjutant;
 import reactor.core.publisher.Flux;
@@ -59,7 +60,7 @@ public abstract class MultiResults {
     }
 
     public static MultiResult asMulti(ITaskAdjutant adjutant, Consumer<ResultSink> consumer) {
-        return MultiResultSubscriber.create(adjutant, consumer);
+        return MultiResultSubscriber.multi(adjutant, consumer);
     }
 
     public static MultiResult deferMulti(Mono<Void> mono, Supplier<MultiResult> supplier) {
@@ -70,5 +71,9 @@ public abstract class MultiResults {
         return FluxResult.create(consumer, true);
     }
 
+
+    static JdbdException noReceiveAnyItem() {
+        return new JdbdException("don't receive any result");
+    }
 
 }

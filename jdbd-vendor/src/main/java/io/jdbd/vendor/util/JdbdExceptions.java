@@ -7,6 +7,7 @@ import io.jdbd.meta.SQLType;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.CursorDirection;
 import io.jdbd.result.ResultStates;
+import io.jdbd.result.ResultStatusConsumerException;
 import io.jdbd.session.*;
 import io.jdbd.statement.OutParameter;
 import io.jdbd.statement.PreparedStatement;
@@ -25,6 +26,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public abstract class JdbdExceptions {
@@ -55,9 +57,24 @@ public abstract class JdbdExceptions {
     }
 
     public static JdbdException queryMapFuncError(Function<CurrentRow, ?> function) {
-        String m = String.format("query map function %s couldn't return null or %s ",
+        String m = String.format("query map function %s couldn't return %s ",
                 function, CurrentRow.class.getName());
         return new JdbdException(m);
+    }
+
+    public static Throwable queryMapFuncInvokeError(Function<CurrentRow, ?> function, Throwable cause) {
+        if (isJvmFatal(cause)) {
+            return cause;
+        }
+        String m = String.format("query map function %s throw error ", function);
+        return new JdbdException(m, cause);
+    }
+
+    public static Throwable resultStatusConsumerInvokingError(Consumer<ResultStates> consumer, Throwable cause) {
+        if (isJvmFatal(cause)) {
+            return cause;
+        }
+        return ResultStatusConsumerException.create(consumer, cause);
     }
 
     /**

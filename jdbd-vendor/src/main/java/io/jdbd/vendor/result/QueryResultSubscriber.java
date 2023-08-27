@@ -1,8 +1,12 @@
 package io.jdbd.vendor.result;
 
+import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
-import io.jdbd.result.*;
-import io.jdbd.vendor.ResultType;
+import io.jdbd.result.CurrentRow;
+import io.jdbd.result.ResultItem;
+import io.jdbd.result.ResultRowMeta;
+import io.jdbd.result.ResultStates;
+import io.jdbd.vendor.JdbdCompositeException;
 import io.jdbd.vendor.stmt.Stmts;
 import io.jdbd.vendor.util.JdbdExceptions;
 import org.reactivestreams.Subscriber;
@@ -10,13 +14,14 @@ import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * @see FluxResult
  */
+@SuppressWarnings("all")
 final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
 
     static <R> Flux<R> create(final @Nullable Function<CurrentRow, R> function,
@@ -43,9 +48,13 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
 
     private Subscription subscription;
 
-    private NonQueryResultException error;
+    private Throwable error;
 
-    private ResultStates resultStates;
+    private boolean disposable;
+
+    private int itemCount = 0;
+
+    private boolean receiveItem;
 
     private QueryResultSubscriber(Function<CurrentRow, R> function, FluxSink<R> sink,
                                   Consumer<ResultStates> statesConsumer) {
@@ -61,81 +70,82 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
     }
 
     @Override
-    public void onNext(final ResultItem result) {
+    public void onNext(final ResultItem item) {
         // this method invoker in EventLoop
-        if (hasError()) {
+        if (this.disposable) {
             return;
         }
 
-        if (result.getResultNo() != 1) {
-            addSubscribeError(ResultType.MULTI_RESULT);
-        } else if (result instanceof CurrentRow) {
-            try {
-                final R row;
-                row = this.function.apply((CurrentRow) result);
-                if (row == null || row instanceof CurrentRow) {
-                    this.addError(JdbdExceptions.queryMapFuncError(this.function));
-                } else {
-                    this.sink.next(row);
-                }
-            } catch (Throwable e) {
-                this.addError(JdbdExceptions.wrapIfNonJvmFatal(e));
-            }
-        } else if (result instanceof ResultStates) {
-            final Consumer<ResultStates> statesConsumer = this.statesConsumer;
-            final ResultStates state = (ResultStates) result;
-            if (!state.hasColumn()) {
-                addSubscribeError(ResultType.UPDATE);
-            } else if (statesConsumer == Stmts.IGNORE_RESULT_STATES) {
-                //no-op
-            } else if (state.hasMoreFetch()) {
-                try {
-                    statesConsumer.accept(state);
-                } catch (Throwable e) {
-                    addError(ResultStatusConsumerException.create(statesConsumer, e));
-                }
-            } else if (this.resultStates == null) {
-                this.resultStates = state;
-            } else {
-                throw createDuplicationResultState(state);
-            }
-        } else if (!(result instanceof ResultRowMeta)) {
-            throw createUnknownTypeError(result);
+        if (!this.receiveItem) {
+            this.receiveItem = true;
         }
+
+        if (item.getResultNo() != 1) {
+            this.handleError(new NonQueryResultException("subscribe query result,but server response multi-result"));
+        } else if (((++this.itemCount) & 31) == 0 && this.sink.isCancelled()) {
+            this.disposable = true;
+            this.subscription.cancel();
+        } else if (item instanceof CurrentRow) {
+            final R r;
+            try {
+                r = this.function.apply((CurrentRow) item);
+            } catch (Throwable e) {
+                this.handleError(JdbdExceptions.queryMapFuncInvokeError(this.function, e));
+                return;
+            }
+
+            if (r instanceof CurrentRow) {
+                this.handleError(JdbdExceptions.queryMapFuncError(this.function));
+            } else {
+                this.sink.next(r);
+            }
+        } else if (item instanceof ResultStates) {
+            final Consumer<ResultStates> statesConsumer = this.statesConsumer;
+            if (statesConsumer != Stmts.IGNORE_RESULT_STATES) {
+                try {
+                    statesConsumer.accept((ResultStates) item);
+                } catch (Throwable e) {
+                    this.handleError(JdbdExceptions.resultStatusConsumerInvokingError(statesConsumer, e));
+                }
+            }
+        } else if (!(item instanceof ResultRowMeta)) {
+            // no bug ,never here
+            String m = String.format("unknown %s %s", ResultStates.class.getName(), item);
+            this.handleError(new JdbdException(m));
+        }
+
+
     }
 
     @Override
     public void onError(Throwable t) {
         // this method invoker in EventLoop
-        this.sink.error(t);
+        final Throwable error = this.error;
+        if (error == null) {
+            this.sink.error(t);
+        } else {
+            this.sink.error(new JdbdCompositeException(Arrays.asList(t, error)));
+        }
     }
 
     @Override
     public void onComplete() {
         // this method invoker in EventLoop
-        if (this.sink.isCancelled()) {
-            return;
-        }
-        final List<Throwable> errorList = this.errorList;
-
-        final ResultStates state;
-        final Consumer<ResultStates> stateConsumer = this.statesConsumer;
-        if (errorList != null && errorList.size() > 0) {
-            this.sink.error(JdbdExceptions.createException(errorList));
-        } else if (stateConsumer == Stmts.IGNORE_RESULT_STATES) {
+        final Throwable error = this.error;
+        if (error != null) {
+            this.sink.error(error);
+        } else if (this.receiveItem) {
             this.sink.complete();
-        } else if ((state = this.resultStates) == null) {
-            // no bug,never here
-            this.sink.error(new NoMoreResultException("No receive terminator query ResultState from upstream."));
         } else {
-            fluxSinkComplete(this.sink, stateConsumer, state);
+            this.sink.error(new JdbdException("don't receive any result"));
         }
     }
 
-    @Override
-    ResultType getSubscribeType() {
-        return ResultType.QUERY;
-    }
 
+    private void handleError(Throwable error) {
+        this.disposable = true;
+        this.error = error;
+        this.subscription.cancel();
+    }
 
 }

@@ -97,11 +97,10 @@ final class FluxResult implements OrderedFlux {
         private static final AtomicIntegerFieldUpdater<SubscriptionImpl> CANCELED =
                 AtomicIntegerFieldUpdater.newUpdater(SubscriptionImpl.class, "canceled");
 
+        private volatile int canceled;
 
         private SubscriptionImpl() {
         }
-
-        private volatile int canceled;
 
         @Override
         public void request(long n) {
