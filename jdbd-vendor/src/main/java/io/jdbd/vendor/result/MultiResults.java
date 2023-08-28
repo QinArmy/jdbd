@@ -18,7 +18,7 @@ public abstract class MultiResults {
 
 
     public static MultiResult multiError(Throwable e) {
-        return new ErrorMultiResult(e);
+        return ErrorMultiResultSpec.errorMultiResult(e);
     }
 
 
@@ -31,7 +31,7 @@ public abstract class MultiResults {
     }
 
     public static BatchQuery batchQueryError(Throwable error) {
-        throw new UnsupportedOperationException();
+        return ErrorMultiResultSpec.errorBatchQuery(error);
     }
 
     public static Mono<ResultStates> update(Consumer<ResultSink> callback) {
@@ -48,7 +48,7 @@ public abstract class MultiResults {
     }
 
     public static BatchQuery batchQuery(ITaskAdjutant adjutant, Consumer<ResultSink> consumer) {
-        throw new UnsupportedOperationException();
+        return MultiResultSubscriber.batch(adjutant, consumer);
     }
 
     public static BatchQuery deferBatchQuery(Mono<Void> empty, Supplier<BatchQuery> supplier) {

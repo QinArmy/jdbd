@@ -3,11 +3,15 @@ package io.jdbd.vendor.result;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.OrderedFlux;
 import io.jdbd.result.ResultItem;
+import io.jdbd.vendor.JdbdCompositeException;
 import io.jdbd.vendor.util.JdbdExceptions;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.Exceptions;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Consumer;
 
@@ -48,11 +52,15 @@ final class FluxResult implements OrderedFlux {
 
     private static final class ResultSinkImpl implements ResultSink {
 
+        private static final Logger LOG = LoggerFactory.getLogger(ResultSinkImpl.class);
+
         private final Subscriber<? super ResultItem> subscriber;
 
         private final boolean applicationDeveloper;
 
         private final SubscriptionImpl subscription;
+
+        private Throwable downstreamError;
 
         private ResultSinkImpl(Subscriber<? super ResultItem> subscriber, boolean applicationDeveloper) {
             this.subscriber = subscriber;
@@ -64,32 +72,68 @@ final class FluxResult implements OrderedFlux {
         @Override
         public void error(Throwable e) {
             // this method invoker in EventLoop
-            this.subscriber.onError(JdbdExceptions.wrapIfNonJvmFatal(e));
+            try {
+                final Throwable downstreamError = this.downstreamError;
+                if (downstreamError == null) {
+                    this.subscriber.onError(JdbdExceptions.wrapIfNonJvmFatal(e));
+                } else {
+                    this.subscriber.onError(new JdbdCompositeException(Arrays.asList(e, downstreamError)));
+                }
+            } catch (Throwable ex) {
+                // never throw Throwable to upstream.
+                LOG.error("downstream onError(Throwable) error ", e);
+            }
         }
 
         @Override
         public void complete() {
             // this method invoker in EventLoop
-            this.subscriber.onComplete();
+            final Throwable downstreamError = this.downstreamError;
+            try {
+
+                if (downstreamError == null) {
+                    this.subscriber.onComplete();
+                } else {
+                    this.subscriber.onError(JdbdExceptions.wrapIfNonJvmFatal(downstreamError));
+                }
+            } catch (Throwable e) {
+                // never throw Throwable to upstream.
+                if (downstreamError == null) {
+                    this.error(e);
+                } else {
+                    LOG.error("downstream onComplete error ", e);
+                }
+
+            }
         }
 
         @Override
         public boolean isCancelled() {
             // this method invoker in EventLoop
-            return this.subscription.canceled == 1;
+            // upstream still invoke complete() or error() method
+            return this.downstreamError != null || this.subscription.canceled != 0;
         }
 
         @Override
         public void next(final ResultItem result) {
             // this method invoker in EventLoop
-            if (result instanceof CurrentRow && this.applicationDeveloper) {
-                this.subscriber.onNext(((CurrentRow) result).asResultRow());
-            } else {
-                this.subscriber.onNext(result);
+            if (this.downstreamError != null) {
+                return;
             }
+            try {
+                if (result instanceof CurrentRow && this.applicationDeveloper) {
+                    this.subscriber.onNext(((CurrentRow) result).asResultRow());
+                } else {
+                    this.subscriber.onNext(result);
+                }
+            } catch (Throwable e) {
+                // never throw Throwable to upstream.
+                this.downstreamError = e;
+            }
+
         }
 
-    }
+    } // ResultSinkImpl
 
 
     private static final class SubscriptionImpl implements Subscription {
@@ -110,6 +154,7 @@ final class FluxResult implements OrderedFlux {
             // 3. io.jdbd.vendor.result.BatchUpdateResultSubscriber
             // 4. io.jdbd.vendor.result.MultiResultSubscriber
             // always Long.MAX_VALUE
+            // driver must clear connection chanel for next statement.
         }
 
         @Override

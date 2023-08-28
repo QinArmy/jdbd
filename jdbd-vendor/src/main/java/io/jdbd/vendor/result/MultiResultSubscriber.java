@@ -19,13 +19,14 @@ import reactor.core.publisher.MonoSink;
 
 import java.util.Arrays;
 import java.util.Queue;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * @see FluxResult
  */
+@SuppressWarnings("all")
 final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
 
@@ -55,6 +56,8 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
     private final ITaskAdjutant adjutant;
 
+    private final AtomicBoolean subscribeUpstream = new AtomicBoolean(false);
+
     private final Queue<DownstreamSink> sinkQueue;
 
     private final Queue<ResultItem> resultItemQueue;
@@ -69,8 +72,6 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
 
     private int sinkNo = 1; // from 1
-
-    private int itemCount = 0;
 
     private boolean disposable;
 
@@ -90,7 +91,6 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         this.subscription = s;
         s.request(Long.MAX_VALUE);
     }
-
 
     @Override
     public void onNext(final ResultItem upstreamItem) {
@@ -270,6 +270,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         } else if (consumer == null) {
             this.handleError(JdbdExceptions.statesConsumerIsNull());
         } else {
+            if (this.sinkQueue.size() == 0) {
+                subscribeUpstreamIfNeedInEventLoop();
+            }
             this.sinkQueue.offer(new QuerySink<>(nextSinkNo, sink, func, consumer));
         }
     }
@@ -283,6 +286,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
+            if (this.sinkQueue.size() == 0) {
+                subscribeUpstreamIfNeedInEventLoop();
+            }
             this.sinkQueue.offer(new UpdateSink(nextSinkNo, sink));
         }
     }
@@ -296,7 +302,16 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
+            if (this.sinkQueue.size() == 0) {
+                subscribeUpstreamIfNeedInEventLoop();
+            }
             this.sinkQueue.offer(new OrderedFluxSink(nextSinkNo, sink));
+        }
+    }
+
+    private void subscribeUpstreamIfNeedInEventLoop() {
+        if (this.subscribeUpstream.compareAndSet(false, true)) {
+            this.source.subscribe(this);
         }
     }
 
@@ -548,25 +563,6 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
     }// OrderedFluxSink
 
-    private static final class OrderedSubscription implements Subscription {
-
-        private static final AtomicIntegerFieldUpdater<OrderedSubscription> CANCELED =
-                AtomicIntegerFieldUpdater.newUpdater(OrderedSubscription.class, "canceled");
-
-        private volatile int canceled = 0;
-
-        @Override
-        public void request(long n) {
-            //no-op,ignore
-        }
-
-        @Override
-        public void cancel() {
-            CANCELED.set(this, 1);
-        }
-
-
-    }// OrderedSubscription
 
 
     private static abstract class JdbdMultiResultSpec implements MultiResultSpec {
