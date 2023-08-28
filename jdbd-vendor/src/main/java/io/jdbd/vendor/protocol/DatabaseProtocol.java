@@ -21,6 +21,8 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     Function<CurrentRow, ResultRow> ROW_FUNC = CurrentRow::asResultRow;
 
     Function<Option<?>, ?> OPTION_FUNC = option -> null;
+    Consumer<ResultStates> IGNORE_RESULT_STATES = states -> {
+    };
 
 
     long sessionIdentifier();
@@ -43,7 +45,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      * </ul>
      * </p>
      */
-    <R> Flux<R> query(StaticStmt stmt, Function<CurrentRow, R> function);
+    <R> Flux<R> query(StaticStmt stmt, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
 
     /**
@@ -83,7 +85,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      * This method is one of underlying api of below methods:
      * </p>
      */
-    <R> Flux<R> paramQuery(ParamStmt stmt, boolean usePrepare, Function<CurrentRow, R> function);
+    <R> Flux<R> paramQuery(ParamStmt stmt, boolean usePrepare, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
     /**
      * <p>

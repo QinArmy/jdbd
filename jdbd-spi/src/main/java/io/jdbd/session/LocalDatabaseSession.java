@@ -150,6 +150,13 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *         <li>{@link Option#RELEASE}</li>
      *     </ul>
      * </p>
+     * <p>
+     * <strong>NOTE</strong> :
+     * <ul>
+     *     <li>driver don't send message to database server before subscribing.</li>
+     *     <li>this method don't check session whether in transaction block or not.</li>
+     * </ul>
+     * </p>
      *
      * @param optionFunc func
      * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
@@ -188,6 +195,13 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *         <li>{@link Option#CHAIN}</li>
      *         <li>{@link Option#RELEASE}</li>
      *     </ul>
+     * </p>
+     * <p>
+     * <strong>NOTE</strong> :
+     * <ul>
+     *     <li>driver don't send message to database server before subscribing.</li>
+     *     <li>this method don't check session whether in transaction block or not.</li>
+     * </ul>
      * </p>
      *
      * @param optionFunc {@link Option} function

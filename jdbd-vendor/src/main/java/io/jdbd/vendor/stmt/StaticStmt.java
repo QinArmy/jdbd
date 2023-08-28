@@ -7,11 +7,10 @@ package io.jdbd.vendor.stmt;
  * <u>
  * <li>{@link io.jdbd.statement.StaticStatement#executeUpdate(String)}</li>
  * <li>{@link io.jdbd.statement.StaticStatement#executeQuery(String)}</li>
- * <li>{@link io.jdbd.statement.StaticStatement#executeQuery(String, java.util.function.Consumer)}</li>
  * </u>
  * </p>
  */
-public interface StaticStmt extends FetchAbleSingleStmt {
+public interface StaticStmt extends SingleStmt {
 
 
 }

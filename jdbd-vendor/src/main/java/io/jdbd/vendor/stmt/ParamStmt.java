@@ -3,6 +3,7 @@ package io.jdbd.vendor.stmt;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -11,14 +12,14 @@ import java.util.function.Consumer;
  * <u>
  * <li>{@link io.jdbd.statement.PreparedStatement#executeUpdate()}</li>
  * <li>{@link io.jdbd.statement.PreparedStatement#executeQuery()}</li>
- * <li>{@link io.jdbd.statement.PreparedStatement#executeQuery(Consumer)}</li>
+ * <li>{@link io.jdbd.statement.PreparedStatement#executeQuery(Function, Consumer)}</li>
  * <li>{@link io.jdbd.statement.BindStatement#executeUpdate()}</li>
  * <li>{@link io.jdbd.statement.BindStatement#executeQuery()}</li>
- * <li>{@link io.jdbd.statement.BindStatement#executeQuery(Consumer)}</li>
+ * <li>{@link io.jdbd.statement.BindStatement#executeQuery(Function, Consumer)}</li>
  * </u>
  * </p>
  */
-public interface ParamStmt extends ParamSingleStmt, FetchAbleSingleStmt {
+public interface ParamStmt extends ParamSingleStmt, SingleStmt {
 
     /**
      * @return a unmodifiable list

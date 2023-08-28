@@ -5,7 +5,6 @@ import io.jdbd.lang.Nullable;
 import io.jdbd.result.*;
 import io.jdbd.vendor.JdbdCompositeException;
 import io.jdbd.vendor.protocol.DatabaseProtocol;
-import io.jdbd.vendor.stmt.Stmts;
 import io.jdbd.vendor.task.ITaskAdjutant;
 import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
@@ -450,7 +449,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
                 }
             } else if (item instanceof ResultStates) {
                 final Consumer<ResultStates> statesConsumer = this.statesConsumer;
-                if (statesConsumer != Stmts.IGNORE_RESULT_STATES) {
+                if (statesConsumer != DatabaseProtocol.IGNORE_RESULT_STATES) {
                     try {
                         statesConsumer.accept((ResultStates) item);
                     } catch (Throwable e) {
@@ -576,12 +575,12 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
         @Override
         public final Publisher<ResultRow> nextQuery() {
-            return this.nextQuery(DatabaseProtocol.ROW_FUNC, Stmts.IGNORE_RESULT_STATES);
+            return this.nextQuery(DatabaseProtocol.ROW_FUNC, DatabaseProtocol.IGNORE_RESULT_STATES);
         }
 
         @Override
         public final <R> Publisher<R> nextQuery(Function<CurrentRow, R> function) {
-            return this.nextQuery(function, Stmts.IGNORE_RESULT_STATES);
+            return this.nextQuery(function, DatabaseProtocol.IGNORE_RESULT_STATES);
         }
 
         @Override

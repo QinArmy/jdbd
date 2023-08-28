@@ -44,6 +44,18 @@ public interface ResultItem {
         return item instanceof ResultRow;
     }
 
+    static boolean isStatesItem(ResultItem item) {
+        return item instanceof ResultStates;
+    }
+
+    static boolean isUpdateStatesItem(ResultItem item) {
+        return item instanceof ResultStates && !((ResultStates) item).hasColumn();
+    }
+
+    static boolean isQueryStatesItem(ResultItem item) {
+        return item instanceof ResultStates && ((ResultStates) item).hasColumn();
+    }
+
 
     /**
      * <p>
