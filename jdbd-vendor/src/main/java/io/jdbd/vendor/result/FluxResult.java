@@ -114,6 +114,7 @@ final class FluxResult implements OrderedFlux {
             return this.downstreamError != null || this.subscription.canceled != 0;
         }
 
+
         @Override
         public void next(final ResultItem result) {
             // this method invoker in EventLoop
@@ -140,7 +141,6 @@ final class FluxResult implements OrderedFlux {
 
         private static final AtomicIntegerFieldUpdater<SubscriptionImpl> CANCELED =
                 AtomicIntegerFieldUpdater.newUpdater(SubscriptionImpl.class, "canceled");
-
         private volatile int canceled;
 
         private SubscriptionImpl() {

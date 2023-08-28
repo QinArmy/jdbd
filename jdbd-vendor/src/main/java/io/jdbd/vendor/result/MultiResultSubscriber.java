@@ -145,6 +145,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         } else {
             currentSink.next(upstreamItem);
             if (upstreamItem instanceof ResultStates) {
+                currentSink.complete();
                 currentSink = null;
             }
         }
