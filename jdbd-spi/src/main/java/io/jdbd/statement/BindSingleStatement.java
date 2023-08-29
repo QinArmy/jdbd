@@ -5,6 +5,7 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
 import io.jdbd.result.CurrentRow;
+import io.jdbd.result.OrderedFlux;
 import io.jdbd.result.ResultRow;
 import io.jdbd.result.ResultStates;
 import io.jdbd.session.ChunkOption;
@@ -114,6 +115,13 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *                       </ul>
      */
     <R> Publisher<R> executeQuery(Function<CurrentRow, R> function, Consumer<ResultStates> statesConsumer);
+
+    /**
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     */
+    OrderedFlux executeAsFlux();
 
 
     /**

@@ -120,7 +120,7 @@ public interface OutParameter extends Parameter {
      * @param name OUT parameter name,empty is allowed by some database , for example : MySQL ,PostgreSQL,because these database don't need.
      * @throws NullPointerException throw when name is null .
      */
-    default OutParameter out(String name) {
+    static OutParameter out(String name) {
         return JdbdParameters.outParam(name);
     }
 

@@ -297,6 +297,11 @@ public final class Option<T> {
 
     public static final Option<Integer> PREPARE_THRESHOLD = Option.from(Driver.PREPARE_THRESHOLD, Integer.class);
 
+    /**
+     * @see io.jdbd.result.ResultRowMeta#getOf(int, Option)
+     */
+    public static final Option<Long> COLUMN_PRECISION = Option.from("COLUMN PRECISION", Long.class);
+
 
     private final String name;
 

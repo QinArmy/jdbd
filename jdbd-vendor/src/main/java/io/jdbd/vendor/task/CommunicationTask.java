@@ -182,6 +182,18 @@ public abstract class CommunicationTask {
         }
     }
 
+    protected final void resume(Consumer<Throwable> consumer) {
+        if (!this.adjutant.inEventLoop()) {
+            consumer.accept(new IllegalStateException("not in EventLoop ,reject resume"));
+        } else if (this.taskPhase != TaskPhase.END) {
+            consumer.accept(new IllegalStateException("not end ,reject resume"));
+        } else {
+            this.taskPhase = null;
+            syncSubmitTask(consumer);
+        }
+    }
+
+
     /**
      * <p>
      * {@link CommunicationTaskExecutor} invoke this method handle error,when below situation:

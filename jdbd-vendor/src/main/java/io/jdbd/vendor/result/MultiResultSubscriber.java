@@ -161,11 +161,12 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         }
         this.done = true;
 
-        final Throwable error = this.error;
+        Throwable error = this.error;
         if (error == null) {
             drainError(JdbdExceptions.wrapIfNonJvmFatal(t));
         } else {
-            drainError(new JdbdCompositeException(Arrays.asList(t, error)));
+            this.error = error = new JdbdCompositeException(Arrays.asList(t, error));
+            drainError(error);
         }
     }
 
@@ -262,18 +263,17 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
     private <R> void addQuerySubscriberInEventLoop(FluxSink<R> sink, @Nullable Function<CurrentRow, R> func,
                                                    @Nullable Consumer<ResultStates> consumer) {
         final int nextSinkNo = this.sinkNo++;
-        if (this.done) {
-            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
-            sink.error(new NoMoreResultException(m));
-        } else if (func == null) {
-            this.handleError(JdbdExceptions.queryMapFuncIsNull());
-        } else if (consumer == null) {
-            this.handleError(JdbdExceptions.statesConsumerIsNull());
-        } else {
+        final Throwable error = this.error;
+        if (!this.done) {
             if (this.sinkQueue.size() == 0) {
                 subscribeUpstreamIfNeedInEventLoop();
             }
             this.sinkQueue.offer(new QuerySink<>(nextSinkNo, sink, func, consumer));
+        } else if (error == null) {
+            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
+            sink.error(new NoMoreResultException(m));
+        } else {
+            sink.error(error);
         }
     }
 
@@ -282,14 +282,17 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
      */
     private void addUpdateSubscriberInEventLoop(MonoSink<ResultStates> sink) {
         final int nextSinkNo = this.sinkNo++;
-        if (this.done) {
-            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
-            sink.error(new NoMoreResultException(m));
-        } else {
+        final Throwable error = this.error;
+        if (!this.done) {
             if (this.sinkQueue.size() == 0) {
                 subscribeUpstreamIfNeedInEventLoop();
             }
             this.sinkQueue.offer(new UpdateSink(nextSinkNo, sink));
+        } else if (error == null) {
+            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
+            sink.error(new NoMoreResultException(m));
+        } else {
+            sink.error(error);
         }
     }
 
@@ -298,14 +301,17 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
      */
     private void addQueryFluxSubscriberInEventLoop(ResultSink sink) {
         final int nextSinkNo = this.sinkNo++;
-        if (this.done) {
-            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
-            sink.error(new NoMoreResultException(m));
-        } else {
+        final Throwable error = this.error;
+        if (!this.done) {
             if (this.sinkQueue.size() == 0) {
                 subscribeUpstreamIfNeedInEventLoop();
             }
             this.sinkQueue.offer(new OrderedFluxSink(nextSinkNo, sink));
+        } else if (error == null) {
+            String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
+            sink.error(new NoMoreResultException(m));
+        } else {
+            sink.error(error);
         }
     }
 
@@ -409,12 +415,20 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
         private boolean receiveItem;
 
-        private QuerySink(int resultNo, FluxSink<R> sink, Function<CurrentRow, R> function,
-                          Consumer<ResultStates> statesConsumer) {
+        private QuerySink(int resultNo, FluxSink<R> sink, @Nullable Function<CurrentRow, R> function,
+                          @Nullable Consumer<ResultStates> statesConsumer) {
             super(resultNo);
             this.sink = sink;
             this.function = function;
             this.statesConsumer = statesConsumer;
+
+            if (function == null) {
+                this.disposable = true;
+                this.error = JdbdExceptions.queryMapFuncIsNull();
+            } else if (statesConsumer == null) {
+                this.disposable = true;
+                this.error = JdbdExceptions.statesConsumerIsNull();
+            }
         }
 
 
@@ -562,7 +576,6 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
 
     }// OrderedFluxSink
-
 
 
     private static abstract class JdbdMultiResultSpec implements MultiResultSpec {

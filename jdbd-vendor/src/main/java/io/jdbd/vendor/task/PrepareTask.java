@@ -18,6 +18,8 @@ public interface PrepareTask {
 
     <R> Flux<R> executeQuery(ParamStmt stmt, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
+    OrderedFlux executeAsFlux(ParamStmt stmt);
+
     Flux<ResultStates> executeBatchUpdate(ParamBatchStmt stmt);
 
     BatchQuery executeBatchQuery(ParamBatchStmt stmt);

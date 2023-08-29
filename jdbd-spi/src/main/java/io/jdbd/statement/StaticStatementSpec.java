@@ -162,7 +162,7 @@ public interface StaticStatementSpec {
      *                                   <li>server response error message, see {@link ServerException}</li>
      *                               </ul>
      */
-    OrderedFlux executeAsFlux(String multiStmt);
+    OrderedFlux executeMultiStmt(String multiStmt);
 
 
 }

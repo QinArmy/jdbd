@@ -21,12 +21,13 @@ import java.util.function.Function;
  * except that don't support server-prepare.
  * </p>
  * <p>
- * This interface is similar to {@link StaticStatementSpec#executeAsFlux(String)} method,
+ * This interface is similar to {@link StaticStatementSpec#executeMultiStmt(String)} method,
  * except that support sql parameter placeholder({@code ?}) with client-prepare.
  * </p>
  * <p>
  * The instance of this interface is created by {@link DatabaseSession#multiStatement()} method.
  * </p>
+ *
  * @since 1.0
  */
 public interface MultiStatement extends MultiResultStatement, ParametrizedStatement {

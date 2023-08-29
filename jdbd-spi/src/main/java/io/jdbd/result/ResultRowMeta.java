@@ -150,6 +150,13 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
 
 
     /**
+     * <p>
+     * This must support following:
+     *     <ul>
+     *         <li>{@link Option#COLUMN_PRECISION},this option representing column precision greater than {@link Integer#MAX_VALUE},for example :  MySQL LONG TEXT</li>
+     *     </ul>
+     * </p>
+     *
      * @return null if value is null or option isn't supported driver.
      * @throws JdbdException throw when indexBasedZero error.
      */
@@ -263,7 +270,6 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * @return a unmodifiable list
      */
     List<String> getColumnLabelList();
-
 
 
     /**

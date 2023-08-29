@@ -71,7 +71,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      */
     OrderedFlux batchAsFlux(StaticBatchStmt stmt);
 
-    OrderedFlux executeAsFlux(StaticMultiStmt stmt);
+    OrderedFlux staticMultiStmtAsFlux(StaticMultiStmt stmt);
 
     /**
      * <p>
@@ -86,6 +86,8 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      * </p>
      */
     <R> Flux<R> paramQuery(ParamStmt stmt, boolean usePrepare, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
+
+    OrderedFlux paramAsFlux(ParamStmt stmt, boolean usePrepare);
 
     /**
      * <p>

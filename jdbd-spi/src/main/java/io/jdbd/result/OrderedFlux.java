@@ -56,7 +56,7 @@ import java.util.List;
  * </p>
  *
  * @see io.jdbd.statement.StaticStatementSpec#executeBatchAsFlux(List)
- * @see io.jdbd.statement.StaticStatementSpec#executeAsFlux(String)
+ * @see io.jdbd.statement.StaticStatementSpec#executeMultiStmt(String)
  * @see MultiResultStatement#executeBatchAsFlux()
  * @since 1.0
  */

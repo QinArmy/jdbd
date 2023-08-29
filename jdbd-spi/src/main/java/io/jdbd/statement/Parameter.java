@@ -7,7 +7,7 @@ import io.jdbd.meta.DataType;
  * This interface representing some special parameter.
  * This interface is base interface of following :
  *     <ul>
- *         <li>{@link ValueParameter}</li>
+ *         <li>{@link io.jdbd.type.LongParameter}</li>
  *         <li>{@link OutParameter}</li>
  *     </ul>
  * </p>
