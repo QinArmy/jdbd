@@ -3,9 +3,9 @@ package io.jdbd.statement;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
-import io.jdbd.result.BatchQuery;
 import io.jdbd.result.MultiResult;
 import io.jdbd.result.OrderedFlux;
+import io.jdbd.result.QueryResults;
 import io.jdbd.result.ResultStates;
 import io.jdbd.session.ChunkOption;
 import io.jdbd.session.Option;
@@ -59,7 +59,7 @@ public interface MultiResultStatement extends Statement {
      *
      *        final int batchItemCount = 3;
      *
-     *        for (int i = 0; i < batchItemCount; i++) {
+     *        for (int i = 0; i &lt; batchItemCount; i++) {
      *            statement.bind(0, JdbdType.TIME, LocalTime.now())
      *                    .bind(1, JdbdType.TIME_WITH_TIMEZONE, OffsetTime.now(ZoneOffset.UTC))
      *                    .bind(2, JdbdType.DATE, LocalDate.now())
@@ -120,7 +120,7 @@ public interface MultiResultStatement extends Statement {
      *
      *        final int batchItemCount = 3;
      *
-     *        for (int i = 0; i < batchItemCount; i++) {
+     *        for (int i = 0; i &lt; batchItemCount; i++) {
      *
      *            statement.bind(0, JdbdType.BIGINT, 1)
      *                    .bind(1, JdbdType.TEXT, "%army%")
@@ -161,16 +161,16 @@ public interface MultiResultStatement extends Statement {
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
-    BatchQuery executeBatchQuery();
+    QueryResults executeBatchQuery();
 
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
      * </p>
-     *<p>
-     *     For example 1 :
-     *     <pre>
+     * <p>
+     * For example 1 :
+     * <pre>
      *         <code><br/>
      *    &#64;Test(dataProvider = "callOutParameterProvider")
      *    public void executeBatchAsMulti(final DatabaseSession session) {
@@ -197,7 +197,7 @@ public interface MultiResultStatement extends Statement {
      *
      *
      *        final int batchItemCount = 3;
-     *        for (int i = 0; i < batchItemCount; i++) {
+     *        for (int i = 0; i &lt; batchItemCount; i++) {
      *            statement.bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
      *                    .bind(1, JdbdType.TIMESTAMP, OutParameter.out("outNow"))
      *
@@ -249,7 +249,8 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     *</p>
+     * </p>
+     *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
@@ -259,6 +260,61 @@ public interface MultiResultStatement extends Statement {
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
+     * </p>
+     * <p>
+     * <pre>
+     * For example 1 :
+     *         <code><br/>
+     *    &#64;Test(dataProvider = "callOutParameterProvider")
+     *    public void executeBatchAsFlux(final DatabaseSession session){
+     *        //  CREATE PROCEDURE army_inout_out_now(INOUT inoutNow DATETIME, OUT outNow DATETIME)
+     *        //    LANGUAGE SQL
+     *        //BEGIN
+     *        //    SELECT current_timestamp(3), DATE_ADD(inoutNow, INTERVAL 1 DAY) INTO outNow,inoutNow;
+     *        //END
+     *        final String sql = "CALL army_inout_out_now( ? , ?)";
+     *        final BindSingleStatement statement;
+     *
+     *        //        way 1:
+     *        //        statement =Mono.from( session.prepareStatement(sql))
+     *        //                .block();
+     *        //        Assert.assertNotNull(statement);
+     *        //
+     *        //        //way 2:
+     *        //        statement = session.bindStatement(sql,true);
+     *
+     *        // way 3:
+     *        statement = session.bindStatement(sql);
+     *        final int batchItemCount = 3;
+     *
+     *        for (int i = 0; i &lt; batchItemCount; i++) {
+     *            statement.bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *                    .bind(1, JdbdType.TIMESTAMP, OutParameter.out("outNow"))
+     *
+     *                    .addBatch();
+     *        }
+     *
+     *
+     *        final List&lt;? extends Map&lt;String, ?>> rowList;
+     *
+     *        // each batch item , MySQL server will produce tow result,
+     *        // result 1 : out parameter result set , just one row.
+     *        // result 2 : the result of CALL command
+     *        rowList = Flux.from(statement.executeBatchAsFlux())
+     *                .filter(ResultItem::isRowItem)
+     *                .map(ResultRow.class::cast)
+     *                .map(this::mapCurrentRowToMap)
+     *                .collectList()
+     *                .block();
+     *
+     *        Assert.assertNotNull(rowList);
+     *        Assert.assertEquals(rowList.size(), batchItemCount);
+     *
+     *        LOG.info("executeBatchAsFlux out parameter : \n{}", rowList);
+     *
+     *    }
+     *         </code>
+     *     </pre>
      * </p>
      *
      * @see BindSingleStatement#addBatch()

@@ -22,7 +22,7 @@ public interface PrepareTask {
 
     Flux<ResultStates> executeBatchUpdate(ParamBatchStmt stmt);
 
-    BatchQuery executeBatchQuery(ParamBatchStmt stmt);
+    QueryResults executeBatchQuery(ParamBatchStmt stmt);
 
     MultiResult executeBatchAsMulti(ParamBatchStmt stmt);
 

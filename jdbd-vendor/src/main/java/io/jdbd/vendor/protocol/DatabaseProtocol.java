@@ -55,7 +55,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      */
     Flux<ResultStates> batchUpdate(StaticBatchStmt stmt);
 
-    BatchQuery batchQuery(StaticBatchStmt stmt);
+    QueryResults batchQuery(StaticBatchStmt stmt);
 
     /**
      * <p>
@@ -96,7 +96,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      */
     Flux<ResultStates> paramBatchUpdate(ParamBatchStmt stmt, boolean usePrepare);
 
-    BatchQuery paramBatchQuery(ParamBatchStmt stmt, boolean usePrepare);
+    QueryResults paramBatchQuery(ParamBatchStmt stmt, boolean usePrepare);
 
     /**
      * <p>
@@ -119,7 +119,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      */
     Flux<ResultStates> multiStmtBatchUpdate(ParamMultiStmt stmt);
 
-    BatchQuery multiStmtBatchQuery(ParamMultiStmt stmt);
+    QueryResults multiStmtBatchQuery(ParamMultiStmt stmt);
 
     /**
      * <p>

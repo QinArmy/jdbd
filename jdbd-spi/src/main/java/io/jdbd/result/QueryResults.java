@@ -8,7 +8,7 @@ package io.jdbd.result;
  *
  * @since 1.0
  */
-public interface BatchQuery extends MultiResultSpec {
+public interface QueryResults extends MultiResultSpec {
 
 
 }

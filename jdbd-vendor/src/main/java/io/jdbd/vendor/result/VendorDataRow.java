@@ -3,6 +3,7 @@ package io.jdbd.vendor.result;
 import io.jdbd.JdbdException;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.DataRow;
+import io.jdbd.result.QueryResults;
 import io.jdbd.vendor.task.ITaskAdjutant;
 import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
@@ -180,7 +181,7 @@ public abstract class VendorDataRow implements DataRow {
      * <ul>
      *     This method is designed for the cache (perhaps occur) of following :
      *     <ul>
-     *         <li>{@link io.jdbd.result.BatchQuery}</li>
+     *         <li>{@link QueryResults}</li>
      *         <li>{@link io.jdbd.result.MultiResult}</li>
      *     </ul>
      * </ul>

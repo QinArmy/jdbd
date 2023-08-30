@@ -13,7 +13,7 @@ import java.util.function.Function;
  * This interface is base interface of following :
  *     <ul>
  *         <li>{@link MultiResult}</li>
- *         <li>{@link BatchQuery}</li>
+ *         <li>{@link QueryResults}</li>
  *     </ul>
  * </p>
  * <p>

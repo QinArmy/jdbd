@@ -123,7 +123,7 @@ public interface StaticStatementSpec {
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * </p>
      */
-    BatchQuery executeBatchQuery(List<String> sqlGroup);
+    QueryResults executeBatchQuery(List<String> sqlGroup);
 
     /**
      * <p>

@@ -14,7 +14,7 @@ abstract class ErrorMultiResultSpec implements MultiResultSpec {
         return new ErrorMultiResult(error);
     }
 
-    static BatchQuery errorBatchQuery(Throwable error) {
+    static QueryResults errorBatchQuery(Throwable error) {
         return new ErrorBatchQuery(error);
     }
 
@@ -60,7 +60,7 @@ abstract class ErrorMultiResultSpec implements MultiResultSpec {
     }//ErrorMultiResult
 
 
-    private static final class ErrorBatchQuery extends ErrorMultiResultSpec implements BatchQuery {
+    private static final class ErrorBatchQuery extends ErrorMultiResultSpec implements QueryResults {
 
         private ErrorBatchQuery(Throwable error) {
             super(error);

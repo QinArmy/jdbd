@@ -30,7 +30,7 @@ public abstract class MultiResults {
         throw new UnsupportedOperationException();
     }
 
-    public static BatchQuery batchQueryError(Throwable error) {
+    public static QueryResults batchQueryError(Throwable error) {
         return ErrorMultiResultSpec.errorBatchQuery(error);
     }
 
@@ -47,11 +47,11 @@ public abstract class MultiResults {
         return BatchUpdateResultSubscriber.create(consumer);
     }
 
-    public static BatchQuery batchQuery(ITaskAdjutant adjutant, Consumer<ResultSink> consumer) {
+    public static QueryResults batchQuery(ITaskAdjutant adjutant, Consumer<ResultSink> consumer) {
         return MultiResultSubscriber.batch(adjutant, consumer);
     }
 
-    public static BatchQuery deferBatchQuery(Mono<Void> empty, Supplier<BatchQuery> supplier) {
+    public static QueryResults deferBatchQuery(Mono<Void> empty, Supplier<QueryResults> supplier) {
         throw new UnsupportedOperationException();
     }
 

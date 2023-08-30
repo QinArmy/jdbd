@@ -40,7 +40,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         return new JdbdMultiResult(new MultiResultSubscriber(result, adjutant));
     }
 
-    static BatchQuery batch(final ITaskAdjutant adjutant, final Consumer<ResultSink> callback) {
+    static QueryResults batch(final ITaskAdjutant adjutant, final Consumer<ResultSink> callback) {
         final OrderedFlux result = FluxResult.create(sink -> {
             try {
                 callback.accept(sink);
@@ -610,7 +610,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
     }// JdbdMultiResultSpec
 
 
-    private static final class JdbdBatchQuery extends JdbdMultiResultSpec implements BatchQuery {
+    private static final class JdbdBatchQuery extends JdbdMultiResultSpec implements QueryResults {
 
         private JdbdBatchQuery(MultiResultSubscriber upstream) {
             super(upstream);

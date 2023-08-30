@@ -12,7 +12,7 @@ import java.util.function.Function;
  *     <li>{@link io.jdbd.statement.StaticStatementSpec#executeQuery(String, Function, Consumer)}</li>
  *     <li>{@link io.jdbd.statement.BindSingleStatement#executeQuery(Function, Consumer)}</li>
  *     <li>{@link MultiResult#nextQuery(Function, Consumer)}</li>
- *     <li>{@link BatchQuery#nextQuery(Function, Consumer)}</li>
+ *     <li>{@link QueryResults#nextQuery(Function, Consumer)}</li>
  * </ul>
  * </p>
  * <p>
