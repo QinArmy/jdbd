@@ -56,14 +56,6 @@ public interface ResultItem {
         return item instanceof ResultStates && ((ResultStates) item).hasColumn();
     }
 
-    static boolean isOutItem(ResultItem item) {
-        return item instanceof OutResultItem;
-    }
-
-    static boolean isOutRowItem(ResultItem item) {
-        return item instanceof OutResultItem && item instanceof ResultRow;
-    }
-
 
     /**
      * <p>

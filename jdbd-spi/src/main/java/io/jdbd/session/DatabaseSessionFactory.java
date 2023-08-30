@@ -43,6 +43,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * </p>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * Driver developer must guarantee this feature.
      * </p>
      *
      * @return emit just one {@link LocalDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
@@ -72,6 +73,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * </p>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * Driver developer must guarantee this feature.
      * </p>
      *
      * @return emit just one {@link RmDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.

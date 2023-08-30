@@ -30,7 +30,7 @@ public interface PrepareTask {
 
     List<? extends DataType> getParamTypes();
 
-    @Nullable
+
     ResultRowMeta getRowMeta();
 
     void closeOnBindError(Throwable error);

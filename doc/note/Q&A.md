@@ -50,6 +50,10 @@ How to clear channel?
     * map 能遍历,需要对未知的和不支持的 Option 做处理,这增加了编程工作
     * map 能修改,若不想被修改则需要再创建一个Map 对象
     * 这样一来 driver 开发者只需关心相应的 Option 即可.可以看作是责任的免除.
+
+14. 为什么 jdbd 删除 auto reconnect ?
+    * 在 reconnect 之后,事务信息并不能迁移,若支持可能造成糟糕的数据问题.
+    * 保持 session 的 immutable 将使实现更简单.
     
 
     

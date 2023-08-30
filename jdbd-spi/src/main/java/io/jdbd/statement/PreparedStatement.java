@@ -60,7 +60,9 @@ import java.util.function.Function;
  */
 public interface PreparedStatement extends BindSingleStatement {
 
-    @Nullable
+    /**
+     * {@link ResultRowMeta#getColumnCount()} is 0 , if statement don't produce result set.
+     */
     ResultRowMeta resultRowMeta();
 
     List<? extends DataType> paramTypeList();
