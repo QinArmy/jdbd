@@ -84,6 +84,46 @@ public interface MultiResultStatement extends Statement {
      *         </code>
      *     </pre>
      * </p>
+     * <p>
+     * For example 2 :
+     * <pre>
+     *         <code><br/>
+     *    &#64;Test
+     *    public void executeBatchUpdate(final DatabaseSession session) {
+     *        final MultiStatement statement;
+     *        statement = session.multiStatement();
+     *
+     *        statement.addStatement("INSERT mysql_types(my_time,my_time1,my_date,my_datetime,my_datetime6,my_text) VALUES( ? , ? , ? , ? , ? , ? )")
+     *
+     *                .bind(0, JdbdType.TIME, LocalTime.now())
+     *                .bind(1, JdbdType.TIME_WITH_TIMEZONE, OffsetTime.now(ZoneOffset.UTC))
+     *                .bind(2, JdbdType.DATE, LocalDate.now())
+     *                .bind(3, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *
+     *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
+     *
+     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+     *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(3, JdbdType.INTEGER, 3);
+     *
+     *
+     *        final List&lt;ResultStates> statesList;
+     *
+     *        statesList = Flux.from(statement.executeBatchUpdate())
+     *                .collectList()
+     *                .block();
+     *
+     *        Assert.assertNotNull(statesList);
+     *        Assert.assertEquals(statesList.size(), 2);
+     *
+     *    }
+     *         </code>
+     *     </pre>
+     * </p>
      *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
@@ -151,6 +191,46 @@ public interface MultiResultStatement extends Statement {
      *
      *        Assert.assertNotNull(rowList);
      *        Assert.assertTrue(rowList.size() > 0);
+     *
+     *    }
+     *
+     *         </code>
+     *     </pre>
+     * </p>
+     * <p>
+     * For example 2 :
+     * <pre>
+     *         <code><br/>
+     *    &#64;Test
+     *    public void executeBatchQuery(final DatabaseSession session) {
+     *        final MultiStatement statement;
+     *        statement = session.multiStatement();
+     *
+     *        statement.addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+     *                .bind(2, JdbdType.INTEGER, 20)
+     *
+     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now().minusDays(2))
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("999999.66"))
+     *                .bind(2, JdbdType.INTEGER, 10);
+     *
+     *        final QueryResults queryResults;
+     *        queryResults = statement.executeBatchQuery();
+     *
+     *        final Function<CurrentRow, Map<String, ?>> function = this::mapCurrentRowToMap;
+     *
+     *        final List&lt;Map&lt;String, ?>> rowList;
+     *
+     *        rowList = Flux.from(queryResults.nextQuery(function))
+     *                .concatWith(queryResults.nextQuery(function))
+     *                .collectList()
+     *                .block();
+     *
+     *        Assert.assertNotNull(rowList);
      *
      *    }
      *
@@ -250,6 +330,53 @@ public interface MultiResultStatement extends Statement {
      *         </code>
      *     </pre>
      * </p>
+     * <p>
+     * For example 2 :
+     * <pre>
+     *         <code><br/>
+     *    &#64;Test
+     *    public void executeBatchAsMulti(final DatabaseSession session) {
+     *        final MultiStatement statement;
+     *        statement = session.multiStatement();
+     *
+     *        statement.addStatement("INSERT mysql_types(my_time,my_time1,my_date,my_datetime,my_datetime6,my_text) VALUES( ? , ? , ? , ? , ? , ? )")
+     *
+     *                .bind(0, JdbdType.TIME, LocalTime.now())
+     *                .bind(1, JdbdType.TIME_WITH_TIMEZONE, OffsetTime.now(ZoneOffset.UTC))
+     *                .bind(2, JdbdType.DATE, LocalDate.now())
+     *                .bind(3, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *
+     *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
+     *
+     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+     *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(3, JdbdType.INTEGER, 3)
+     *
+     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+     *                .bind(2, JdbdType.INTEGER, 20);
+     *
+     *
+     *        final MultiResult multiResult;
+     *        multiResult = statement.executeBatchAsMulti();
+     *
+     *
+     *        Mono.from(multiResult.nextUpdate())
+     *                .then(Mono.from(multiResult.nextUpdate()))
+     *                .thenMany(multiResult.nextQuery(this::mapCurrentRowToMap))
+     *                .collectList()
+     *                .block();
+     *
+     *    }
+     *         </code>
+     *     </pre>
+     * </p>
      *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
@@ -316,7 +443,74 @@ public interface MultiResultStatement extends Statement {
      *         </code>
      *     </pre>
      * </p>
+     *<p>
+     *     For example 2 :
+     *     <pre>
+     *         <code><br/>
+     *    &#64;Test
+     *    public void executeBatchAsFlux(final DatabaseSession session){
+     *        final MultiStatement statement;
+     *        statement = session.multiStatement();
      *
+     *        statement.addStatement("INSERT mysql_types(my_time,my_time1,my_date,my_datetime,my_datetime6,my_text) VALUES( ? , ? , ? , ? , ? , ? )")
+     *
+     *                .bind(0, JdbdType.TIME, LocalTime.now())
+     *                .bind(1, JdbdType.TIME_WITH_TIMEZONE, OffsetTime.now(ZoneOffset.UTC))
+     *                .bind(2, JdbdType.DATE, LocalDate.now())
+     *                .bind(3, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *
+     *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
+     *
+     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+     *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(3, JdbdType.INTEGER, 3)
+     *
+     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *
+     *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
+     *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+     *                .bind(2, JdbdType.INTEGER, 20);
+     *
+     *
+     *         final AtomicReference&lt;ResultStates> insertStatesHolder = new AtomicReference<>(null);
+     *
+     *        final AtomicReference&lt;ResultStates> updateStatesHolder = new AtomicReference<>(null);
+     *
+     *        final List&lt;? extends Map&lt;String, ?>> rowList;
+     *
+     *        rowList =    Flux.from(statement.executeBatchAsFlux())
+     *                 .filter(ResultItem::isRowOrStatesItem)
+     *                 .doOnNext(item->{
+     *                     switch (item.getResultNo()){
+     *                         case 1:
+     *                             insertStatesHolder.set((ResultStates) item);
+     *                             break;
+     *                         case 2:
+     *                             updateStatesHolder.set((ResultStates) item);
+     *                             break;
+     *                         default:
+     *                             //no-op
+     *                     }
+     *                 })
+     *                 .filter(ResultItem::isRowItem)
+     *                 .map(ResultRow.class::cast)
+     *                 .map(this::mapCurrentRowToMap)
+     *                 .collectList()
+     *                 .block();
+     *
+     *        Assert.assertNotNull(insertStatesHolder.get());
+     *        Assert.assertNotNull(updateStatesHolder.get());
+     *        Assert.assertNotNull(rowList);
+     *
+     *
+     *    }
+     *         </code>
+     *     </pre>
+     *</p>
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */

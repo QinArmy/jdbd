@@ -153,10 +153,8 @@ public interface Statement extends OptionSpec {
      * <p>
      * Currently,only following methods support this method:
      *     <ul>
-     *         <li>{@link BindSingleStatement#executeQuery()}</li>
-     *         <li>{@link BindSingleStatement#executeQuery(Function)}</li>
      *         <li>{@link BindSingleStatement#executeQuery(Function, Consumer)}</li>
-     *         <li>{@link BindSingleStatement#executeBatchAsFlux()},if only sql is query statement and batch size is 1 .</li>
+     *         <li>{@link BindSingleStatement#executeAsFlux()}</li>
      *     </ul>
      * </p>
      * <p>
@@ -164,14 +162,14 @@ public interface Statement extends OptionSpec {
      * </p>
      *
      * @param fetchSize <ul>
-     *                                                                         <li>0 : fetch all, this is default value</li>
-     *                                                                         <li>positive : fetch size</li>
-     *                                                                         <li>negative : error</li>
-     *                                                                     </ul>
+     *                                                                                                                            <li>0 : fetch all, this is default value</li>
+     *                                                                                                                            <li>positive : fetch size</li>
+     *                                                                                                                            <li>negative : error</li>
+     *                                                                                                                        </ul>
      * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when fetchSize is negative.
      */
-    Statement setFetchSize(int fetchSize) throws JdbdException;
+    Statement setFetchSize(int fetchSize);
 
     /**
      * @return <strong>this</strong>

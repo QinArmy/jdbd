@@ -27,7 +27,53 @@ import java.util.function.Function;
  * <p>
  * The instance of this interface is created by {@link DatabaseSession#multiStatement()} method.
  * </p>
+ * <p>
+ * For example 1 :
+ * <pre>
+ *         <code><br/>
+ *    &#64;Test
+ *    public void executeBatchAsMulti(final DatabaseSession session) {
+ *        final MultiStatement statement;
+ *        statement = session.multiStatement();
  *
+ *        statement.addStatement("INSERT mysql_types(my_time,my_time1,my_date,my_datetime,my_datetime6,my_text) VALUES( ? , ? , ? , ? , ? , ? )")
+ *
+ *                .bind(0, JdbdType.TIME, LocalTime.now())
+ *                .bind(1, JdbdType.TIME_WITH_TIMEZONE, OffsetTime.now(ZoneOffset.UTC))
+ *                .bind(2, JdbdType.DATE, LocalDate.now())
+ *                .bind(3, JdbdType.TIMESTAMP, LocalDateTime.now())
+ *
+ *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+ *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
+ *
+ *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+ *
+ *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
+ *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+ *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
+ *                .bind(3, JdbdType.INTEGER, 3)
+ *
+ *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+ *
+ *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
+ *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
+ *                .bind(2, JdbdType.INTEGER, 20);
+ *
+ *
+ *        final MultiResult multiResult;
+ *        multiResult = statement.executeBatchAsMulti();
+ *
+ *
+ *        Mono.from(multiResult.nextUpdate())
+ *                .then(Mono.from(multiResult.nextUpdate()))
+ *                .thenMany(multiResult.nextQuery(this::mapCurrentRowToMap))
+ *                .collectList()
+ *                .block();
+ *
+ *    }
+ *         </code>
+ *     </pre>
+ * </p>
  * @since 1.0
  */
 public interface MultiStatement extends MultiResultStatement, ParametrizedStatement {

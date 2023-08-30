@@ -336,11 +336,6 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
-     * @return true : session have closed.
-     */
-    boolean isClosed();
-
-    /**
      * <p>
      * If return true , then the pool vendor developer must guarantee session and <strong>this</strong> both are created <br/>
      * by same pool {@link DatabaseSessionFactory} instance,and both underlying driver session instance are created by <br/>
