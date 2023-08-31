@@ -54,12 +54,8 @@ final class BatchUpdateResultSubscriber implements Subscriber<ResultItem> {
     @Override
     public void onNext(final ResultItem result) {
         // this method invoker in EventLoop
+
         if (this.disposable) {
-            return;
-        }
-        if (!(result instanceof ResultStates)) {
-            this.disposable = true;
-            this.error = new NonBatchUpdateException("subscribe batch update , but server response contain query result.");
             return;
         }
 
@@ -67,15 +63,16 @@ final class BatchUpdateResultSubscriber implements Subscriber<ResultItem> {
             this.receiveResult = true;
         }
 
-        if ((((++this.itemCount) & 31) != 0)) {
-            this.sink.next((ResultStates) result);
-        } else if (this.sink.isCancelled()) {
+        if (!(result instanceof ResultStates)) {
+            this.disposable = true;
+            this.error = new NonBatchUpdateException("subscribe batch update , but server response contain query result.");
+            this.subscription.cancel();
+        } else if ((((++this.itemCount) & 31) == 0) && this.sink.isCancelled()) {
             this.disposable = true;
             this.subscription.cancel();
         } else {
             this.sink.next((ResultStates) result);
         }
-
 
     }
 
