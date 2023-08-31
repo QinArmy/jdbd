@@ -169,5 +169,9 @@ public class XaException extends JdbdException {
     }
 
 
+    public final int getXaCode() {
+        return this.xaCode;
+    }
+
 
 }

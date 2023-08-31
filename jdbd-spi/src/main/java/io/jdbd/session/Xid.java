@@ -2,8 +2,6 @@ package io.jdbd.session;
 
 import io.jdbd.lang.Nullable;
 
-import java.util.Map;
-
 /**
  * <p>
  * XID consist of following three :
@@ -14,12 +12,12 @@ import java.util.Map;
  * </ul>
  * </p>
  * <p>
- * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
+ * To be safe,{@link RmDatabaseSession} <strong>possibly</strong>  write gtrid and bqual as hex strings. steps :
  * <ul>
  *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
  *     <li>write gtrid or bqual as hex strings</li>
  * </ul>
- * the conversion process of {@link RmDatabaseSession#recover(int, Map)} is the reverse of above.
+ * the conversion process of {@link RmDatabaseSession#recover(int, java.util.function.Function)} is the reverse of above.
  * </p>
  *
  * @see Option#XID
@@ -137,11 +135,11 @@ public interface Xid extends OptionSpec {
 
     /**
      * <p>
-     * {@link RmDatabaseSession#recover(int, Map) } maybe add some dialect value.
+     * {@link RmDatabaseSession#recover(int, java.util.function.Function) } maybe add some dialect value.
      * </p>
      *
      * @return null or dialect option value.
-     * @see RmDatabaseSession#recover(int, Map)
+     * @see RmDatabaseSession#recover(int, java.util.function.Function)
      */
     @Nullable
     @Override

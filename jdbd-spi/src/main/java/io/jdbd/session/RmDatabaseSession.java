@@ -132,6 +132,34 @@ public interface RmDatabaseSession extends DatabaseSession {
     int XA_OK = 0;
 
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.start(xid,RmDatabaseSession.TM_NO_FLAGS,TransactionOption.option(null,false)) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #start(Xid, int, TransactionOption)
+     */
+    Publisher<RmDatabaseSession> start(Xid xid);
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.start(xid,flags,TransactionOption.option(null,false)) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #start(Xid, int, TransactionOption)
+     */
     Publisher<RmDatabaseSession> start(Xid xid, int flags);
 
     /**
@@ -175,6 +203,34 @@ public interface RmDatabaseSession extends DatabaseSession {
     Publisher<RmDatabaseSession> start(Xid xid, int flags, TransactionOption option);
 
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.end(xid,RmDatabaseSession.TM_SUCCESS,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #end(Xid, int, Function)
+     */
+    Publisher<RmDatabaseSession> end(Xid xid);
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.end(xid,flags,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #end(Xid, int, Function)
+     */
     Publisher<RmDatabaseSession> end(Xid xid, int flags);
 
     /**
@@ -192,17 +248,17 @@ public interface RmDatabaseSession extends DatabaseSession {
      * </ul>
      * </p>
      *
-     * @param flags     bit set, support one of following :
-     *                  <ul>
-     *                      <li>{@link #TM_SUCCESS} s specified, the portion of work has completed successfully.</li>
-     *                      <li>{@link #TM_FAIL} is specified, the portion of work has failed.<br/>
-     *                      The resource manager may mark the transaction as rollback-only
-     *                      </li>
-     *                      <li>{@link #TM_SUSPEND} , the transaction branch is temporarily suspended in an incomplete state.<br/>
-     *                      The transaction context is in a suspended state and must be resumed via the <code>start</code><br/>
-     *                      method with {@link #TM_RESUME} specified.<br/>
-     *                      </li>
-     *                  </ul>
+     * @param flags      bit set, support one of following :
+     *                   <ul>
+     *                       <li>{@link #TM_SUCCESS} s specified, the portion of work has completed successfully.</li>
+     *                       <li>{@link #TM_FAIL} is specified, the portion of work has failed.<br/>
+     *                       The resource manager may mark the transaction as rollback-only
+     *                       </li>
+     *                       <li>{@link #TM_SUSPEND} , the transaction branch is temporarily suspended in an incomplete state.<br/>
+     *                       The transaction context is in a suspended state and must be resumed via the <code>start</code><br/>
+     *                       method with {@link #TM_RESUME} specified.<br/>
+     *                       </li>
+     *                   </ul>
      * @param optionFunc dialect option ,empty or option.
      * @throws XaException emit(not throw) when
      *                     <ul>
@@ -217,6 +273,19 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     Publisher<RmDatabaseSession> end(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.prepare(xid,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #prepare(Xid, Function)
+     */
     Publisher<Integer> prepare(Xid xid);
 
     /**
@@ -243,6 +312,34 @@ public interface RmDatabaseSession extends DatabaseSession {
     Publisher<Integer> prepare(Xid xid, Function<Option<?>, ?> optionFunc);
 
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.commit(xid,RmDatabaseSession.TM_NO_FLAGS,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #commit(Xid, int, Function)
+     */
+    Publisher<RmDatabaseSession> commit(Xid xid);
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.commit(xid,flags,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #commit(Xid, int, Function)
+     */
     Publisher<RmDatabaseSession> commit(Xid xid, int flags);
 
     /**
@@ -255,6 +352,11 @@ public interface RmDatabaseSession extends DatabaseSession {
      * </p>
      *
      * @param xid        non-null
+     * @param flags      one of following :
+     *                   <ul>
+     *                     <li>{@link #TM_NO_FLAGS}</li>
+     *                     <li>{@link #TM_ONE_PHASE}</li>
+     *                   </ul>
      * @param optionFunc optionMap dialect option ,empty or option map.
      * @throws XaException emit(not throw) when
      *                     <ul>
@@ -268,6 +370,19 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     Publisher<RmDatabaseSession> commit(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.rollback(xid,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #rollback(Xid, Function)
+     */
     Publisher<RmDatabaseSession> rollback(Xid xid);
 
     /**
@@ -293,6 +408,19 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     Publisher<RmDatabaseSession> rollback(Xid xid, Function<Option<?>, ?> optionFunc);
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.forget(xid,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #forget(Xid, Function)
+     */
     Publisher<RmDatabaseSession> forget(Xid xid);
 
     /**
@@ -319,11 +447,39 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     Publisher<RmDatabaseSession> forget(Xid xid, Function<Option<?>, ?> optionFunc);
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.recover(RmDatabaseSession.TM_NO_FLAGS,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #recover(int, Function)
+     */
+    Publisher<Optional<Xid>> recover();
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link RmDatabaseSession}
+     *             session.recover(flags,option -> null) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @see #recover(int, Function)
+     */
     Publisher<Optional<Xid>> recover(int flags);
 
     /**
      * <p>
-     * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
+     * To be safe,{@link RmDatabaseSession} <strong>possibly</strong> write gtrid and bqual as hex strings. steps :
      * <ul>
      *     <li>Get byte[] of trid ( or bqual) with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid ( or bqual) as hex strings</li>
@@ -331,7 +487,12 @@ public interface RmDatabaseSession extends DatabaseSession {
      * so the conversion process of this method is the reverse of above.
      * </p>
      *
-     * @param flags      bit sets
+     * @param flags   one of following :
+     *                <ul>
+     *                  <li>{@link #TM_NO_FLAGS}</li>
+     *                  <li>{@link #TM_START_RSCAN}</li>
+     *                  <li>{@link #TM_END_RSCAN}</li>
+     *                </ul>
      * @param optionFunc optionMap dialect option ,empty or option map.
      * @return return the xids whose xid format follow this driver, If xid format don't follow this driver, then it is represented by {@link Optional#empty()}.
      * @throws XaException emit(not throw) when
@@ -396,7 +557,6 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     @Override
     Publisher<RmDatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
-
 
 
 }

@@ -33,6 +33,9 @@ public abstract class JdbdBuffers {
         return new String(hexEscapes(upperCase, bufferArray, offset, end), StandardCharsets.UTF_8);
     }
 
+    public static byte[] hexEscapes(boolean upperCase, byte[] bufferArray) {
+        return hexEscapes(upperCase, bufferArray, 0, bufferArray.length);
+    }
 
     public static byte[] hexEscapes(boolean upperCase, byte[] bufferArray, final int end) {
         return hexEscapes(upperCase, bufferArray, 0, end);
@@ -45,12 +48,16 @@ public abstract class JdbdBuffers {
         final byte[] hexDigits = upperCase ? UPPER_CASE_HEX_DIGITS : LOWER_CASE_HEX_DIGITS;
         final byte[] hexDigitArray = new byte[(end - offset) << 1];
         byte b;
-        for (int i = offset, j = offset; i < end; i++, j += 2) {
+        for (int i = offset, j = 0; i < end; i++, j += 2) {
             b = bufferArray[i];
             hexDigitArray[j] = hexDigits[(b >> 4) & 0xF]; // write highBits
             hexDigitArray[j + 1] = hexDigits[b & 0xF]; // write lowBits
         }
         return hexDigitArray;
+    }
+
+    public static byte[] decodeHex(byte[] hexBytes) {
+        return decodeHex(hexBytes, 0, hexBytes.length);
     }
 
     public static byte[] decodeHex(byte[] hexBytes, final int end) {
@@ -64,7 +71,7 @@ public abstract class JdbdBuffers {
         final byte[] digitArray = new byte[(end - offset) >> 1];
         final int num0 = '0', num9 = '9', a = 'a', f = 'f', A = 'A', F = 'F';
         final int intervalOfa = a - 10, intervalOfA = A - 10;
-        for (int i = offset, j = offset; i < end; i++, j += 2) {
+        for (int i = 0, j = offset; i < digitArray.length; i++, j += 2) {
 
             for (int k = j, b; k < j + 2; k++) {
                 b = hexBytes[k];

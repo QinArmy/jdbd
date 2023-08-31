@@ -713,7 +713,7 @@ public abstract class JdbdExceptions {
 
     public static XaException xaTransactionRollbackOnly(@Nullable Xid xid) {
         String m = String.format("xid[%s] is rollback-only.", xid);
-        return new XaException(m, XaException.XAER_PROTO);
+        return new XaException(m, XaException.XA_RBROLLBACK);
     }
 
     public static XaException xaTransactionDontSupportEndCommand(@Nullable Xid xid, XaStates states) {
