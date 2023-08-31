@@ -64,7 +64,7 @@ public interface Statement extends OptionSpec {
      * @param value    nullable the parameter value; be following type :
      *                 <ul>
      *                    <li>generic java type,for example : {@link Boolean} , {@link Integer} , {@link String} , {@code byte[]},{@code Integer[]} ,{@link java.time.LocalDateTime} , {@link java.time.Duration} ,{@link java.time.YearMonth} ,{@link java.util.BitSet},{@link java.util.List}</li>
-     *                    <li>{@link Point} spatial point type</li>
+     *                     <li>{@link Point} spatial point type,spatial have two format : WKB and WKT, see the java doc of the implementation of this method. </li>
      *                    <li>{@link Parameter} :
      *                        <ol>
      *                            <li>{@link Blob} long binary</li>
