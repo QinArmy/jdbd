@@ -12,6 +12,7 @@ import java.time.Duration;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -45,6 +46,8 @@ public final class Option<T> {
         }
         return new Option<>(name, javaType);
     }
+
+    public static final Function<Option<?>, ?> EMPTY_OPTION_FUNC = option -> null;
 
     private static final ConcurrentMap<String, Option<?>> INSTANCE_MAP = Isolation.concurrentHashMap();
 

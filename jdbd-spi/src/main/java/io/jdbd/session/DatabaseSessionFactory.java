@@ -45,7 +45,6 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
      * </p>
-     *
      * @return emit just one {@link LocalDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>
      * <li>If the instance of {@link DatabaseSessionFactory} is created pool vendor , then always emit non-{@link io.jdbd.pool.PoolLocalDatabaseSession} instance.</li>

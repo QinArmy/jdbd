@@ -4,10 +4,7 @@ package io.jdbd.statement;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
-import io.jdbd.result.CurrentRow;
-import io.jdbd.result.OrderedFlux;
-import io.jdbd.result.ResultRow;
-import io.jdbd.result.ResultStates;
+import io.jdbd.result.*;
 import io.jdbd.session.ChunkOption;
 import io.jdbd.session.Option;
 import org.reactivestreams.Publisher;
@@ -76,6 +73,29 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * This method is equivalent to following :
      * <pre>
      *         <code><br/>
+     *             // statement is a instance of {@link BindSingleStatement}
+     *              R mono  = monoFunc.apply(statement.executeUpdate()) ;
+     *
+     *              // for example ,if use Project reactor , reactor.core.publisher.Mono
+     *              statement.executeUpdate(Mono::from)
+     *                 .map(ResultStates::affectedRows)
+     *
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @param monoFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Mono#from(org.reactivestreams.Publisher)}
+     * @param <M>      M representing Mono that emit just one element or {@link Throwable}.
+     * @return Mono that emit just one element or {@link Throwable}.
+     * @see #executeUpdate()
+     */
+    <M extends Publisher<ResultStates>> M executeUpdate(Function<Publisher<ResultStates>, M> monoFunc);
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
      *             // stmt is instance of {@link BindSingleStatement}.
      *             stmt.executeQuery(CurrentRow::asResultRow,states -> {}) ; // ignore ResultStates instance.
      *         </code>
@@ -100,7 +120,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      * @see #executeQuery(Function, Consumer)
      */
-    <R> Publisher<R> executeQuery(Function<CurrentRow, R> function);
+    <R> Publisher<R> executeQuery(Function<CurrentRow, R> rowFunc);
 
 
     /**
@@ -114,7 +134,31 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Text}</li>
      *                       </ul>
      */
-    <R> Publisher<R> executeQuery(Function<CurrentRow, R> function, Consumer<ResultStates> statesConsumer);
+    <R> Publisher<R> executeQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // statement is a instance of {@link BindSingleStatement}
+     *              R flux  = fluxFunc.apply(statement.executeQuery(rowFunc,statesConsumer)) ;
+     *
+     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
+     *              statement.executeQuery(rowFunc,statesConsumer,Flux::from)
+     *                 .collectList()
+     *
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
+     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
+     * @return Flux that emit just one element or {@link Throwable}.
+     * @see #executeQuery(Function, Consumer)
+     */
+    <R, F extends Publisher<R>> F executeQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer, Function<Publisher<R>, F> fluxFunc);
+
 
     /**
      * <p>
@@ -122,6 +166,29 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * </p>
      */
     OrderedFlux executeAsFlux();
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // statement is a instance of {@link BindSingleStatement}
+     *              R flux  = fluxFunc.apply(statement.executeAsFlux()) ;
+     *
+     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
+     *              statement.executeAsFlux(Flux::from)
+     *                 .collectList()
+     *
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
+     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
+     * @return Flux that emit just one element or {@link Throwable}.
+     * @see #executeAsFlux()
+     */
+    <F extends Publisher<ResultItem>> F executeAsFlux(Function<OrderedFlux, F> fluxFunc);
 
 
     /**

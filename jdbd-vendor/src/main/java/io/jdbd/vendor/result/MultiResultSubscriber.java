@@ -4,7 +4,6 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.result.*;
 import io.jdbd.vendor.JdbdCompositeException;
-import io.jdbd.vendor.protocol.DatabaseProtocol;
 import io.jdbd.vendor.task.ITaskAdjutant;
 import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
@@ -463,7 +462,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
                 }
             } else if (item instanceof ResultStates) {
                 final Consumer<ResultStates> statesConsumer = this.statesConsumer;
-                if (statesConsumer != DatabaseProtocol.IGNORE_RESULT_STATES) {
+                if (statesConsumer != ResultStates.IGNORE_STATES) {
                     try {
                         statesConsumer.accept((ResultStates) item);
                     } catch (Throwable e) {
@@ -588,12 +587,12 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
 
         @Override
         public final Publisher<ResultRow> nextQuery() {
-            return this.nextQuery(DatabaseProtocol.ROW_FUNC, DatabaseProtocol.IGNORE_RESULT_STATES);
+            return this.nextQuery(CurrentRow.AS_RESULT_ROW, ResultStates.IGNORE_STATES);
         }
 
         @Override
         public final <R> Publisher<R> nextQuery(Function<CurrentRow, R> function) {
-            return this.nextQuery(function, DatabaseProtocol.IGNORE_RESULT_STATES);
+            return this.nextQuery(function, ResultStates.IGNORE_STATES);
         }
 
         @Override
@@ -602,8 +601,36 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         }
 
         @Override
+        public final <R, F extends Publisher<R>> F nextQuery(Function<CurrentRow, R> rowFunc,
+                                                             Consumer<ResultStates> statesConsumer,
+                                                             @Nullable Function<Publisher<R>, F> fluxFunc) {
+            if (fluxFunc == null) {
+                throw JdbdExceptions.fluxFuncIsNull();
+            }
+            final F flux;
+            flux = fluxFunc.apply(nextQuery(rowFunc, statesConsumer));
+            if (flux == null) {
+                throw JdbdExceptions.fluxFuncReturnNull(fluxFunc);
+            }
+            return flux;
+        }
+
+        @Override
         public final OrderedFlux nextQueryFlux() {
             return this.upstream.addQueryFluxSubscriber();
+        }
+
+        @Override
+        public final <F extends Publisher<ResultItem>> F nextQueryFlux(@Nullable Function<OrderedFlux, F> fluxFunc) {
+            if (fluxFunc == null) {
+                throw JdbdExceptions.fluxFuncIsNull();
+            }
+            final F flux;
+            flux = fluxFunc.apply(nextQueryFlux());
+            if (flux == null) {
+                throw JdbdExceptions.fluxFuncReturnNull(fluxFunc);
+            }
+            return flux;
         }
 
 
@@ -630,6 +657,20 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         public Publisher<ResultStates> nextUpdate() {
             return this.upstream.addUpdateSubscriber();
         }
+
+        @Override
+        public <M extends Publisher<ResultStates>> M nextUpdate(@Nullable Function<Publisher<ResultStates>, M> monoFunc) {
+            if (monoFunc == null) {
+                throw JdbdExceptions.monoFuncIsNull();
+            }
+            final M mono;
+            mono = monoFunc.apply(nextUpdate());
+            if (mono == null) {
+                throw JdbdExceptions.monoFuncReturnNull(monoFunc);
+            }
+            return mono;
+        }
+
 
     }// JdbdMultiResult
 

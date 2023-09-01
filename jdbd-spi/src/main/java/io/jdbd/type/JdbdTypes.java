@@ -1,5 +1,6 @@
 package io.jdbd.type;
 
+import io.jdbd.JdbdException;
 import io.jdbd.lang.NonNull;
 import io.jdbd.lang.Nullable;
 import org.reactivestreams.Publisher;
@@ -7,6 +8,7 @@ import org.reactivestreams.Publisher;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.function.Function;
 
 abstract class JdbdTypes {
 
@@ -55,6 +57,21 @@ abstract class JdbdTypes {
     }
 
 
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    static NullPointerException fluxFuncIsNull() {
+        return new NullPointerException("fluxFunc must be non-null");
+    }
+
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    static NullPointerException fluxFuncReturnNull(Function<?, ?> fluxFunc) {
+        return new NullPointerException(String.format("%s must return non-null", fluxFunc));
+    }
+
+
     private static final class JdbdBlob implements Blob {
 
         private final Publisher<byte[]> source;
@@ -69,6 +86,18 @@ abstract class JdbdTypes {
             return this.source;
         }
 
+        @Override
+        public <F extends Publisher<byte[]>> F value(final @Nullable Function<Publisher<byte[]>, F> fluxFunc) {
+            if (fluxFunc == null) {
+                throw fluxFuncIsNull();
+            }
+            final F flux;
+            flux = fluxFunc.apply(this.source);
+            if (flux == null) {
+                throw fluxFuncReturnNull(fluxFunc);
+            }
+            return flux;
+        }
 
     }//JdbdBlob
 
@@ -86,6 +115,18 @@ abstract class JdbdTypes {
             return this.source;
         }
 
+        @Override
+        public <F extends Publisher<CharSequence>> F value(final @Nullable Function<Publisher<CharSequence>, F> fluxFunc) {
+            if (fluxFunc == null) {
+                throw fluxFuncIsNull();
+            }
+            final F flux;
+            flux = fluxFunc.apply(this.source);
+            if (flux == null) {
+                throw fluxFuncReturnNull(fluxFunc);
+            }
+            return flux;
+        }
 
     }//JdbdBlob
 
@@ -110,6 +151,19 @@ abstract class JdbdTypes {
         @Override
         public Publisher<byte[]> value() {
             return this.source;
+        }
+
+        @Override
+        public <F extends Publisher<byte[]>> F value(final @Nullable Function<Publisher<byte[]>, F> fluxFunc) {
+            if (fluxFunc == null) {
+                throw fluxFuncIsNull();
+            }
+            final F flux;
+            flux = fluxFunc.apply(this.source);
+            if (flux == null) {
+                throw fluxFuncReturnNull(fluxFunc);
+            }
+            return flux;
         }
 
         @Override

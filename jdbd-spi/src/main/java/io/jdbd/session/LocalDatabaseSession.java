@@ -224,6 +224,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
     Publisher<LocalDatabaseSession> setTransactionCharacteristics(TransactionOption option);
 
 
+
     /**
      * {@inheritDoc}
      */
@@ -235,6 +236,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      */
     @Override
     Publisher<LocalDatabaseSession> releaseSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
+
 
     /**
      * {@inheritDoc}

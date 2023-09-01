@@ -203,6 +203,7 @@ public interface RmDatabaseSession extends DatabaseSession {
     Publisher<RmDatabaseSession> start(Xid xid, int flags, TransactionOption option);
 
 
+
     /**
      * <p>
      * This method is equivalent to following :
@@ -273,6 +274,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     Publisher<RmDatabaseSession> end(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
 
+
     /**
      * <p>
      * This method is equivalent to following :
@@ -342,6 +344,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     Publisher<RmDatabaseSession> commit(Xid xid, int flags);
 
+
     /**
      * <p>
      * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
@@ -369,6 +372,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                     </ul>
      */
     Publisher<RmDatabaseSession> commit(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
+
 
     /**
      * <p>
@@ -407,6 +411,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                     </ul>
      */
     Publisher<RmDatabaseSession> rollback(Xid xid, Function<Option<?>, ?> optionFunc);
+
 
     /**
      * <p>
@@ -487,12 +492,12 @@ public interface RmDatabaseSession extends DatabaseSession {
      * so the conversion process of this method is the reverse of above.
      * </p>
      *
-     * @param flags   one of following :
-     *                <ul>
-     *                  <li>{@link #TM_NO_FLAGS}</li>
-     *                  <li>{@link #TM_START_RSCAN}</li>
-     *                  <li>{@link #TM_END_RSCAN}</li>
-     *                </ul>
+     * @param flags      one of following :
+     *                   <ul>
+     *                     <li>{@link #TM_NO_FLAGS}</li>
+     *                     <li>{@link #TM_START_RSCAN}</li>
+     *                     <li>{@link #TM_END_RSCAN}</li>
+     *                   </ul>
      * @param optionFunc optionMap dialect option ,empty or option map.
      * @return return the xids whose xid format follow this driver, If xid format don't follow this driver, then it is represented by {@link Optional#empty()}.
      * @throws XaException emit(not throw) when
@@ -504,6 +509,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                     </ul>
      */
     Publisher<Optional<Xid>> recover(int flags, Function<Option<?>, ?> optionFunc);
+
 
     /**
      * @return true : support {@link #forget(Xid, Function)} method

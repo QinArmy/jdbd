@@ -3,10 +3,7 @@ package io.jdbd.statement;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
-import io.jdbd.result.MultiResult;
-import io.jdbd.result.OrderedFlux;
-import io.jdbd.result.QueryResults;
-import io.jdbd.result.ResultStates;
+import io.jdbd.result.*;
 import io.jdbd.session.ChunkOption;
 import io.jdbd.session.Option;
 import org.reactivestreams.Publisher;
@@ -129,6 +126,29 @@ public interface MultiResultStatement extends Statement {
      * @see MultiStatement#addStatement(String)
      */
     Publisher<ResultStates> executeBatchUpdate();
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // statement is a instance of {@link MultiResultStatement}
+     *              R flux  = fluxFunc.apply(statement.executeBatchUpdate()) ;
+     *
+     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
+     *              statement.executeBatchUpdate(Flux::from)
+     *                 .collectList()
+     *
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
+     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
+     * @return Flux that emit just one element or {@link Throwable}.
+     * @see #executeBatchAsFlux()
+     */
+    <F extends Publisher<ResultStates>> F executeBatchUpdate(Function<Publisher<ResultStates>, F> fluxFunc);
 
     /**
      * <p>
@@ -443,9 +463,9 @@ public interface MultiResultStatement extends Statement {
      *         </code>
      *     </pre>
      * </p>
-     *<p>
-     *     For example 2 :
-     *     <pre>
+     * <p>
+     * For example 2 :
+     * <pre>
      *         <code><br/>
      *    &#64;Test
      *    public void executeBatchAsFlux(final DatabaseSession session){
@@ -510,11 +530,35 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     *</p>
+     * </p>
+     *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
     OrderedFlux executeBatchAsFlux();
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // statement is a instance of {@link BindSingleStatement}
+     *              R flux  = fluxFunc.apply(statement.executeBatchAsFlux()) ;
+     *
+     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
+     *              statement.executeBatchAsFlux(Flux::from)
+     *                 .collectList()
+     *
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
+     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
+     * @return Flux that emit just one element or {@link Throwable}.
+     * @see #executeBatchAsFlux()
+     */
+    <F extends Publisher<ResultItem>> F executeBatchAsFlux(Function<OrderedFlux, F> fluxFunc);
 
     /**
      * {@inheritDoc }

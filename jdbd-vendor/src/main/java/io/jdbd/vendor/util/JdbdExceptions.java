@@ -46,6 +46,34 @@ public abstract class JdbdExceptions {
         return e;
     }
 
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    public static NullPointerException fluxFuncIsNull() {
+        return new NullPointerException("fluxFunc must be non-null");
+    }
+
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    public static NullPointerException fluxFuncReturnNull(Function<?, ?> fluxFunc) {
+        return new NullPointerException(String.format("%s must return non-null", fluxFunc));
+    }
+
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    public static NullPointerException monoFuncIsNull() {
+        return new NullPointerException("monoFunc must be non-null");
+    }
+
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    public static NullPointerException monoFuncReturnNull(Function<?, ?> monoFunc) {
+        return new NullPointerException(String.format("%s must return non-null", monoFunc));
+    }
+
 
     public static JdbdException unexpectedEnum(Enum<?> e) {
         return new JdbdException(String.format("unexpected enum %s", e));

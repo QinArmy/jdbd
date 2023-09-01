@@ -7,7 +7,6 @@ import io.jdbd.result.ResultItem;
 import io.jdbd.result.ResultRowMeta;
 import io.jdbd.result.ResultStates;
 import io.jdbd.vendor.JdbdCompositeException;
-import io.jdbd.vendor.protocol.DatabaseProtocol;
 import io.jdbd.vendor.util.JdbdExceptions;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -101,7 +100,7 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
             }
         } else if (item instanceof ResultStates) {
             final Consumer<ResultStates> statesConsumer = this.statesConsumer;
-            if (statesConsumer != DatabaseProtocol.IGNORE_RESULT_STATES) {
+            if (statesConsumer != ResultStates.IGNORE_STATES) {
                 try {
                     statesConsumer.accept((ResultStates) item);
                 } catch (Throwable e) {

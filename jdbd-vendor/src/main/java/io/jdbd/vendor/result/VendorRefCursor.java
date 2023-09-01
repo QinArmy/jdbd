@@ -3,7 +3,7 @@ package io.jdbd.vendor.result;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.CursorDirection;
 import io.jdbd.result.RefCursor;
-import io.jdbd.vendor.protocol.DatabaseProtocol;
+import io.jdbd.result.ResultStates;
 import org.reactivestreams.Publisher;
 
 import java.util.function.Function;
@@ -24,12 +24,12 @@ public abstract class VendorRefCursor implements RefCursor {
 
     @Override
     public final <T> Publisher<T> fetch(CursorDirection direction, Function<CurrentRow, T> function) {
-        return this.fetch(direction, function, DatabaseProtocol.IGNORE_RESULT_STATES);
+        return this.fetch(direction, function, ResultStates.IGNORE_STATES);
     }
 
     @Override
     public final <T> Publisher<T> fetch(CursorDirection direction, long count, Function<CurrentRow, T> function) {
-        return this.fetch(direction, count, function, DatabaseProtocol.IGNORE_RESULT_STATES);
+        return this.fetch(direction, count, function, ResultStates.IGNORE_STATES);
     }
 
 

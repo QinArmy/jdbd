@@ -54,6 +54,7 @@ public interface StaticStatementSpec {
     Publisher<ResultStates> executeUpdate(String sql);
 
 
+
     /**
      * <p>
      * This method is equivalent to following :
@@ -82,7 +83,7 @@ public interface StaticStatementSpec {
      *
      * @see #executeQuery(String, Function, Consumer)
      */
-    <R> Publisher<R> executeQuery(String sql, Function<CurrentRow, R> function);
+    <R> Publisher<R> executeQuery(String sql, Function<CurrentRow, R> rowFunc);
 
     /**
      * <p>
@@ -118,12 +119,14 @@ public interface StaticStatementSpec {
      */
     Publisher<ResultStates> executeBatchUpdate(List<String> sqlGroup);
 
+
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * </p>
      */
     QueryResults executeBatchQuery(List<String> sqlGroup);
+
 
     /**
      * <p>
@@ -138,6 +141,7 @@ public interface StaticStatementSpec {
      * </p>
      */
     OrderedFlux executeBatchAsFlux(List<String> sqlGroup);
+
 
     /**
      * <p>

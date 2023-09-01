@@ -6,6 +6,8 @@ import io.jdbd.session.Option;
 import io.jdbd.session.OptionSpec;
 import io.jdbd.statement.Statement;
 
+import java.util.function.Consumer;
+
 /**
  * <p>
  * The interface representing the states of the result of sql statement (eg: SELECT/INSERT/UPDATE/DELETE).
@@ -26,6 +28,9 @@ import io.jdbd.statement.Statement;
  * @since 1.0
  */
 public interface ResultStates extends ResultItem, OptionSpec {
+
+    Consumer<ResultStates> IGNORE_STATES = states -> {
+    };
 
 
     boolean isSupportInsertId();

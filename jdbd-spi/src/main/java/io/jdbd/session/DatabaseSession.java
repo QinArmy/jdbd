@@ -146,6 +146,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      */
     Publisher<PreparedStatement> prepareStatement(String sql);
 
+
     /**
      * <p>
      * This method is equivalent to following :
@@ -259,6 +260,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      */
     Publisher<? extends DatabaseSession> setTransactionCharacteristics(TransactionOption option);
 
+
     /**
      * <p>
      * The state usually is returned database server by database client protocol.
@@ -310,6 +312,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     Publisher<? extends DatabaseSession> releaseSavePoint(SavePoint savepoint);
+
 
     /**
      * <p>

@@ -1,6 +1,5 @@
 package io.jdbd.type;
 
-import io.jdbd.lang.NonNull;
 import org.reactivestreams.Publisher;
 
 /**
@@ -17,7 +16,7 @@ import org.reactivestreams.Publisher;
  */
 public interface PublisherParameter extends LongParameter {
 
-    @NonNull
+
     Publisher<?> value();
 
 

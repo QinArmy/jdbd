@@ -101,7 +101,8 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                  <li>server response error,see {@link ServerException}</li>
      *                              </ul>
      */
-    <T> Publisher<T> fetch(CursorDirection direction, Function<CurrentRow, T> function, Consumer<ResultStates> consumer);
+    <T> Publisher<T> fetch(CursorDirection direction, Function<CurrentRow, T> rowFunc, Consumer<ResultStates> statesConsumer);
+
 
     /**
      * <p>
@@ -214,6 +215,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                  </ul>
      */
     <T> Publisher<T> fetch(CursorDirection direction, long count, Function<CurrentRow, T> function, Consumer<ResultStates> consumer);
+
 
     /**
      * <p>

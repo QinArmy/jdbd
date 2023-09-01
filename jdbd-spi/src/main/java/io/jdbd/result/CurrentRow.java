@@ -25,6 +25,8 @@ import java.util.function.Function;
  */
 public interface CurrentRow extends DataRow {
 
+    Function<CurrentRow, ResultRow> AS_RESULT_ROW = CurrentRow::asResultRow;
+
     /**
      * @return the row number of current row, based 1 . The first value is 1 .
      */

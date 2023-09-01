@@ -1,7 +1,10 @@
 package io.jdbd.vendor.protocol;
 
 import io.jdbd.result.*;
-import io.jdbd.session.*;
+import io.jdbd.session.Closeable;
+import io.jdbd.session.DatabaseSession;
+import io.jdbd.session.OptionSpec;
+import io.jdbd.session.ServerVersion;
 import io.jdbd.statement.BindStatement;
 import io.jdbd.statement.MultiStatement;
 import io.jdbd.statement.StaticStatement;
@@ -17,12 +20,6 @@ import java.util.function.Function;
 
 public interface DatabaseProtocol extends OptionSpec, Closeable {
 
-
-    Function<CurrentRow, ResultRow> ROW_FUNC = CurrentRow::asResultRow;
-
-    Function<Option<?>, ?> OPTION_FUNC = option -> null;
-    Consumer<ResultStates> IGNORE_RESULT_STATES = states -> {
-    };
 
 
     long sessionIdentifier();
