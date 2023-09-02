@@ -2,6 +2,7 @@ package io.jdbd.session;
 
 import io.jdbd.Driver;
 import io.jdbd.result.RefCursor;
+import io.jdbd.util.JdbdUtils;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -34,7 +35,7 @@ public final class Option<T> {
 
     @SuppressWarnings("unchecked")
     public static <T> Option<T> from(final String name, final Class<T> javaType) {
-        if (Isolation.hasNoText(name)) {
+        if (JdbdUtils.hasNoText(name)) {
             throw new IllegalArgumentException("no text");
         }
         Objects.requireNonNull(javaType);
@@ -49,7 +50,7 @@ public final class Option<T> {
 
     public static final Function<Option<?>, ?> EMPTY_OPTION_FUNC = option -> null;
 
-    private static final ConcurrentMap<String, Option<?>> INSTANCE_MAP = Isolation.concurrentHashMap();
+    private static final ConcurrentMap<String, Option<?>> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
 
     /**
      * <p>

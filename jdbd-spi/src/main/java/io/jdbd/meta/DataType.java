@@ -56,4 +56,105 @@ public interface DataType {
      */
     boolean isUserDefined();
 
+
+    /**
+     * <p>
+     * This method is equivalent to {@code DataType.buildIn(typeName,false)} :
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
+     * It means you should prefer {@link JdbdType}.
+     * </p>
+     *
+     * @see #buildIn(String, boolean)
+     */
+    static DataType buildIn(String typeName) {
+        return DataTypeFactory.buildIn(typeName, false);
+    }
+
+    /**
+     * <p>
+     * Get database build-in dialect {@link DataType} instance by typeName.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
+     * It means you should prefer {@link JdbdType}.
+     * </p>
+     *
+     * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
+     * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.
+     * @return {@link DataType} that representing database build-in dialect type.
+     * @throws IllegalArgumentException throw when typeName have no text.
+     */
+    static DataType buildIn(String typeName, boolean caseSensitivity) {
+        return DataTypeFactory.buildIn(typeName, caseSensitivity);
+    }
+
+    /**
+     * <p>
+     * This method is equivalent to {@code DataType.internalUse(typeName,false)} :
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
+     * It means you should prefer {@link JdbdType}.
+     * </p>
+     *
+     * @see #internalUse(String, boolean)
+     */
+    static DataType internalUse(String typeName) {
+        return DataTypeFactory.internalUse(typeName, false);
+    }
+
+    /**
+     * <p>
+     * Get database internal-use {@link DataType} instance by typeName.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
+     * It means you should prefer {@link JdbdType}.
+     * </p>
+     *
+     * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
+     * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.
+     * @return {@link DataType} that representing database internal-use type.
+     * @throws IllegalArgumentException throw when typeName have no text.
+     */
+    static DataType internalUse(String typeName, boolean caseSensitivity) {
+        return DataTypeFactory.internalUse(typeName, caseSensitivity);
+    }
+
+    /**
+     * <p>
+     * This method is equivalent to {@code DataType.userDefined(typeName,false)} :
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
+     * It means you should prefer {@link JdbdType}.
+     * </p>
+     *
+     * @see #userDefined(String, boolean)
+     */
+    static DataType userDefined(String typeName) {
+        return DataTypeFactory.userDefined(typeName, false);
+    }
+
+    /**
+     * <p>
+     * Get user-defined {@link DataType} instance by typeName.
+     * </p>
+     * * <p>
+     * * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
+     * * It means you should prefer {@link JdbdType}.
+     * * </p>
+     *
+     * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
+     * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.
+     * @return {@link DataType} that representing user-defined type,{@link DataType#isUserDefined()} always true.
+     * @throws IllegalArgumentException throw when typeName have no text.
+     */
+    static DataType userDefined(String typeName, boolean caseSensitivity) {
+        return DataTypeFactory.userDefined(typeName, caseSensitivity);
+    }
+
+
 }

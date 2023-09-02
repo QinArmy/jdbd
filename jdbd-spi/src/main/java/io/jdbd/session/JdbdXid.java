@@ -1,15 +1,16 @@
 package io.jdbd.session;
 
 import io.jdbd.lang.Nullable;
+import io.jdbd.util.JdbdUtils;
 
 import java.util.Objects;
 
 final class JdbdXid implements Xid {
 
     static JdbdXid from(final String gtrid, final @Nullable String bqual, final int formatId) {
-        if (Isolation.hasNoText(gtrid)) {
+        if (JdbdUtils.hasNoText(gtrid)) {
             throw new IllegalArgumentException("gtrid must have text");
-        } else if (bqual != null && Isolation.hasNoText(gtrid)) {
+        } else if (bqual != null && JdbdUtils.hasNoText(gtrid)) {
             throw new IllegalArgumentException("bqual must be null or  have text");
         }
         return new JdbdXid(gtrid, bqual, formatId);

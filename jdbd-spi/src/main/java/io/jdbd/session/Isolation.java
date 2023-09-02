@@ -1,20 +1,19 @@
 package io.jdbd.session;
 
 
-import io.jdbd.lang.Nullable;
+import io.jdbd.util.JdbdUtils;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 public final class Isolation {
 
     public static Isolation from(final String value) {
-        if (hasNoText(value)) {
+        if (JdbdUtils.hasNoText(value)) {
             throw new IllegalArgumentException("no text");
         }
         return INSTANCE_MAP.computeIfAbsent(value, CONSTRUCTOR);
@@ -22,7 +21,7 @@ public final class Isolation {
 
     private static final Function<String, Isolation> CONSTRUCTOR = Isolation::new;
 
-    private static final ConcurrentMap<String, Isolation> INSTANCE_MAP = concurrentHashMap((int) (4 / 0.75f));
+    private static final ConcurrentMap<String, Isolation> INSTANCE_MAP = JdbdUtils.concurrentHashMap((int) (4 / 0.75f));
 
 
     /**
@@ -105,23 +104,6 @@ public final class Isolation {
     }
 
 
-    static boolean hasNoText(final @Nullable String str) {
-        final int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
-            return true;
-        }
-        boolean match = true;
-        for (int i = 0; i < strLen; i++) {
-            if (Character.isWhitespace(str.charAt(i))) {
-                continue;
-            }
-            match = false;
-            break;
-        }
-        return match;
-    }
-
-
     /*-------------------below private method -------------------*/
 
     private void readObject(ObjectInputStream in) throws IOException {
@@ -131,27 +113,6 @@ public final class Isolation {
     private void readObjectNoData() throws ObjectStreamException {
         throw new InvalidObjectException("can't deserialize Isolation");
     }
-
-
-    static <K, V> ConcurrentHashMap<K, V> concurrentHashMap() {
-        return new FinalConcurrentHashMap<>();
-    }
-
-    static <K, V> ConcurrentHashMap<K, V> concurrentHashMap(int capacity) {
-        return new FinalConcurrentHashMap<>(capacity);
-    }
-
-    private static final class FinalConcurrentHashMap<K, V> extends ConcurrentHashMap<K, V> {
-
-        private FinalConcurrentHashMap() {
-        }
-
-        private FinalConcurrentHashMap(int initialCapacity) {
-            super(initialCapacity);
-        }
-
-
-    }//FinalConcurrentHashMap
 
 
 }
