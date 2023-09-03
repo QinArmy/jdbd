@@ -127,28 +127,6 @@ public interface MultiResultStatement extends Statement {
      */
     Publisher<ResultStates> executeBatchUpdate();
 
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *             // statement is a instance of {@link MultiResultStatement}
-     *              R flux  = fluxFunc.apply(statement.executeBatchUpdate()) ;
-     *
-     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
-     *              statement.executeBatchUpdate(Flux::from)
-     *                 .collectList()
-     *
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
-     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
-     * @return Flux that emit just one element or {@link Throwable}.
-     * @see #executeBatchAsFlux()
-     */
-    <F extends Publisher<ResultStates>> F executeBatchUpdate(Function<Publisher<ResultStates>, F> fluxFunc);
 
     /**
      * <p>

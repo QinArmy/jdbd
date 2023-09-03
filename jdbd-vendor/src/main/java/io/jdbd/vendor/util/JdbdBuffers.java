@@ -25,6 +25,10 @@ public abstract class JdbdBuffers {
             , (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f'};
 
 
+    public static String hexEscapesText(boolean upperCase, byte[] bufferArray) {
+        return new String(hexEscapes(upperCase, bufferArray, 0, bufferArray.length), StandardCharsets.UTF_8);
+    }
+
     public static String hexEscapesText(boolean upperCase, byte[] bufferArray, final int length) {
         return new String(hexEscapes(upperCase, bufferArray, 0, length), StandardCharsets.UTF_8);
     }

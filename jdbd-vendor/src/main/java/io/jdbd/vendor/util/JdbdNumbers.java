@@ -27,8 +27,7 @@ public abstract class JdbdNumbers {
             throw new IllegalArgumentException("offset error");
         } else if (wkbArray.length < end) {
             throw new IllegalArgumentException("overflow");
-        }
-        if (bigEndian) {
+        } else if (bigEndian) {
             for (int i = offset, bitCount = 24; i < end; i++, bitCount -= 8) {
                 wkbArray[i] = (byte) (bitSet >> bitCount);
             }
@@ -40,6 +39,7 @@ public abstract class JdbdNumbers {
 
 
     }
+
 
     public static void writeLong(final long bitSet, final boolean bigEndian, final byte[] wkbArray, final int offset) {
         final int end = offset + 8;
@@ -59,6 +59,48 @@ public abstract class JdbdNumbers {
         }
 
 
+    }
+
+    public static int readInt(final boolean bigEndian, final byte[] wkbArray, final int offset) {
+        final int end = offset + 4;
+
+        if (offset < 0) {
+            throw new IllegalArgumentException("offset error");
+        } else if (wkbArray.length < end) {
+            throw new IllegalArgumentException("overflow");
+        }
+        int value = 0;
+        if (bigEndian) {
+            for (int i = offset, bitCount = 24; i < end; i++, bitCount -= 8) {
+                value |= ((wkbArray[i] & 0xff) << bitCount);
+            }
+        } else {
+            for (int i = offset, bitCount = 0; i < end; i++, bitCount += 8) {
+                value |= ((wkbArray[i] & 0xff) << bitCount);
+            }
+        }
+        return value;
+    }
+
+    public static long readLong(final boolean bigEndian, final byte[] wkbArray, final int offset) {
+        final int end = offset + 8;
+
+        if (offset < 0) {
+            throw new IllegalArgumentException("offset error");
+        } else if (wkbArray.length < end) {
+            throw new IllegalArgumentException("overflow");
+        }
+        long value = 0;
+        if (bigEndian) {
+            for (int i = offset, bitCount = 56; i < end; i++, bitCount -= 8) {
+                value |= ((wkbArray[i] & 0xffL) << bitCount);
+            }
+        } else {
+            for (int i = offset, bitCount = 0; i < end; i++, bitCount += 8) {
+                value |= ((wkbArray[i] & 0xffL) << bitCount);
+            }
+        }
+        return value;
     }
 
     public static byte[] toBinaryBytes(final int value, final boolean bigEndian) {

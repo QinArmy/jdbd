@@ -2,10 +2,14 @@ package io.jdbd.vendor.result;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
+import io.jdbd.type.BlobPath;
+import io.jdbd.type.Point;
+import io.jdbd.type.TextPath;
 import io.jdbd.vendor.util.*;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.BitSet;
@@ -24,6 +28,8 @@ public abstract class ColumnConverts {
         final Object value;
         if (targetClass == String.class) {
             value = ColumnConverts.convertToString(meta, source);
+        } else if (targetClass == byte[].class) {
+            value = convertToByteArray(meta, source);
         } else if (targetClass == Boolean.class) {
             value = ColumnConverts.convertToBoolean(meta, source);
         } else if (Number.class.isAssignableFrom(targetClass)) {
@@ -80,6 +86,8 @@ public abstract class ColumnConverts {
             }
         } else if (targetClass == BitSet.class) {
             value = convertToBitSet(meta, source);
+        } else if (targetClass == Point.class) {
+            value = convertToPoint(meta, source);
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
         }
@@ -349,11 +357,52 @@ public abstract class ColumnConverts {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
             }
         } else if (source instanceof byte[]) {
-            value = JdbdBuffers.hexEscapesText(false, (byte[]) source, ((byte[]) source).length);
+            value = JdbdBuffers.hexEscapesText(false, (byte[]) source);
         } else if (source instanceof BitSet) {
             value = JdbdStrings.bitSetToBitString((BitSet) source, true);
+        } else if (source instanceof TextPath) {
+            try {
+                if (Files.size(((TextPath) source).value()) > (Integer.MAX_VALUE - 128)) {
+                    throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
+                }
+                final byte[] bytes;
+                bytes = Files.readAllBytes(((TextPath) source).value());
+                value = new String(bytes, ((TextPath) source).charset());
+            } catch (Throwable e) {
+                throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, e);
+            }
+        } else if (source instanceof BlobPath) {
+            try {
+                if (Files.size(((BlobPath) source).value()) > (Integer.MAX_VALUE - 128)) {
+                    throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
+                }
+                final byte[] bytes;
+                bytes = Files.readAllBytes(((BlobPath) source).value());
+                value = JdbdBuffers.hexEscapesText(false, bytes);
+            } catch (Throwable e) {
+                throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, e);
+            }
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
+        }
+        return value;
+    }
+
+    public static byte[] convertToByteArray(final ColumnMeta meta, final Object source) {
+        final byte[] value;
+        if (source instanceof byte[]) {
+            value = (byte[]) source;
+        } else if (source instanceof BlobPath) {
+            try {
+                if (Files.size(((BlobPath) source).value()) > (Integer.MAX_VALUE - 128)) {
+                    throw JdbdExceptions.cannotConvertColumnValue(meta, source, byte[].class, null);
+                }
+                value = Files.readAllBytes(((BlobPath) source).value());
+            } catch (Throwable e) {
+                throw JdbdExceptions.cannotConvertColumnValue(meta, source, byte[].class, e);
+            }
+        } else {
+            throw JdbdExceptions.cannotConvertColumnValue(meta, source, byte[].class, null);
         }
         return value;
     }
@@ -746,6 +795,21 @@ public abstract class ColumnConverts {
             value = OffsetTime.of((LocalTime) source, serverZone);
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, OffsetTime.class, null);
+        }
+        return value;
+    }
+
+
+    public static Point convertToPoint(final ColumnMeta meta, final Object source) {
+        final Point value;
+        if (source instanceof Point) {
+            value = (Point) source;
+        } else if (source instanceof byte[]) {
+            value = JdbdSpatials.readPointWkb(meta, (byte[]) source);
+        } else if (source instanceof String) {
+            value = JdbdSpatials.readPointWkt(meta, (String) source);
+        } else {
+            throw JdbdExceptions.cannotConvertColumnValue(meta, source, Point.class, null);
         }
         return value;
     }
