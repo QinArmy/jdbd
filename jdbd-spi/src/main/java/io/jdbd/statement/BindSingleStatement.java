@@ -128,6 +128,12 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * </p>
      *
+     * @param rowFunc current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
+     *                for example :
+     *                <ul>
+     *                     <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
+     *                     <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
+     *                </ul>
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
      *                           <li>param bind error</li>

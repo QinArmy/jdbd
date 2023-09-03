@@ -53,10 +53,17 @@ public interface MultiResultSpec {
      *
      * @see #nextQuery(Function, Consumer)
      */
-    <R> Publisher<R> nextQuery(Function<CurrentRow, R> function);
+    <R> Publisher<R> nextQuery(Function<CurrentRow, R> rowFunc);
 
-
-    <R> Publisher<R> nextQuery(Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
+    /**
+     * @param rowFunc current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
+     *                for example :
+     *                <ul>
+     *                     <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
+     *                     <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
+     *                </ul>
+     */
+    <R> Publisher<R> nextQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> consumer);
 
     /**
      * <p>

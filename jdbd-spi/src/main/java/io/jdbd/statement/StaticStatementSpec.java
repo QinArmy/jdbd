@@ -54,7 +54,6 @@ public interface StaticStatementSpec {
     Publisher<ResultStates> executeUpdate(String sql);
 
 
-
     /**
      * <p>
      * This method is equivalent to following :
@@ -94,6 +93,12 @@ public interface StaticStatementSpec {
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * </p>
      *
+     * @param rowFunc current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
+     *                for example :
+     *                <ul>
+     *                     <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
+     *                     <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
+     *                </ul>
      * @return the {@link Publisher} emit 0-N element or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws NullPointerException  emit(not throw) when
      *                               <ul>
@@ -109,7 +114,7 @@ public interface StaticStatementSpec {
      *                                   <li>server response error message, see {@link ServerException}</li>
      *                               </ul>
      */
-    <R> Publisher<R> executeQuery(String sql, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
+    <R> Publisher<R> executeQuery(String sql, Function<CurrentRow, R> rowFunc, Consumer<ResultStates> consumer);
 
 
     /**
