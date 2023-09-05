@@ -259,24 +259,9 @@ public abstract class CommunicationTask {
      * <li>emit {@link Throwable} when {@link CommunicationTaskExecutor} reject signal</li>
      * </ul>
      */
-    @Deprecated
     protected final Mono<Boolean> sendPacketSignal(boolean endTask) {
-        final Mono<Boolean> mono;
-        if (this.adjutant.inEventLoop()) {
-            if (this.methodStack == MethodStack.DECODE) {
-                mono = Mono.just(Boolean.TRUE);
-            } else if (this.methodStack != null) {
-                mono = Mono.error(new IllegalStateException
-                        (String.format("Unsupported invoke in %s method stack.", this.methodStack)));
-            } else {
-                mono = this.taskSignal.sendPacket(this, endTask)
-                        .then(Mono.just(Boolean.FALSE));
-            }
-        } else {
-            mono = this.taskSignal.sendPacket(this, endTask)
-                    .then(Mono.just(Boolean.FALSE));
-        }
-        return mono;
+        return this.taskSignal.sendPacket(this, endTask)
+                .then(Mono.just(this.methodStack == MethodStack.DECODE));
     }
 
     protected final boolean inDecodeMethod() {
