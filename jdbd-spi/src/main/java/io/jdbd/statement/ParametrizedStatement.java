@@ -63,7 +63,6 @@ public interface ParametrizedStatement extends Statement {
      *                                  <li>{@link OutParameter} that representing OUT parameter of stored procedure/function</li>
      *                                  <li>{@link Blob} long binary</li>
      *                                  <li>{@link Clob} long string</li>
-     *                                  <li>{@link Text} long text</li>
      *                                  <li>{@link BlobPath} long binary,if {@link BlobPath#isDeleteOnClose()} is true , driver will delete file on close,see {@link java.nio.file.StandardOpenOption#DELETE_ON_CLOSE}</li>
      *                                  <li>{@link TextPath} long text,if {@link TextPath#isDeleteOnClose()} is true , driver will delete file on close,see {@link java.nio.file.StandardOpenOption#DELETE_ON_CLOSE}</li>
      *                              </ol>

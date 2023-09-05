@@ -61,7 +61,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
      *                           <li>param bind error</li>
-     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Text}</li>
+     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Clob}</li>
      *                       </ul>
      * @see BindStatement#executeUpdate()
      * @see PreparedStatement#executeUpdate()
@@ -137,7 +137,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
      *                           <li>param bind error</li>
-     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Text}</li>
+     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Clob}</li>
      *                       </ul>
      */
     <R> Publisher<R> executeQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);

@@ -3,17 +3,24 @@ package io.jdbd.vendor.util;
 import io.jdbd.JdbdException;
 import io.jdbd.meta.SQLType;
 import io.jdbd.type.PathParameter;
+import io.jdbd.type.TextPath;
 import io.jdbd.vendor.stmt.ParamValue;
 import io.jdbd.vendor.stmt.Value;
 import io.netty.buffer.ByteBuf;
 import reactor.util.annotation.Nullable;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.StandardOpenOption;
 import java.time.*;
@@ -126,6 +133,7 @@ public abstract class JdbdBinds {
     }
 
 
+    @Deprecated
     public static void readFileAndWrite(final FileChannel channel, final ByteBuffer buffer, final ByteBuf packet,
                                         int restBytes, final Charset textCharset, final Charset clientCharset)
             throws IOException {
@@ -154,6 +162,19 @@ public abstract class JdbdBinds {
         }
 
 
+    }
+
+    public static BufferedReader newReader(final TextPath textPath, final int bufferSize) throws IOException {
+        final SeekableByteChannel channel;
+        channel = Files.newByteChannel(textPath.value(), openOptionSet(textPath));
+
+        final InputStream inputStream;
+        inputStream = Channels.newInputStream(channel);
+
+        final InputStreamReader inReader;
+        inReader = new InputStreamReader(inputStream, textPath.charset().newDecoder());
+
+        return new BufferedReader(inReader, bufferSize);
     }
 
 

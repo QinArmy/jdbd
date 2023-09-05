@@ -31,14 +31,6 @@ abstract class JdbdTypes {
         return new JdbdClob((Publisher<CharSequence>) source);
     }
 
-    static Text textParam(@Nullable Charset charset, @Nullable Publisher<byte[]> source) {
-        if (charset == null) {
-            throw new NullPointerException("charset must non-null");
-        } else if (source == null) {
-            throw new NullPointerException("source must non-null");
-        }
-        return new JdbdText(charset, source);
-    }
 
     static TextPath textPathParam(boolean deleteOnClose, @Nullable Charset charset, @Nullable Path path) {
         if (charset == null) {
@@ -130,49 +122,6 @@ abstract class JdbdTypes {
 
     }//JdbdBlob
 
-    private static final class JdbdText implements Text {
-
-        private final Charset charset;
-
-        private final Publisher<byte[]> source;
-
-        private JdbdText(Charset charset, Publisher<byte[]> source) {
-            this.charset = charset;
-            this.source = source;
-        }
-
-        @Override
-        public Charset charset() {
-            return this.charset;
-        }
-
-
-        @NonNull
-        @Override
-        public Publisher<byte[]> value() {
-            return this.source;
-        }
-
-        @Override
-        public <F extends Publisher<byte[]>> F value(final @Nullable Function<Publisher<byte[]>, F> fluxFunc) {
-            if (fluxFunc == null) {
-                throw fluxFuncIsNull();
-            }
-            final F flux;
-            flux = fluxFunc.apply(this.source);
-            if (flux == null) {
-                throw fluxFuncReturnNull(fluxFunc);
-            }
-            return flux;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%s[ charset : %s ]", getClass().getName(), this.charset.name());
-        }
-
-
-    }//JdbdText
 
     private static final class JdbdTextPath implements TextPath {
 

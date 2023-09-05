@@ -8,7 +8,6 @@ import org.reactivestreams.Publisher;
  *     <ul>
  *         <li>{@link Blob}</li>
  *         <li>{@link Clob}</li>
- *         <li>{@link Text}</li>
  *     </ul>
  * </p>
  *
