@@ -2,6 +2,7 @@ package io.jdbd.vendor.task;
 
 import io.jdbd.session.SessionCloseException;
 import io.netty.buffer.ByteBufAllocator;
+import reactor.core.publisher.Mono;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +29,8 @@ public interface ITaskAdjutant {
     void execute(Runnable runnable);
 
     void schedule(Runnable command, long delay, TimeUnit unit);
+
+    Mono<Void> logicallyClose();
 
     ByteBufAllocator allocator();
 

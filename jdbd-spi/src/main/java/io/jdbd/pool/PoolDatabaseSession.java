@@ -28,10 +28,7 @@ import org.reactivestreams.Publisher;
 public interface PoolDatabaseSession extends DatabaseSession {
 
 
-    /**
-     * @return {@link Publisher} that emit <strong>this</strong> when success.
-     */
-    Publisher<? extends PoolDatabaseSession> ping(int timeoutMills);
+    Publisher<? extends PoolDatabaseSession> ping();
 
 
     /**
@@ -54,5 +51,11 @@ public interface PoolDatabaseSession extends DatabaseSession {
      */
     Publisher<? extends PoolDatabaseSession> reset();
 
+    /**
+     * <p>
+     * cancel all have not executed statement,emit {@link io.jdbd.session.SessionCloseException} to the downstream of statement.
+     * </p>
+     */
+    Publisher<? extends PoolDatabaseSession> logicallyClose();
 
 }

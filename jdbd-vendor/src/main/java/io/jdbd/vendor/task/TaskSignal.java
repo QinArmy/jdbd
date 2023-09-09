@@ -1,11 +1,13 @@
 package io.jdbd.vendor.task;
 
-import reactor.core.publisher.Mono;
 
-public interface TaskSignal {
+import io.netty.buffer.ByteBuf;
+import org.reactivestreams.Publisher;
+
+interface TaskSignal {
 
 
-    Mono<Void> sendPacket(CommunicationTask task, boolean endTask);
+    void sendPacket(CommunicationTask task, Publisher<ByteBuf> packets, boolean endTask);
 
 
 }

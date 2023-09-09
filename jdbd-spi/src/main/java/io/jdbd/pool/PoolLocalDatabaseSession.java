@@ -18,12 +18,18 @@ public interface PoolLocalDatabaseSession extends PoolDatabaseSession, LocalData
      * {@inheritDoc}
      */
     @Override
-    Publisher<PoolLocalDatabaseSession> ping(int timeoutMills);
+    Publisher<PoolLocalDatabaseSession> ping();
 
     /**
      * {@inheritDoc}
      */
     Publisher<PoolLocalDatabaseSession> reset();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Publisher<PoolLocalDatabaseSession> logicallyClose();
 
 
 }

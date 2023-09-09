@@ -5,7 +5,6 @@ import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
 import io.netty.buffer.ByteBuf;
 import org.reactivestreams.Publisher;
-import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
 
 import java.util.List;
@@ -247,21 +246,13 @@ public abstract class CommunicationTask {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * <p>
-     * this method is useful,when receive params from application(or persistent framework) developer
-     * and  execute statement after prepare statement.
-     * </p>
-     *
-     * @param endTask true : task end after invoke {@link #moreSendPacket()}.
-     * @return <ul>
-     * <li>emit success when {@link CommunicationTaskExecutor} accept signal</li>
-     * <li>emit {@link Throwable} when {@link CommunicationTaskExecutor} reject signal</li>
-     * </ul>
-     */
-    protected final Mono<Boolean> sendPacketSignal(boolean endTask) {
-        return this.taskSignal.sendPacket(this, endTask)
-                .then(Mono.just(this.methodStack == MethodStack.DECODE));
+
+    protected final void activelySendPackets(Publisher<ByteBuf> publisher) {
+        this.taskSignal.sendPacket(this, publisher, false);
+    }
+
+    protected final void activelySendPacketsAndEndTask(Publisher<ByteBuf> publisher) {
+        this.taskSignal.sendPacket(this, publisher, true);
     }
 
 

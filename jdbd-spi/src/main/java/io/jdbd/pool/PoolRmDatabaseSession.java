@@ -18,7 +18,7 @@ public interface PoolRmDatabaseSession extends RmDatabaseSession, PoolDatabaseSe
      * {@inheritDoc}
      */
     @Override
-    Publisher<PoolRmDatabaseSession> ping(int timeoutMills);
+    Publisher<PoolRmDatabaseSession> ping();
 
     /**
      * {@inheritDoc}
@@ -26,5 +26,9 @@ public interface PoolRmDatabaseSession extends RmDatabaseSession, PoolDatabaseSe
     @Override
     Publisher<PoolRmDatabaseSession> reset();
 
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    Publisher<PoolRmDatabaseSession> logicallyClose();
 }

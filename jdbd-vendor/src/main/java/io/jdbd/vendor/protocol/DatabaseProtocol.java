@@ -140,9 +140,11 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     Mono<PrepareTask> prepare(String sql);
 
 
-    Mono<Void> ping(int timeoutMills);
+    Mono<Void> ping();
 
     Mono<Void> reset();
+
+    Mono<Void> logicallyClose();
 
     boolean supportMultiStmt();
 

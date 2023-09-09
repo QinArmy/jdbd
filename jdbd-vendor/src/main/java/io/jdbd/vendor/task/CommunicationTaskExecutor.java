@@ -15,6 +15,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
 import reactor.core.CoreSubscriber;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
 import reactor.netty.Connection;
@@ -77,7 +78,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         this.eventLoop = channel.eventLoop();
         this.allocator = channel.alloc();
 
-        this.taskSignal = new TaskSingleImpl(this);
+        this.taskSignal = this::taskSendPackets;
 
         this.taskAdjutant = createTaskAdjutant();
         connection.inbound()
@@ -88,7 +89,6 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         this.logger = getLogger();
 
     }
-
 
     @Override
     public final T taskAdjutant() {
@@ -256,6 +256,27 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
     }
 
+    private Mono<Void> logicallyClose() {
+        final Mono<Void> mono;
+        if (this.eventLoop.inEventLoop()) {
+            this.logicallyCloseInEventLoop();
+            mono = Mono.empty();
+        } else {
+            mono = Mono.create(sink -> {
+                this.eventLoop.execute(this::logicallyClose);
+                sink.success();
+            });
+        }
+        return mono;
+    }
+
+    private void logicallyCloseInEventLoop() {
+        CommunicationTask task;
+        while ((task = this.taskQueue.poll()) != null) {
+            task.onChannelClose();
+        }
+    }
+
 
     /**
      * @see #onNext(ByteBuf)
@@ -363,6 +384,32 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
         }
     }
+
+    private void taskSendPackets(final CommunicationTask task, final Publisher<ByteBuf> publisher, final boolean endTask) {
+        if (this.eventLoop.inEventLoop()) {
+            taskSendPacketsInEventLoop(task, publisher, endTask);
+        } else {
+            this.eventLoop.execute(() -> taskSendPacketsInEventLoop(task, publisher, endTask));
+        }
+
+    }
+
+    private void taskSendPacketsInEventLoop(CommunicationTask task, Publisher<ByteBuf> publisher, boolean endTask) {
+        if (task != this.currentTask) {
+            Flux.from(publisher)
+                    .doOnNext(ByteBuf::release)
+                    .subscribe();
+            return;
+        }
+        Mono.from(this.connection.outbound().send(publisher))
+                .subscribe();
+
+        if (endTask) {
+            this.currentTask = null;
+            startHeadIfNeed();
+        }
+    }
+
 
     /**
      * must invoke in {@link #eventLoop}
@@ -531,17 +578,14 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         if (currentTask instanceof ConnectionTask) {
             Publisher<ByteBuf> packetPublisher = currentTask.moreSendPacket();
             if (packetPublisher != null) {
-                sendPacket(currentTask, packetPublisher);
+                sendPacket(currentTask, packetPublisher)
+                        .subscribe();
             }
 
         }
     }
 
 
-    /**
-     * @see CommunicationTask#sendPacketSignal(boolean)
-     * @see TaskSingleImpl#sendPacket(CommunicationTask, boolean)
-     */
     private void doSendPacketSignal(final MonoSink<Void> sink, final CommunicationTask signalTask, boolean endTask) {
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("{} send packet signal", signalTask);
@@ -652,6 +696,11 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         }
 
         @Override
+        public final Mono<Void> logicallyClose() {
+            return this.taskExecutor.logicallyClose();
+        }
+
+        @Override
         public final ByteBufAllocator allocator() {
             return this.taskExecutor.allocator;
         }
@@ -677,29 +726,6 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
         public TaskExecutorException(String message, Throwable cause) {
             super(message, cause);
-        }
-
-    }
-
-    private static final class TaskSingleImpl implements TaskSignal {
-
-        private final CommunicationTaskExecutor<?> taskExecutor;
-
-        private TaskSingleImpl(CommunicationTaskExecutor<?> taskExecutor) {
-            this.taskExecutor = taskExecutor;
-        }
-
-
-        @Override
-        public Mono<Void> sendPacket(final CommunicationTask task, final boolean endTask) {
-            return Mono.create(sink -> {
-                if (this.taskExecutor.eventLoop.inEventLoop()) {
-                    this.taskExecutor.doSendPacketSignal(sink, task, endTask);
-                } else {
-                    this.taskExecutor.eventLoop.execute(()
-                            -> this.taskExecutor.doSendPacketSignal(sink, task, endTask));
-                }
-            });
         }
 
     }
