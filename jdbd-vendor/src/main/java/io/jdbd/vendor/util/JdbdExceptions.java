@@ -12,6 +12,7 @@ import io.jdbd.session.*;
 import io.jdbd.statement.OutParameter;
 import io.jdbd.statement.PreparedStatement;
 import io.jdbd.statement.Statement;
+import io.jdbd.statement.TimeoutException;
 import io.jdbd.type.PathParameter;
 import io.jdbd.type.TextPath;
 import io.jdbd.vendor.JdbdCompositeException;
@@ -144,6 +145,26 @@ public abstract class JdbdExceptions {
 
     public static SessionCloseException sessionHaveClosed() {
         return new SessionCloseException("session have closed");
+    }
+
+    public static SessionCloseException unexpectedSessionClose() {
+        return new SessionCloseException("unexpected session close");
+    }
+
+
+    public static TimeoutException statementTimeout(long startTime, int timeoutMills, @Nullable Throwable cause) {
+        final long nowMills;
+        nowMills = System.currentTimeMillis();
+        String m;
+        m = String.format("timeout %s mills,but rest %s mills", timeoutMills, timeoutMills - (nowMills - startTime));
+
+        final TimeoutException error;
+        if (cause == null) {
+            error = new TimeoutException(m);
+        } else {
+            error = new TimeoutException(m, cause);
+        }
+        return error;
     }
 
     public static RuntimeException stmtVarNameHaveNoText(@Nullable String name) {
