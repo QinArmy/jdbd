@@ -4,6 +4,7 @@ import io.jdbd.session.SessionCloseException;
 import io.netty.buffer.ByteBufAllocator;
 
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public interface ITaskAdjutant {
@@ -25,6 +26,8 @@ public interface ITaskAdjutant {
     void syncSubmitTask(CommunicationTask task, Runnable successCallBack);
 
     void execute(Runnable runnable);
+
+    void schedule(Runnable command, long delay, TimeUnit unit);
 
     ByteBufAllocator allocator();
 

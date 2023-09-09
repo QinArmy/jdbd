@@ -264,6 +264,7 @@ public abstract class CommunicationTask {
                 .then(Mono.just(this.methodStack == MethodStack.DECODE));
     }
 
+
     protected final boolean inDecodeMethod() {
         return this.adjutant.inEventLoop() && this.methodStack == MethodStack.DECODE;
     }

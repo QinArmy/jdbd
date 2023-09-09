@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -643,6 +644,11 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         @Override
         public final void execute(Runnable runnable) {
             this.taskExecutor.eventLoop.execute(runnable);
+        }
+
+        @Override
+        public final void schedule(Runnable command, long delay, TimeUnit unit) {
+            this.taskExecutor.eventLoop.schedule(command, delay, unit);
         }
 
         @Override
