@@ -1,5 +1,6 @@
 package io.jdbd.vendor.task;
 
+import io.jdbd.JdbdException;
 import io.jdbd.session.SessionCloseException;
 import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
@@ -296,6 +297,35 @@ public abstract class CommunicationTask {
             this.errorList = errorList = JdbdCollections.arrayList();
         }
         errorList.add(JdbdExceptions.wrapIfNonJvmFatal(error));
+    }
+
+    protected final void replaceErrorIfPresent(final JdbdException error) {
+        List<Throwable> errorList = this.errorList;
+        if (errorList == null) {
+            this.errorList = errorList = JdbdCollections.arrayList();
+        }
+        final int errorSize = errorList.size();
+        if (errorSize == 0) {
+            errorList.add(error);
+            return;
+        }
+        final Class<?> errorClass = error.getClass();
+        Throwable e = null;
+        for (int i = 0; i < errorSize; i++) {
+            e = errorList.get(i);
+            if (errorClass.isAssignableFrom(e.getClass())) {
+                errorList.set(i, error);
+                break;
+            }
+            e = null; //clear
+
+        }
+
+        if (e == null) {
+            errorList.add(error);
+        }
+
+
     }
 
 

@@ -5,9 +5,9 @@ import io.jdbd.session.OptionSpec;
 
 import java.util.List;
 
-public interface TableIndexMetaData extends OptionSpec {
+public interface TableIndexMeta extends OptionSpec {
 
-    DatabaseTableMetaData tableMeta();
+    TableMeta tableMeta();
 
     String indexName();
 

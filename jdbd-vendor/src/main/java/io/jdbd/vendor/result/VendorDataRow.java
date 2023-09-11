@@ -4,7 +4,9 @@ import io.jdbd.JdbdException;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.DataRow;
 import io.jdbd.result.QueryResults;
+import io.jdbd.result.ResultRowMeta;
 import io.jdbd.vendor.task.ITaskAdjutant;
+import io.jdbd.vendor.util.JdbdClasses;
 import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
 import org.reactivestreams.Publisher;
@@ -14,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 /**
  * <p>
@@ -55,9 +58,49 @@ public abstract class VendorDataRow implements DataRow {
     public final <T> T getNonNull(final int indexBasedZero, final Class<T> columnClass)
             throws NullPointerException, JdbdException {
         final T value;
-        value = this.get(indexBasedZero, columnClass);
+        value = get(indexBasedZero, columnClass);
         if (value == null) {
             throw JdbdExceptions.columnIsNull(this.getColumnMeta(indexBasedZero));
+        }
+        return value;
+    }
+
+    @Override
+    public final Object getOrDefault(final int indexBasedZero, final Object defaultValue) throws JdbdException {
+        Object value;
+        value = get(indexBasedZero);
+        if (value == null) {
+            value = checkDefault(indexBasedZero, defaultValue);
+        }
+        return value;
+    }
+
+    @Override
+    public final <T> T getOrDefault(int indexBasedZero, Class<T> columnClass, T defaultValue) throws JdbdException {
+        T value;
+        value = get(indexBasedZero, columnClass);
+        if (value == null) {
+            value = checkDefault(indexBasedZero, defaultValue);
+        }
+        return value;
+    }
+
+    @Override
+    public final Object getOrSupplier(int indexBasedZero, Supplier<Object> supplier) throws JdbdException {
+        Object value;
+        value = get(indexBasedZero);
+        if (value == null) {
+            value = checkDefault(indexBasedZero, supplier.get());
+        }
+        return value;
+    }
+
+    @Override
+    public final <T> T getOrSupplier(int indexBasedZero, Class<T> columnClass, Supplier<T> supplier) throws JdbdException {
+        T value;
+        value = get(indexBasedZero, columnClass);
+        if (value == null) {
+            value = checkDefault(indexBasedZero, supplier.get());
         }
         return value;
     }
@@ -102,8 +145,28 @@ public abstract class VendorDataRow implements DataRow {
     }
 
     @Override
+    public final Object getOrDefault(final String columnLabel, final Object defaultValue) throws JdbdException {
+        return getOrDefault(getRowMeta().getColumnIndex(columnLabel), defaultValue);
+    }
+
+    @Override
+    public final Object getOrSupplier(String columnLabel, Supplier<Object> supplier) throws JdbdException {
+        return getOrSupplier(getRowMeta().getColumnIndex(columnLabel), supplier);
+    }
+
+    @Override
     public final <T> T get(String columnLabel, Class<T> columnClass) throws JdbdException {
         return this.get(getRowMeta().getColumnIndex(columnLabel), columnClass);
+    }
+
+    @Override
+    public final <T> T getOrDefault(String columnLabel, Class<T> columnClass, T defaultValue) throws JdbdException {
+        return getOrDefault(getRowMeta().getColumnIndex(columnLabel), columnClass, defaultValue);
+    }
+
+    @Override
+    public final <T> T getOrSupplier(String columnLabel, Class<T> columnClass, Supplier<T> supplier) throws JdbdException {
+        return getOrSupplier(getRowMeta().getColumnIndex(columnLabel), columnClass, supplier);
     }
 
     @Override
@@ -195,6 +258,43 @@ public abstract class VendorDataRow implements DataRow {
      */
     protected CurrentRow copyCurrentRowIfNeed() {
         throw new UnsupportedOperationException();
+    }
+
+    /*-------------------below private instance methods-------------------*/
+
+    /**
+     * @see #getOrDefault(int, Object)
+     * @see #getOrDefault(String, Class, Object)
+     * @see #getOrSupplier(int, Supplier)
+     * @see #getOrSupplier(int, Class, Supplier)
+     */
+    private <T> T checkDefault(final int indexBasedZero, final T defaultValue) {
+        final ResultRowMeta rowMeta;
+        final Class<?> secondJavaType;
+        final T finalValue;
+        if ((rowMeta = getRowMeta()).getFirstJavaType(indexBasedZero).isInstance(defaultValue)) {
+            finalValue = defaultValue;
+        } else if ((secondJavaType = rowMeta.getSecondJavaType(indexBasedZero)) == null) {
+            throw nonColumnJavaTypeError(getColumnMeta(indexBasedZero), defaultValue);
+        } else if (secondJavaType.isInstance(defaultValue)) {
+            finalValue = defaultValue;
+        } else {
+            throw nonColumnJavaTypeError(getColumnMeta(indexBasedZero), defaultValue);
+        }
+        return finalValue;
+    }
+
+
+    /*-------------------below private static methods -------------------*/
+
+
+    private static JdbdException nonColumnJavaTypeError(ColumnMeta meta, Object defaultValue) {
+        final String m = String.format("%s isn't the type of column[index : %s , label : %s]",
+                JdbdClasses.safeClassName(defaultValue),
+                meta.getColumnIndex(),
+                meta.getColumnLabel()
+        );
+        return new JdbdException(m);
     }
 
 

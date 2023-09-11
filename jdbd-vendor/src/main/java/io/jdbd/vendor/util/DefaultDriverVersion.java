@@ -106,6 +106,14 @@ public final class DefaultDriverVersion implements DriverVersion {
     }
 
     @Override
+    public <T> T nonNullOf(Option<T> option) {
+        final T value;
+        value = valueOf(option);
+        Objects.requireNonNull(value);
+        return value;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(this.name, this.version, this.major, this.minor, this.subMinor);
     }

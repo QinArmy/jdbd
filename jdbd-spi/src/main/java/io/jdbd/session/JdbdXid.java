@@ -50,6 +50,11 @@ final class JdbdXid implements Xid {
     }
 
     @Override
+    public <T> T nonNullOf(Option<T> option) {
+        throw new NullPointerException();
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(this.gtrid, this.bqual, this.formatId);
     }

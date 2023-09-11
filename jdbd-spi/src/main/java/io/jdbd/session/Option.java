@@ -1,6 +1,7 @@
 package io.jdbd.session;
 
 import io.jdbd.Driver;
+import io.jdbd.meta.SchemaMeta;
 import io.jdbd.result.RefCursor;
 import io.jdbd.util.JdbdUtils;
 
@@ -161,7 +162,6 @@ public final class Option<T> {
      * This option <strong>perhaps</strong> is supported by following :
      *     <ul>
      *         <li>{@link io.jdbd.result.ResultStates#valueOf(Option)}</li>
-     *         <li>{@link DatabaseSession#valueOf(Option)}</li>
      *     </ul>
      * </p>
      */
@@ -304,7 +304,39 @@ public final class Option<T> {
     /**
      * @see io.jdbd.result.ResultRowMeta#getOf(int, Option)
      */
-    public static final Option<Long> COLUMN_PRECISION = Option.from("COLUMN PRECISION", Long.class);
+    public static final Option<Long> PRECISION = Option.from("PRECISION", Long.class);
+
+    /**
+     * The type name of something.
+     *
+     * @see io.jdbd.meta.DatabaseMetaData#tablesOfSchema(SchemaMeta, Function)
+     * @see io.jdbd.meta.TableMeta#valueOf(Option)
+     */
+    public static final Option<String> TYPE_NAME = Option.from("TYPE NAME", String.class);
+
+    /**
+     * this option representing charset option.
+     *
+     * @see io.jdbd.meta.TableMeta#valueOf(Option)
+     * @see io.jdbd.meta.TableColumnMeta#valueOf(Option)
+     */
+    public static final Option<Charset> CHARSET = Option.from("CHARSET", Charset.class);
+
+    /**
+     * this option representing collation option.
+     *
+     * @see io.jdbd.meta.TableMeta#valueOf(Option)
+     * @see io.jdbd.meta.TableColumnMeta#valueOf(Option)
+     */
+    public static final Option<String> COLLATION = Option.from("COLLATION", String.class);
+
+    /**
+     * this option representing privilege option.
+     *
+     * @see io.jdbd.meta.TableMeta#valueOf(Option)
+     * @see io.jdbd.meta.TableColumnMeta#valueOf(Option)
+     */
+    public static final Option<String> PRIVILEGE = Option.from("PRIVILEGE", String.class);
 
 
     private final String name;

@@ -2,6 +2,8 @@ package io.jdbd.session;
 
 import io.jdbd.lang.Nullable;
 
+import java.util.Objects;
+
 /**
  * <p>
  * This interface is base interface of following :
@@ -38,6 +40,13 @@ public interface OptionSpec {
      */
     @Nullable
     <T> T valueOf(Option<T> option);
+
+    default <T> T nonNullOf(Option<T> option) {
+        final T value;
+        value = valueOf(option);
+        Objects.requireNonNull(value);
+        return value;
+    }
 
 
 }

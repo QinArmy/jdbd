@@ -153,7 +153,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * <p>
      * This must support following:
      *     <ul>
-     *         <li>{@link Option#COLUMN_PRECISION},this option representing column precision greater than {@link Integer#MAX_VALUE},for example :  MySQL LONG TEXT</li>
+     *         <li>{@link Option#PRECISION},this option representing column precision greater than {@link Integer#MAX_VALUE},for example :  MySQL LONG TEXT</li>
      *     </ul>
      * </p>
      *

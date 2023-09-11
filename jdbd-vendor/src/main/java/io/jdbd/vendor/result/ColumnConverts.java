@@ -2,6 +2,7 @@ package io.jdbd.vendor.result;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
+import io.jdbd.meta.BooleanMode;
 import io.jdbd.type.BlobPath;
 import io.jdbd.type.Point;
 import io.jdbd.type.TextPath;
@@ -88,6 +89,8 @@ public abstract class ColumnConverts {
             value = convertToBitSet(meta, source);
         } else if (targetClass == Point.class) {
             value = convertToPoint(meta, source);
+        } else if (targetClass == BooleanMode.class) {
+            value = convertToBoolean(meta, source) ? BooleanMode.TRUE : BooleanMode.FALSE;
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
         }

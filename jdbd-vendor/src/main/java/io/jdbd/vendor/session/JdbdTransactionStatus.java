@@ -63,6 +63,14 @@ public enum JdbdTransactionStatus implements TransactionStatus {
     }
 
     @Override
+    public <T> T nonNullOf(Option<T> option) {
+        final T value;
+        value = valueOf(option);
+        Objects.requireNonNull(value);
+        return value;
+    }
+
+    @Override
     public final boolean inTransaction() {
         //always true
         return true;
@@ -148,6 +156,14 @@ public enum JdbdTransactionStatus implements TransactionStatus {
         @Override
         public <T> T valueOf(Option<T> option) {
             return (T) this.optionMap.get(option);
+        }
+
+        @Override
+        public <T> T nonNullOf(Option<T> option) {
+            final T value;
+            value = valueOf(option);
+            Objects.requireNonNull(value);
+            return value;
         }
 
 

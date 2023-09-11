@@ -4,6 +4,8 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
 import io.jdbd.meta.SQLType;
+import io.jdbd.meta.SchemaMeta;
+import io.jdbd.meta.TableMeta;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.CursorDirection;
 import io.jdbd.result.ResultStates;
@@ -21,6 +23,7 @@ import io.jdbd.vendor.stmt.NamedValue;
 import io.jdbd.vendor.stmt.ParamValue;
 import io.jdbd.vendor.stmt.Stmt;
 import io.jdbd.vendor.stmt.Value;
+import io.jdbd.vendor.task.TimeoutTask;
 import org.slf4j.Logger;
 
 import java.nio.charset.Charset;
@@ -139,6 +142,16 @@ public abstract class JdbdExceptions {
         return new JdbdException(String.format("unexpected %s", direction));
     }
 
+    public static JdbdException unknownSchemaMeta(SchemaMeta meta) {
+        String m = String.format("unknown %s %s", SchemaMeta.class.getName(), meta);
+        return new JdbdException(m);
+    }
+
+    public static JdbdException unknownTableMeta(TableMeta meta) {
+        String m = String.format("unknown %s %s", TableMeta.class.getName(), meta);
+        return new JdbdException(m);
+    }
+
     public static JdbdException dontSupportDataType(DataType dataType, String database) {
         return new JdbdException(String.format("%s don't support %s[%s]", database, DataType.class.getName(), dataType));
     }
@@ -152,11 +165,10 @@ public abstract class JdbdExceptions {
     }
 
 
-    public static TimeoutException statementTimeout(long startTime, int timeoutMills, @Nullable Throwable cause) {
-        final long nowMills;
-        nowMills = System.currentTimeMillis();
+    public static TimeoutException statementTimeout(TimeoutTask task, int timeoutMills, @Nullable Throwable cause) {
         String m;
-        m = String.format("timeout %s mills,but rest %s mills", timeoutMills, timeoutMills - (nowMills - startTime));
+        m = String.format("timeout %s mills,but rest %s mills", timeoutMills,
+                timeoutMills - (task.runTimeMills() - task.startTimeMills()));
 
         final TimeoutException error;
         if (cause == null) {

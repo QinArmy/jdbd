@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
 /**
  * <p>
@@ -82,13 +83,64 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     @Nullable
     Object get(int indexBasedZero) throws JdbdException;
 
+    /**
+     * @param defaultValue must be the instance of column first java type or second java type.
+     * @return non-null value
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #get(int)} throw {@link JdbdException}</li>
+     *                           <li>defaultValue isn't the instance of column first java type or second java type</li>
+     *                       </ul>
+     * @see ResultRowMeta#getFirstJavaType(int)
+     * @see ResultRowMeta#getSecondJavaType(int)
+     */
+    Object getOrDefault(int indexBasedZero, Object defaultValue) throws JdbdException;
+
+    /**
+     * @param supplier must return the instance of column first java type or second java type.
+     * @return non-null value
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #get(int)} throw {@link JdbdException}</li>
+     *                           <li>defaultValue isn't the instance of column first java type or second java type</li>
+     *                       </ul>
+     * @see ResultRowMeta#getFirstJavaType(int)
+     * @see ResultRowMeta#getSecondJavaType(int)
+     */
+    Object getOrSupplier(int indexBasedZero, Supplier<Object> supplier) throws JdbdException;
 
     @Nullable
     <T> T get(int indexBasedZero, Class<T> columnClass) throws JdbdException;
 
+    /**
+     * @param defaultValue must be the instance of column first java type or second java type.
+     * @return non-null value
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #get(int, Class)} throw {@link JdbdException}</li>
+     *                           <li>defaultValue isn't the instance of column first java type or second java type</li>
+     *                       </ul>
+     */
+    <T> T getOrDefault(int indexBasedZero, Class<T> columnClass, T defaultValue) throws JdbdException;
+
+    /**
+     * @param supplier must return the instance of column first java type or second java type.
+     * @return non-null value
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #get(int)} throw {@link JdbdException}</li>
+     *                           <li>defaultValue isn't the instance of column first java type or second java type</li>
+     *                       </ul>
+     * @see ResultRowMeta#getFirstJavaType(int)
+     * @see ResultRowMeta#getSecondJavaType(int)
+     */
+    <T> T getOrSupplier(int indexBasedZero, Class<T> columnClass, Supplier<T> supplier) throws JdbdException;
+
+
     Object getNonNull(int indexBasedZero) throws NullPointerException, JdbdException;
 
     <T> T getNonNull(int indexBasedZero, Class<T> columnClass) throws NullPointerException, JdbdException;
+
 
     <T> List<T> getList(int indexBasedZero, Class<T> elementClass) throws JdbdException;
 
@@ -147,6 +199,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     Object get(String columnLabel) throws JdbdException;
 
 
+    Object getOrDefault(String columnLabel, Object defaultValue) throws JdbdException;
+
+    Object getOrSupplier(String columnLabel, Supplier<Object> supplier) throws JdbdException;
+
+
     /**
      * <p>
      * This method is equivalent to below:
@@ -161,6 +218,9 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     @Nullable
     <T> T get(String columnLabel, Class<T> columnClass) throws JdbdException;
 
+    <T> T getOrDefault(String columnLabel, Class<T> columnClass, T defaultValue) throws JdbdException;
+
+    <T> T getOrSupplier(String columnLabel, Class<T> columnClass, Supplier<T> supplier) throws JdbdException;
 
     Object getNonNull(String columnLabel) throws NullPointerException, JdbdException;
 

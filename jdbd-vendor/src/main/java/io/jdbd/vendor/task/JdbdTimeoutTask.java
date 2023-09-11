@@ -1,7 +1,10 @@
 package io.jdbd.vendor.task;
 
+
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
@@ -10,11 +13,18 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     private static final AtomicReferenceFieldUpdater<JdbdTimeoutTask, TaskStatus> STATUS =
             AtomicReferenceFieldUpdater.newUpdater(JdbdTimeoutTask.class, TaskStatus.class, "status");
 
+    private static final AtomicIntegerFieldUpdater<JdbdTimeoutTask> SUSPEND_STATUS =
+            AtomicIntegerFieldUpdater.newUpdater(JdbdTimeoutTask.class, "suspendStatus");
 
-    private volatile TaskStatus status = TaskStatus.NONE;
-
+    private static final AtomicLongFieldUpdater<JdbdTimeoutTask> RUN_TIME =
+            AtomicLongFieldUpdater.newUpdater(JdbdTimeoutTask.class, "runTime");
 
     private final long startTime;
+    private volatile TaskStatus status = TaskStatus.NONE;
+
+    private volatile int suspendStatus = 0;
+
+    private volatile long runTime;
 
     protected JdbdTimeoutTask() {
         this.startTime = System.currentTimeMillis();
@@ -25,11 +35,15 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
         if (this.status == TaskStatus.RUNNING) {
             return;
         }
-        if (STATUS.updateAndGet(this, this::updateToRunning) != TaskStatus.RUNNING) {
-            return;
+        RUN_TIME.set(this, System.currentTimeMillis());
+        if (STATUS.updateAndGet(this, this::updateToRunning) == TaskStatus.RUNNING && this.suspendStatus == 0) {
+            runKillQuery();
         }
-        killQuery()
-                .doOnSuccess(v -> STATUS.compareAndSet(this, TaskStatus.RUNNING, TaskStatus.NORMAL_END))
+
+    }
+
+    private void runKillQuery() {
+        killQuery().doOnSuccess(v -> STATUS.compareAndSet(this, TaskStatus.RUNNING, TaskStatus.NORMAL_END))
                 .subscribe();
     }
 
@@ -37,7 +51,7 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     @Override
     public final boolean isTimeout() {
         final boolean timeout;
-        switch (this.status) {
+        switch (STATUS.get(this)) {
             case RUNNING:
             case CANCELED_AND_END:
             case NORMAL_END:
@@ -55,6 +69,11 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     }
 
     @Override
+    public final long runTimeMills() {
+        return this.runTime;
+    }
+
+    @Override
     public final TaskStatus currentStatus() {
         return STATUS.get(this);
     }
@@ -67,16 +86,18 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     @Override
     public final boolean suspend() {
         final boolean timeout;
-        switch (STATUS.updateAndGet(this, this::updateToSuspend)) {
+        switch (this.status) {
             case NORMAL_END:
             case CANCELED_AND_END:
             case RUNNING:
                 timeout = true;
                 break;
-            case NONE:
             case CANCELED:
-            case SUSPEND:
+                timeout = false;
+                break;
+            case NONE:
             default:
+                SUSPEND_STATUS.compareAndSet(this, 0, 1);
                 timeout = false;
 
         }
@@ -86,16 +107,23 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     @Override
     public final boolean resume() {
         final boolean timeout;
-        switch (STATUS.updateAndGet(this, this::updateToNone)) {
+        switch (this.status) {
             case NORMAL_END:
-            case RUNNING:
             case CANCELED_AND_END:
                 timeout = true;
                 break;
-            case SUSPEND:
+            case RUNNING: {
+                timeout = true;
+                if (SUSPEND_STATUS.compareAndSet(this, 1, 0)) {
+                    runKillQuery();
+                }
+            }
+            break;
+            case NONE:
             case CANCELED:
             default:
                 timeout = false;
+                SUSPEND_STATUS.compareAndSet(this, 1, 0);
         }
         return timeout;
     }
@@ -121,12 +149,11 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     private TaskStatus updateToRunning(final TaskStatus oldStatus) {
         final TaskStatus newStatus;
         switch (oldStatus) {
-            case SUSPEND: // here , task end
-                newStatus = TaskStatus.NORMAL_END;
-                break;
             case NONE:
+            case RUNNING:
                 newStatus = TaskStatus.RUNNING;
                 break;
+            case NORMAL_END:
             default:
                 newStatus = oldStatus;
 
@@ -137,7 +164,6 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
     private TaskStatus updateToCanceled(final TaskStatus oldStatus) {
         final TaskStatus newStatus;
         switch (oldStatus) {
-            case SUSPEND:
             case NONE:
                 newStatus = TaskStatus.CANCELED;
                 break;
@@ -147,38 +173,6 @@ public abstract class JdbdTimeoutTask implements TimeoutTask, Runnable {
             case NORMAL_END:
             case CANCELED_AND_END:
             case CANCELED:
-            default:
-                newStatus = oldStatus;
-
-        }
-        return newStatus;
-    }
-
-    private TaskStatus updateToSuspend(final TaskStatus oldStatus) {
-        final TaskStatus newStatus;
-        switch (oldStatus) {
-            case SUSPEND:
-            case NONE:
-                newStatus = TaskStatus.SUSPEND;
-                break;
-            default:
-                newStatus = oldStatus;
-
-        }
-        return newStatus;
-    }
-
-    private TaskStatus updateToNone(final TaskStatus oldStatus) {
-        final TaskStatus newStatus;
-        switch (oldStatus) {
-            case SUSPEND:
-                newStatus = TaskStatus.NONE;
-                break;
-            case CANCELED:
-            case RUNNING:
-            case NONE:
-            case NORMAL_END:
-            case CANCELED_AND_END:
             default:
                 newStatus = oldStatus;
 

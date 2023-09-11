@@ -7,6 +7,7 @@ import io.jdbd.lang.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -108,6 +109,14 @@ final class JdbdTransactionOption implements TransactionStatus {
     }
 
     @Override
+    public <T> T nonNullOf(Option<T> option) {
+        final T value;
+        value = valueOf(option);
+        Objects.requireNonNull(value);
+        return value;
+    }
+
+    @Override
     public String toString() {
         return String.format("%s[inTransaction:false,isolation:%s,readOnly:%s].",
                 JdbdTransactionOption.class.getName(),
@@ -152,6 +161,14 @@ final class JdbdTransactionOption implements TransactionStatus {
                 value = null;
             }
             return (T) value;
+        }
+
+        @Override
+        public <T> T nonNullOf(Option<T> option) {
+            final T value;
+            value = valueOf(option);
+            Objects.requireNonNull(value);
+            return value;
         }
 
 
@@ -236,6 +253,14 @@ final class JdbdTransactionOption implements TransactionStatus {
         @Override
         public <T> T valueOf(Option<T> key) {
             return (T) this.optionMap.get(key);
+        }
+
+        @Override
+        public <T> T nonNullOf(Option<T> option) {
+            final T value;
+            value = valueOf(option);
+            Objects.requireNonNull(value);
+            return value;
         }
 
         @Override

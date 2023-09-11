@@ -12,6 +12,8 @@ public interface TimeoutTask {
 
     long startTimeMills();
 
+    long runTimeMills();
+
     /**
      * cancel timeout task
      */
@@ -47,8 +49,6 @@ public interface TimeoutTask {
         NONE,
 
         RUNNING,
-
-        SUSPEND,
 
         CANCELED,
 

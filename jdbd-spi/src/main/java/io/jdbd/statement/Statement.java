@@ -4,10 +4,7 @@ package io.jdbd.statement;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
-import io.jdbd.session.ChunkOption;
-import io.jdbd.session.DatabaseSession;
-import io.jdbd.session.Option;
-import io.jdbd.session.OptionSpec;
+import io.jdbd.session.*;
 import io.jdbd.type.*;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -37,7 +34,7 @@ import java.util.function.Function;
  * @see PreparedStatement
  * @see MultiStatement
  */
-public interface Statement extends OptionSpec {
+public interface Statement extends SessionHolderSpec, OptionSpec {
 
 
     /**
@@ -214,15 +211,5 @@ public interface Statement extends OptionSpec {
     @Override
     <T> T valueOf(Option<T> option);
 
-    /**
-     * @return the {@link DatabaseSession} that create this statement instance.
-     */
-    DatabaseSession getSession();
-
-    /**
-     * @return the {@link DatabaseSession} that create this statement instance.
-     * @throws ClassCastException throw when cast error
-     */
-    <T extends DatabaseSession> T getSession(Class<T> sessionClass);
 
 }

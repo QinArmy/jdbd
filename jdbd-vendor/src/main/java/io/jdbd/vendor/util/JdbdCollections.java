@@ -1,6 +1,7 @@
 package io.jdbd.vendor.util;
 
 import io.jdbd.lang.Nullable;
+import io.jdbd.util.JdbdUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -113,11 +114,11 @@ public abstract class JdbdCollections {
     }
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap() {
-        return new FinalConcurrentHashMap<>();
+        return JdbdUtils.concurrentHashMap();
     }
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap(int initialCapacity) {
-        return new FinalConcurrentHashMap<>(initialCapacity);
+        return JdbdUtils.concurrentHashMap(initialCapacity);
     }
 
     public static <E> ArrayList<E> arrayList() {
@@ -276,15 +277,6 @@ public abstract class JdbdCollections {
     }//FinalHashSet
 
 
-    private static final class FinalConcurrentHashMap<K, V> extends ConcurrentHashMap<K, V> {
-
-        private FinalConcurrentHashMap() {
-        }
-
-        private FinalConcurrentHashMap(int initialCapacity) {
-            super(initialCapacity);
-        }
-    }//FinalConcurrentHashMap
 
 
 }
