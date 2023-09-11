@@ -25,6 +25,19 @@ import java.util.function.Supplier;
  * The {@link #getResultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
  * See {@link #getRowMeta()}
  * </p>
+ * <p>
+ *     This interface have following core 'get' methods:
+ *     <ul>
+ *         <li>{@link #get(int)}</li>
+ *         <li>{@link #get(int, Class)}</li>
+ *         <li>{@link #getString(int)} ,this method is similar to {@linkplain  #get(int, Class String.class)}, except that binary or blob return normal string not hex string.</li>
+ *         <li>{@link #getList(int, Class, IntFunction)}</li>
+ *         <li>{@link #getSet(int, Class, IntFunction)}</li>
+ *         <li>{@link #getMap(int, Class, Class, IntFunction)}</li>
+ *         <li>{@link #getPublisher(int, Class)}</li>
+ *     </ul>
+ *     other 'get' methods are only the decoration of above methods.
+ * </p>
  *
  * @since 1.0
  */
@@ -109,8 +122,25 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      */
     Object getOrSupplier(int indexBasedZero, Supplier<Object> supplier) throws JdbdException;
 
+
     @Nullable
     <T> T get(int indexBasedZero, Class<T> columnClass) throws JdbdException;
+
+    /**
+     * <p>
+     * This method is similar to {@linkplain  #get(int, Class String.class)}, except that binary or blob return normal string not hex string.
+     * </p>
+     *
+     * @see #get(int, Class)
+     */
+    @Nullable
+    String getString(int indexBasedZero) throws JdbdException;
+
+    String getStringOrDefault(int indexBasedZero, String defaultValue) throws JdbdException;
+
+    String getStringOrSupplier(int indexBasedZero, Supplier<String> supplier) throws JdbdException;
+
+    String getNonNullString(int indexBasedZero) throws JdbdException, NullPointerException;
 
     /**
      * @param defaultValue must be the instance of column first java type or second java type.
@@ -118,7 +148,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #get(int, Class)} throw {@link JdbdException}</li>
-     *                           <li>defaultValue isn't the instance of column first java type or second java type</li>
+     *                           <li>defaultValue isn't the instance columnClass</li>
      *                       </ul>
      */
     <T> T getOrDefault(int indexBasedZero, Class<T> columnClass, T defaultValue) throws JdbdException;
@@ -129,7 +159,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #get(int)} throw {@link JdbdException}</li>
-     *                           <li>defaultValue isn't the instance of column first java type or second java type</li>
+     *                           <li>supplier return value isn't the instance columnClass</li>
      *                       </ul>
      * @see ResultRowMeta#getFirstJavaType(int)
      * @see ResultRowMeta#getSecondJavaType(int)
@@ -214,9 +244,20 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      * </p>
      *
      * @see #get(int, Class)
+     * @see #getString(int)
      */
     @Nullable
     <T> T get(String columnLabel, Class<T> columnClass) throws JdbdException;
+
+
+    @Nullable
+    String getString(String columnLabel) throws JdbdException;
+
+    String getStringOrDefault(String columnLabel, String defaultValue) throws JdbdException;
+
+    String getStringOrSupplier(String columnLabel, Supplier<String> supplier) throws JdbdException;
+
+    String getNonNullString(String columnLabel) throws JdbdException, NullPointerException;
 
     <T> T getOrDefault(String columnLabel, Class<T> columnClass, T defaultValue) throws JdbdException;
 

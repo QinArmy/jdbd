@@ -30,6 +30,8 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
 
     public static final Option<String> COLUMN_COMMENT = Option.from("COMMENT", String.class);
 
+    public static final Function<Class<?>, Set<?>> EMPTY_ENUMS_FUNC = clazz -> Collections.emptySet();
+
 
     /**
      * <p>
@@ -124,12 +126,12 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
 
     @Override
     public String defaultValue() {
-        return nonNullOf(COLUMN_DEFAULT);
+        return valueOf(COLUMN_DEFAULT);
     }
 
     @Override
     public String comment() {
-        return nonNullOf(COLUMN_COMMENT);
+        return valueOf(COLUMN_COMMENT);
     }
 
     @SuppressWarnings("unchecked")
@@ -203,6 +205,23 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
             builder.append(" , privilege : '")
                     .append(optionValue)
                     .append('\'');
+        }
+
+        final Set<String> enumSet;
+        enumSet = enumElementSet(String.class);
+        if (enumSet.size() > 0) {
+            builder.append(" , enumElementSet : [");
+            int index = 0;
+            for (String s : enumSet) {
+                if (index > 0) {
+                    builder.append(',');
+                }
+                builder.append('\'')
+                        .append(s)
+                        .append('\'');
+                index++;
+            }
+            builder.append(']');
         }
 
 

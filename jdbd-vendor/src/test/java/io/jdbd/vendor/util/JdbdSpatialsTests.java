@@ -51,6 +51,7 @@ public class JdbdSpatialsTests {
             return "pseudo";
         }
 
+
         @Override
         public boolean isUnsigned() {
             throw new UnsupportedOperationException();

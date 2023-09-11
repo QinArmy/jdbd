@@ -28,11 +28,11 @@ public abstract class ColumnConverts {
                                         final @Nullable ZoneOffset serverZone) {
         final Object value;
         if (targetClass == String.class) {
-            value = ColumnConverts.convertToString(meta, source);
+            value = convertToString(meta, source);
         } else if (targetClass == byte[].class) {
             value = convertToByteArray(meta, source);
         } else if (targetClass == Boolean.class) {
-            value = ColumnConverts.convertToBoolean(meta, source);
+            value = convertToBoolean(meta, source);
         } else if (Number.class.isAssignableFrom(targetClass)) {
             if (targetClass == Integer.class) {
                 value = convertToInt(meta, source);
@@ -78,7 +78,9 @@ public abstract class ColumnConverts {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
             }
         } else if (Enum.class.isAssignableFrom(targetClass)) {
-            if (!(source instanceof String)) {
+            if (targetClass == BooleanMode.class) {
+                value = convertToBoolean(meta, source) ? BooleanMode.TRUE : BooleanMode.FALSE;
+            } else if (!(source instanceof String)) {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
             } else if (targetClass.isAnonymousClass()) {
                 value = convertToEnum(targetClass.getSuperclass(), (String) source);
@@ -89,8 +91,6 @@ public abstract class ColumnConverts {
             value = convertToBitSet(meta, source);
         } else if (targetClass == Point.class) {
             value = convertToPoint(meta, source);
-        } else if (targetClass == BooleanMode.class) {
-            value = convertToBoolean(meta, source) ? BooleanMode.TRUE : BooleanMode.FALSE;
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
         }
@@ -360,7 +360,7 @@ public abstract class ColumnConverts {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
             }
         } else if (source instanceof byte[]) {
-            value = JdbdBuffers.hexEscapesText(false, (byte[]) source);
+            value = JdbdBuffers.hexEscapesText(true, (byte[]) source);
         } else if (source instanceof BitSet) {
             value = JdbdStrings.bitSetToBitString((BitSet) source, true);
         } else if (source instanceof TextPath) {
@@ -381,7 +381,7 @@ public abstract class ColumnConverts {
                 }
                 final byte[] bytes;
                 bytes = Files.readAllBytes(((BlobPath) source).value());
-                value = JdbdBuffers.hexEscapesText(false, bytes);
+                value = JdbdBuffers.hexEscapesText(true, bytes);
             } catch (Throwable e) {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, e);
             }

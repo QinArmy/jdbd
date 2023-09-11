@@ -178,6 +178,39 @@ public abstract class JdbdStrings /*extends StringUtils*/ {
 
     }
 
+    public static <T extends Enum<T>> Set<T> textSetToEnumSet(final Set<String> textSet, Class<T> clazz,
+                                                              final boolean unmodifiable) throws JdbdException {
+
+        Set<T> set;
+        final int setSize = textSet.size();
+        if (setSize == 0) {
+            if (unmodifiable) {
+                set = Collections.emptySet();
+            } else {
+                set = JdbdCollections.hashSet();
+            }
+            return set;
+        }
+
+        if (setSize < 64) {
+            set = EnumSet.noneOf(clazz);
+        } else {
+            set = JdbdCollections.hashSet((int) (setSize / 0.75f));
+        }
+
+        try {
+            for (String text : textSet) {
+                set.add(Enum.valueOf(clazz, text));
+            }
+            if (unmodifiable) {
+                set = JdbdCollections.unmodifiableSet(set);
+            }
+            return set;
+        } catch (Exception e) {
+            throw new JdbdException(e.getMessage(), e);
+        }
+    }
+
 
     public static Set<String> spitAsSet(@Nullable String text, String regex, final boolean unmodifiable) {
         Set<String> set;

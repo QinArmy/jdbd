@@ -1,6 +1,7 @@
 package io.jdbd.vendor.result;
 
 import io.jdbd.JdbdException;
+import io.jdbd.lang.Nullable;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.DataRow;
 import io.jdbd.result.QueryResults;
@@ -66,6 +67,45 @@ public abstract class VendorDataRow implements DataRow {
     }
 
     @Override
+    public final String getStringOrDefault(final int indexBasedZero, final @Nullable String defaultValue)
+            throws JdbdException {
+        String value;
+        value = getString(indexBasedZero);
+        if (value == null) {
+            if (defaultValue == null) {
+                throw stringDefaultNullError(getColumnMeta(indexBasedZero));
+            }
+            value = defaultValue;
+        }
+        return value;
+    }
+
+
+    @Override
+    public final String getStringOrSupplier(final int indexBasedZero, final Supplier<String> supplier)
+            throws JdbdException {
+        String value;
+        value = getString(indexBasedZero);
+        if (value == null) {
+            value = supplier.get();
+            if (value == null) {
+                throw stringDefaultNullError(getColumnMeta(indexBasedZero));
+            }
+        }
+        return value;
+    }
+
+    @Override
+    public final String getNonNullString(final int indexBasedZero) throws JdbdException, NullPointerException {
+        final String value;
+        value = getString(indexBasedZero);
+        if (value == null) {
+            throw JdbdExceptions.columnIsNull(getColumnMeta(indexBasedZero));
+        }
+        return value;
+    }
+
+    @Override
     public final Object getOrDefault(final int indexBasedZero, final Object defaultValue) throws JdbdException {
         Object value;
         value = get(indexBasedZero);
@@ -80,7 +120,10 @@ public abstract class VendorDataRow implements DataRow {
         T value;
         value = get(indexBasedZero, columnClass);
         if (value == null) {
-            value = checkDefault(indexBasedZero, defaultValue);
+            if (!columnClass.isInstance(defaultValue)) {
+                throw defaultValueTypeNotMatch(getColumnMeta(indexBasedZero), columnClass, defaultValue);
+            }
+            value = defaultValue;
         }
         return value;
     }
@@ -96,11 +139,15 @@ public abstract class VendorDataRow implements DataRow {
     }
 
     @Override
-    public final <T> T getOrSupplier(int indexBasedZero, Class<T> columnClass, Supplier<T> supplier) throws JdbdException {
+    public final <T> T getOrSupplier(final int indexBasedZero, Class<T> columnClass, Supplier<T> supplier)
+            throws JdbdException {
         T value;
         value = get(indexBasedZero, columnClass);
         if (value == null) {
-            value = checkDefault(indexBasedZero, supplier.get());
+            value = supplier.get();
+            if (!columnClass.isInstance(value)) {
+                throw defaultValueTypeNotMatch(getColumnMeta(indexBasedZero), columnClass, value);
+            }
         }
         return value;
     }
@@ -157,6 +204,26 @@ public abstract class VendorDataRow implements DataRow {
     @Override
     public final <T> T get(String columnLabel, Class<T> columnClass) throws JdbdException {
         return this.get(getRowMeta().getColumnIndex(columnLabel), columnClass);
+    }
+
+    @Override
+    public final String getString(String columnLabel) {
+        return getString(getRowMeta().getColumnIndex(columnLabel));
+    }
+
+    @Override
+    public final String getStringOrDefault(String columnLabel, String defaultValue) {
+        return getStringOrDefault(getRowMeta().getColumnIndex(columnLabel), defaultValue);
+    }
+
+    @Override
+    public final String getStringOrSupplier(String columnLabel, Supplier<String> supplier) {
+        return getStringOrSupplier(getRowMeta().getColumnIndex(columnLabel), supplier);
+    }
+
+    @Override
+    public final String getNonNullString(String columnLabel) {
+        return getNonNullString(getRowMeta().getColumnIndex(columnLabel));
     }
 
     @Override
@@ -291,6 +358,24 @@ public abstract class VendorDataRow implements DataRow {
     private static JdbdException nonColumnJavaTypeError(ColumnMeta meta, Object defaultValue) {
         final String m = String.format("%s isn't the type of column[index : %s , label : %s]",
                 JdbdClasses.safeClassName(defaultValue),
+                meta.getColumnIndex(),
+                meta.getColumnLabel()
+        );
+        return new JdbdException(m);
+    }
+
+    private static <T> JdbdException defaultValueTypeNotMatch(ColumnMeta meta, Class<T> columnClass, T defaultValue) {
+        final String m = String.format("%s isn't the type of %s ,column[index : %s , label : %s]",
+                JdbdClasses.safeClassName(defaultValue),
+                columnClass.getName(),
+                meta.getColumnIndex(),
+                meta.getColumnLabel()
+        );
+        return new JdbdException(m);
+    }
+
+    private static JdbdException stringDefaultNullError(final ColumnMeta meta) {
+        final String m = String.format("column[index : %s , label : %s] getString() defaultValue is null",
                 meta.getColumnIndex(),
                 meta.getColumnLabel()
         );
