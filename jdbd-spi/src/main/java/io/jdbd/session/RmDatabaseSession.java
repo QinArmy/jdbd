@@ -1,5 +1,7 @@
 package io.jdbd.session;
 
+import io.jdbd.JdbdException;
+import io.jdbd.lang.Nullable;
 import org.reactivestreams.Publisher;
 
 import java.util.Optional;
@@ -563,6 +565,18 @@ public interface RmDatabaseSession extends DatabaseSession {
      */
     @Override
     Publisher<RmDatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    RmDatabaseSession appendLiteral(@Nullable String text, StringBuilder builder) throws JdbdException;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    RmDatabaseSession appendIdentifier(String identifier, StringBuilder builder) throws JdbdException;
 
 
 }

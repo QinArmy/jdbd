@@ -1,6 +1,7 @@
 package io.jdbd.session;
 
 import io.jdbd.JdbdException;
+import io.jdbd.lang.Nullable;
 import org.reactivestreams.Publisher;
 
 import java.util.function.Function;
@@ -250,5 +251,16 @@ public interface LocalDatabaseSession extends DatabaseSession {
     @Override
     Publisher<LocalDatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    LocalDatabaseSession appendLiteral(@Nullable String text, StringBuilder builder) throws JdbdException;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    LocalDatabaseSession appendIdentifier(String identifier, StringBuilder builder) throws JdbdException;
 
 }

@@ -337,6 +337,36 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
     Publisher<? extends DatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
+    /**
+     * <p>
+     * append text literal to builder,driver will quote and escape if need.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: driver don't append space before literal.
+     * </p>
+     *
+     * @return <strong>this</strong>
+     * @throws JdbdException throw when session have closed.
+     */
+    DatabaseSession appendLiteral(@Nullable String text, StringBuilder builder) throws JdbdException;
+
+    /**
+     * <p>
+     * append text identifier to builder,driver will quote and escape if need.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: driver don't append space before identifier.
+     * </p>
+     *
+     * @param identifier non-null,for example : column label
+     * @return <strong>this</strong>
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>identifier contain identifier quote char and driver couldn't escape.</li>
+     *                       </ul>
+     */
+    DatabaseSession appendIdentifier(String identifier, StringBuilder builder) throws JdbdException;
 
     /**
      * <p>
