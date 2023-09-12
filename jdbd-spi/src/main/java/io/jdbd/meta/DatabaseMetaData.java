@@ -9,6 +9,7 @@ import io.jdbd.session.OptionSpec;
 import io.jdbd.session.SessionHolderSpec;
 import org.reactivestreams.Publisher;
 
+import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -126,7 +127,6 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      * <p>
      * This implementation of this method must support following :
      *     <ul>
-     *         <li>{@link Option#TYPE_NAME} : database support table types</li>
      *         <li>{@link Option#USER} : representing current user name of session</li>
      *     </ul>
      * </p>
@@ -134,7 +134,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     <R> Publisher<R> queryOption(Option<R> option);
 
 
-    Publisher<String> sqlKeyWords();
+    Publisher<Map<String, Boolean>> sqlKeyWords(boolean onlyReserved);
 
     /**
      * @return the quoting string or a space if quoting is not supported

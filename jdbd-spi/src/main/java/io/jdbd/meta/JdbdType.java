@@ -287,7 +287,7 @@ public enum JdbdType implements DataType {
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
      *     </ul>
      *     If application developer want to bind user-defined data type ,then application developer should define the new {@link DataType} type
-     *     that it's {@link #typeName()} is supported by database and it's {@link #isUserDefined()} is true.
+     *     that it's {@link #typeName()} is supported by database and it's {@link UserDefinedType}.
      * </p>
      */
     USER_DEFINED,
@@ -335,11 +335,6 @@ public enum JdbdType implements DataType {
     @Override
     public final boolean isUnknown() {
         return this == UNKNOWN;
-    }
-
-    @Override
-    public final boolean isUserDefined() {
-        return this == USER_DEFINED;
     }
 
     /**

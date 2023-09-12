@@ -29,19 +29,25 @@ abstract class DataTypeFactory {
         return DatabaseBuildInType.INSTANCE_MAP.computeIfAbsent(typeName, DatabaseBuildInType.CONSTRUCTOR);
     }
 
-    static DataType internalUse(String typeName, boolean caseSensitivity) {
+    static InternalUseType internalUse(String typeName, boolean caseSensitivity) {
         // currently, same
-        return buildIn(typeName, caseSensitivity);
-    }
-
-    static DataType userDefined(String typeName, boolean caseSensitivity) {
         if (JdbdUtils.hasNoText(typeName)) {
             throw JdbdUtils.requiredText(typeName);
         }
         if (!caseSensitivity) {
             typeName = typeName.toUpperCase(Locale.ROOT);
         }
-        return UserDefinedType.INSTANCE_MAP.computeIfAbsent(typeName, UserDefinedType.CONSTRUCTOR);
+        return DatabaseInternalUseType.INSTANCE_MAP.computeIfAbsent(typeName, DatabaseInternalUseType.CONSTRUCTOR);
+    }
+
+    static UserDefinedType userDefined(String typeName, boolean caseSensitivity) {
+        if (JdbdUtils.hasNoText(typeName)) {
+            throw JdbdUtils.requiredText(typeName);
+        }
+        if (!caseSensitivity) {
+            typeName = typeName.toUpperCase(Locale.ROOT);
+        }
+        return JdbdUserDefinedType.INSTANCE_MAP.computeIfAbsent(typeName, JdbdUserDefinedType.CONSTRUCTOR);
     }
 
 
@@ -74,12 +80,6 @@ abstract class DataTypeFactory {
         }
 
 
-        @Override
-        public final boolean isUserDefined() {
-            return this instanceof UserDefinedType;
-        }
-
-
     }// JdbdDataType
 
 
@@ -96,19 +96,33 @@ abstract class DataTypeFactory {
 
     }// DatabaseBuildInType
 
+    private static final class DatabaseInternalUseType extends JdbdDataType implements InternalUseType {
 
-    private static final class UserDefinedType extends JdbdDataType {
+        private static final ConcurrentMap<String, DatabaseInternalUseType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
 
-        private static final ConcurrentMap<String, UserDefinedType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
+        private static final Function<String, DatabaseInternalUseType> CONSTRUCTOR = DatabaseInternalUseType::new;
 
-        private static final Function<String, UserDefinedType> CONSTRUCTOR = UserDefinedType::new;
-
-
-        private UserDefinedType(String dataTypeName) {
+        private DatabaseInternalUseType(String dataTypeName) {
             super(dataTypeName);
         }
 
-    }//UserDefinedType
+
+    }//DatabaseInternalUseType
+
+
+    private static final class JdbdUserDefinedType extends JdbdDataType implements UserDefinedType {
+
+        private static final ConcurrentMap<String, JdbdUserDefinedType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
+
+        private static final Function<String, JdbdUserDefinedType> CONSTRUCTOR = JdbdUserDefinedType::new;
+
+
+        private JdbdUserDefinedType(String dataTypeName) {
+            super(dataTypeName);
+        }
+
+
+    }//JdbdUserDefinedType
 
 
 }

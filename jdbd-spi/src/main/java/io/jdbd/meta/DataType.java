@@ -14,7 +14,9 @@ import io.jdbd.statement.ParametrizedStatement;
  * <p>
  *     The Known superinterfaces:
  *     <ul>
- *         <li>{@link SQLType} representing database build-in / internal-use data type</li>
+ *         <li>{@link SQLType} representing database build-in type</li>
+ *         <li>{@link InternalUseType} representing internal-use data type</li>
+ *         <li>{@link UserDefinedType} representing user-defined type</li>
  *     </ul>
  * </p>
  * <p>
@@ -48,13 +50,6 @@ public interface DataType {
     boolean isArray();
 
     boolean isUnknown();
-
-    /**
-     * <p>
-     * <strong>NOTE</strong> : if {@link #isUnknown()} return true ,this method always return false.
-     * </p>
-     */
-    boolean isUserDefined();
 
 
     /**
@@ -101,7 +96,7 @@ public interface DataType {
      *
      * @see #internalUse(String, boolean)
      */
-    static DataType internalUse(String typeName) {
+    static InternalUseType internalUse(String typeName) {
         return DataTypeFactory.internalUse(typeName, false);
     }
 
@@ -119,7 +114,7 @@ public interface DataType {
      * @return {@link DataType} that representing database internal-use type.
      * @throws IllegalArgumentException throw when typeName have no text.
      */
-    static DataType internalUse(String typeName, boolean caseSensitivity) {
+    static InternalUseType internalUse(String typeName, boolean caseSensitivity) {
         return DataTypeFactory.internalUse(typeName, caseSensitivity);
     }
 
@@ -134,7 +129,7 @@ public interface DataType {
      *
      * @see #userDefined(String, boolean)
      */
-    static DataType userDefined(String typeName) {
+    static UserDefinedType userDefined(String typeName) {
         return DataTypeFactory.userDefined(typeName, false);
     }
 
@@ -149,10 +144,10 @@ public interface DataType {
      *
      * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
      * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.
-     * @return {@link DataType} that representing user-defined type,{@link DataType#isUserDefined()} always true.
+     * @return {@link DataType} that representing user-defined type.
      * @throws IllegalArgumentException throw when typeName have no text.
      */
-    static DataType userDefined(String typeName, boolean caseSensitivity) {
+    static UserDefinedType userDefined(String typeName, boolean caseSensitivity) {
         return DataTypeFactory.userDefined(typeName, caseSensitivity);
     }
 
