@@ -97,6 +97,10 @@ public interface TableColumnMeta extends OptionSpec {
      * <li>{@link #generatedMode()}</li>
      * <li>{@link #defaultValue()}</li>
      * <li>{@link #comment()}</li>
+     * <li>charset if exists</li>
+     * <li>collation if exists</li>
+     * <li>privilege if exists</li>
+     * <li>enumElementSet if non-empty</li>
      * <li>{@link System#identityHashCode(Object)}</li>
      * </ol>
      */

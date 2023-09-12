@@ -1,7 +1,10 @@
 package io.jdbd.vendor.result;
 
 import io.jdbd.JdbdException;
-import io.jdbd.meta.*;
+import io.jdbd.meta.BooleanMode;
+import io.jdbd.meta.DataType;
+import io.jdbd.meta.JdbdType;
+import io.jdbd.meta.KeyType;
 import io.jdbd.result.FieldType;
 import io.jdbd.result.ResultRowMeta;
 import io.jdbd.session.Option;
@@ -67,13 +70,13 @@ public abstract class VendorResultRowMeta implements ResultRowMeta {
     }
 
     @Override
-    public final KeyMode getKeyMode(String columnLabel) throws JdbdException {
+    public final KeyType getKeyMode(String columnLabel) throws JdbdException {
         return this.getKeyMode(this.getColumnIndex(columnLabel));
     }
 
     @Override
-    public final NullMode getNullMode(String columnLabel) throws JdbdException {
-        return this.getNullMode(this.getColumnIndex(columnLabel));
+    public final BooleanMode getNullableMode(String columnLabel) throws JdbdException {
+        return this.getNullableMode(this.getColumnIndex(columnLabel));
     }
 
     @Override

@@ -5,6 +5,7 @@ import io.jdbd.meta.DataType;
 import io.jdbd.meta.TableColumnMeta;
 import io.jdbd.meta.TableMeta;
 import io.jdbd.session.Option;
+import io.jdbd.vendor.VendorOptions;
 import io.jdbd.vendor.util.JdbdStrings;
 
 import java.nio.charset.Charset;
@@ -14,22 +15,6 @@ import java.util.function.Function;
 
 public final class VendorTableColumnMeta implements TableColumnMeta {
 
-    public static final Option<Integer> COLUMN_POSITION = Option.from("POSITION", Integer.class);
-
-    public static final Option<Integer> COLUMN_SCALE = Option.from("SCALE", Integer.class);
-
-    public static final Option<DataType> COLUMN_DATA_TYPE = Option.from("DATA TYPE", DataType.class);
-
-    public static final Option<BooleanMode> COLUMN_NULLABLE_MODE = Option.from("NULLABLE MODE", BooleanMode.class);
-
-    public static final Option<BooleanMode> COLUMN_AUTO_INCREMENT_MODE = Option.from("AUTO INCREMENT MODE", BooleanMode.class);
-
-    public static final Option<BooleanMode> COLUMN_GENERATED_MODE = Option.from("GENERATED MODE", BooleanMode.class);
-
-    public static final Option<String> COLUMN_DEFAULT = Option.from("DEFAULT VALUE", String.class);
-
-    public static final Option<String> COLUMN_COMMENT = Option.from("COMMENT", String.class);
-
     public static final Function<Class<?>, Set<?>> EMPTY_ENUMS_FUNC = clazz -> Collections.emptySet();
 
 
@@ -38,14 +23,14 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
      * optionFunc must support following option:
      *     <ul>
      *         <li>{@link Option#NAME} column name,see {@link #columnName()}</li>
-     *         <li>{@link #COLUMN_DATA_TYPE},see {@link #dataType()}</li>
+     *         <li>{@link VendorOptions#DATA_TYPE},see {@link #dataType()}</li>
      *         <li>{@link Option#PRECISION} column precision,see {@link #precision()}</li>
-     *         <li>{@link #COLUMN_SCALE} column scale,see {@link #scale()}</li>
-     *         <li>{@link #COLUMN_NULLABLE_MODE},see {@link #nullableMode()}</li>
-     *         <li>{@link #COLUMN_AUTO_INCREMENT_MODE},see {@link #autoincrementMode()}</li>
-     *         <li>{@link #COLUMN_GENERATED_MODE},see {@link #generatedMode()}</li>
-     *         <li>{@link #COLUMN_DEFAULT},see {@link #defaultValue()}</li>
-     *         <li>{@link #COLUMN_COMMENT},see {@link #comment()}</li>
+     *         <li>{@link VendorOptions#SCALE} column scale,see {@link #scale()}</li>
+     *         <li>{@link VendorOptions#NULLABLE_MODE},see {@link #nullableMode()}</li>
+     *         <li>{@link VendorOptions#AUTO_INCREMENT_MODE},see {@link #autoincrementMode()}</li>
+     *         <li>{@link VendorOptions#GENERATED_MODE},see {@link #generatedMode()}</li>
+     *         <li>{@link VendorOptions#DEFAULT_VALUE},see {@link #defaultValue()}</li>
+     *         <li>{@link VendorOptions#COMMENT},see {@link #comment()}</li>
      *     </ul>
      * </p>
      * <p>
@@ -90,12 +75,12 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
 
     @Override
     public DataType dataType() {
-        return nonNullOf(COLUMN_DATA_TYPE);
+        return nonNullOf(VendorOptions.DATA_TYPE);
     }
 
     @Override
     public int position() {
-        return nonNullOf(COLUMN_POSITION);
+        return nonNullOf(VendorOptions.POSITION);
     }
 
     @Override
@@ -105,33 +90,33 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
 
     @Override
     public int scale() {
-        return nonNullOf(COLUMN_SCALE);
+        return nonNullOf(VendorOptions.SCALE);
     }
 
 
     @Override
     public BooleanMode nullableMode() {
-        return nonNullOf(COLUMN_NULLABLE_MODE);
+        return nonNullOf(VendorOptions.NULLABLE_MODE);
     }
 
     @Override
     public BooleanMode autoincrementMode() {
-        return nonNullOf(COLUMN_AUTO_INCREMENT_MODE);
+        return nonNullOf(VendorOptions.AUTO_INCREMENT_MODE);
     }
 
     @Override
     public BooleanMode generatedMode() {
-        return nonNullOf(COLUMN_GENERATED_MODE);
+        return nonNullOf(VendorOptions.GENERATED_MODE);
     }
 
     @Override
     public String defaultValue() {
-        return valueOf(COLUMN_DEFAULT);
+        return valueOf(VendorOptions.DEFAULT_VALUE);
     }
 
     @Override
     public String comment() {
-        return valueOf(COLUMN_COMMENT);
+        return valueOf(VendorOptions.COMMENT);
     }
 
     @SuppressWarnings("unchecked")
@@ -180,11 +165,28 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
                 .append(this.autoincrementMode())
                 .append(" , generatedMode : ")
                 .append(this.generatedMode())
-                .append(" , defaultValue : '")
-                .append(this.defaultValue())
-                .append("' , comment : '")
-                .append(this.comment())
-                .append('\'');
+                .append(" , defaultValue : ");
+
+        String textValue;
+
+        textValue = defaultValue();
+        if (textValue != null) {
+            builder.append('\'');
+        }
+        builder.append(textValue);
+        if (textValue != null) {
+            builder.append('\'');
+        }
+
+        builder.append(" , comment : ");
+        textValue = comment();
+        if (textValue != null) {
+            builder.append('\'');
+        }
+        builder.append(textValue);
+        if (textValue != null) {
+            builder.append('\'');
+        }
 
         Object optionValue;
         optionValue = this.optionFunc.apply(Option.CHARSET);
@@ -216,9 +218,9 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
                 if (index > 0) {
                     builder.append(',');
                 }
-                builder.append('\'')
+                builder.append('"')
                         .append(s)
-                        .append('\'');
+                        .append('"');
                 index++;
             }
             builder.append(']');

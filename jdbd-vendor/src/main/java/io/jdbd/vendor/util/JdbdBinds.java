@@ -1,31 +1,23 @@
 package io.jdbd.vendor.util;
 
 import io.jdbd.JdbdException;
-import io.jdbd.meta.SQLType;
-import io.jdbd.type.PathParameter;
-import io.jdbd.type.TextPath;
 import io.jdbd.vendor.stmt.ParamValue;
 import io.jdbd.vendor.stmt.Value;
 import io.netty.buffer.ByteBuf;
 import reactor.util.annotation.Nullable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.StandardOpenOption;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
-import java.util.*;
+import java.util.BitSet;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class JdbdBinds {
 
@@ -111,26 +103,6 @@ public abstract class JdbdBinds {
 //            default:
 
 
-    public static <T extends SQLType> Map<String, T> createSqlTypeMap(final T[] valueArray) {
-        final Map<String, T> map = JdbdCollections.hashMap((int) (valueArray.length / 0.75f));
-        for (T value : valueArray) {
-            if (value.isUnknown()) {
-                continue;
-            }
-            map.put(value.typeName(), value);
-        }
-        return JdbdCollections.unmodifiableMap(map);
-    }
-
-    public static Set<OpenOption> openOptionSet(final PathParameter parameter) {
-        final Set<OpenOption> optionSet;
-        if (parameter.isDeleteOnClose()) {
-            optionSet = JdbdArrays.asSet(StandardOpenOption.READ, StandardOpenOption.DELETE_ON_CLOSE);
-        } else {
-            optionSet = Collections.singleton(StandardOpenOption.READ);
-        }
-        return optionSet;
-    }
 
 
     @Deprecated
@@ -164,18 +136,6 @@ public abstract class JdbdBinds {
 
     }
 
-    public static BufferedReader newReader(final TextPath textPath, final int bufferSize) throws IOException {
-        final SeekableByteChannel channel;
-        channel = Files.newByteChannel(textPath.value(), openOptionSet(textPath));
-
-        final InputStream inputStream;
-        inputStream = Channels.newInputStream(channel);
-
-        final InputStreamReader inReader;
-        inReader = new InputStreamReader(inputStream, textPath.charset().newDecoder());
-
-        return new BufferedReader(inReader, bufferSize);
-    }
 
 
     @Nullable

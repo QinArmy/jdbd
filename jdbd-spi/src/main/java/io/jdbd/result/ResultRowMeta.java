@@ -2,7 +2,10 @@ package io.jdbd.result;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
-import io.jdbd.meta.*;
+import io.jdbd.meta.BooleanMode;
+import io.jdbd.meta.DataType;
+import io.jdbd.meta.JdbdType;
+import io.jdbd.meta.KeyType;
 import io.jdbd.session.Option;
 
 import java.util.List;
@@ -118,14 +121,14 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      */
     int getScale(int indexBasedZero) throws JdbdException;
 
-    KeyMode getKeyMode(int indexBasedZero) throws JdbdException;
+    KeyType getKeyMode(int indexBasedZero) throws JdbdException;
 
     /**
      * @param indexBasedZero base 0,the first column is 0, the second is 1, ...
      * @throws JdbdException if a database access error occurs
      * @see #getColumnIndex(String)
      */
-    NullMode getNullMode(int indexBasedZero) throws JdbdException;
+    BooleanMode getNullableMode(int indexBasedZero) throws JdbdException;
 
 
     /**
@@ -205,13 +208,13 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
     int getScale(String columnLabel) throws JdbdException;
 
 
-    KeyMode getKeyMode(String columnLabel) throws JdbdException;
+    KeyType getKeyMode(String columnLabel) throws JdbdException;
 
 
     /**
-     * @see #getNullMode(int)
+     * @see #getNullableMode(int)
      */
-    NullMode getNullMode(String columnLabel) throws JdbdException;
+    BooleanMode getNullableMode(String columnLabel) throws JdbdException;
 
 
     /**

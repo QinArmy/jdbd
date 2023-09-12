@@ -126,7 +126,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      * <p>
      * This implementation of this method must support following :
      *     <ul>
-     *         <li>{@link DatabaseMetaData#TABLE_TYPE} : database support table types</li>
+     *         <li>{@link Option#TYPE_NAME} : database support table types</li>
      *         <li>{@link Option#USER} : representing current user name of session</li>
      *     </ul>
      * </p>

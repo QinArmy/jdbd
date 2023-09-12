@@ -2,6 +2,7 @@ package io.jdbd.session;
 
 import io.jdbd.Driver;
 import io.jdbd.meta.SchemaMeta;
+import io.jdbd.meta.TableMeta;
 import io.jdbd.result.RefCursor;
 import io.jdbd.util.JdbdUtils;
 
@@ -338,6 +339,12 @@ public final class Option<T> {
      */
     public static final Option<String> PRIVILEGE = Option.from("PRIVILEGE", String.class);
 
+    /**
+     * this option representing unique option ,for example index.
+     *
+     * @see io.jdbd.meta.DatabaseMetaData#indexesOfTable(TableMeta, Function)
+     */
+    public static final Option<Boolean> UNIQUE = from("UNIQUE", Boolean.class);
 
     private final String name;
 
