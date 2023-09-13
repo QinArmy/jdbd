@@ -7,7 +7,7 @@
     <groupId>io.jdbd</groupId>
     <artifactId>jdbd</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version><!-- jdbd version find and replace-->
+    <version>0.8.0</version><!-- jdbd version find and replace-->
     <modules>
         <module>jdbd-spi</module>
         <module>jdbd-vendor</module>
@@ -18,6 +18,12 @@
         <url>https://jdbd.io/</url>
     </organization>
 
+    <developers>
+        <developer>
+            <name>zoro</name>
+            <email>zoro@qinarmy.io</email>
+        </developer>
+    </developers>
 
 
     <properties>
