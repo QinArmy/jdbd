@@ -1,43 +1,31 @@
 package io.jdbd.type;
 
 
+import io.jdbd.meta.DataType;
 import org.reactivestreams.Publisher;
 
-import java.util.function.Function;
-
-
+/**
+ * <p>
+ * This interface representing the holder of bye[] {@link Publisher}.
+ * </p>
+ * <p>
+ * Application developer can get the instance of this interface by {@link #from(Publisher)} method.
+ * </p>
+ *
+ * @see io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)
+ * @see io.jdbd.result.DataRow#get(int, Class)
+ * @since 1.0
+ */
 public interface Blob extends PublisherParameter {
 
-
+    /**
+     * @return bye[] {@link Publisher}
+     */
     Publisher<byte[]> value();
 
     /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *             // blob is a instance of {@link Blob}
-     *              R flux  = function.apply(blob.value()) ;
-     *
-     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
-     *              blob.value(Flux::from)
-     *                 .collectList()
-     *
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
-     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
-     * @return non-null Flux that emit just one element or {@link Throwable}.
-     * @throws NullPointerException throw when
-     *                              <ul>
-     *                                  <li>fluxFunc is null</li>
-     *                                  <li>fluxFunc return null</li>
-     *                              </ul>
+     * create {@link Blob} instance.
      */
-    <F extends Publisher<byte[]>> F value(Function<Publisher<byte[]>, F> fluxFunc);
-
     static Blob from(Publisher<byte[]> source) {
         return JdbdTypes.blobParam(source);
     }

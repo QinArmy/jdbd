@@ -25,6 +25,19 @@
         </developer>
     </developers>
 
+    <scm>
+        <connection>scm:git@github.com:QinArmy/jdbd.git</connection>
+        <url>https://github.com/QinArmy/jdbd</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
 
     <properties>
         <java.version>1.8</java.version>
@@ -187,4 +200,76 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>central</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>3.0.1</version>
+                            <executions>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                                    <configuration>
+                                        <gpgArguments>
+                                            <arg>--pinentry-mode</arg>
+                                            <arg>loopback</arg>
+                                        </gpgArguments>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <!-- Deploy to Sonatype OSS Nexus -->
+
+                        <plugin>
+                            <groupId>org.sonatype.plugins</groupId>
+                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                            <version>1.6.13</version>
+                            <extensions>true</extensions>
+                            <configuration>
+                                <serverId>sonatype</serverId>
+                                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                                <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                                <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
+                                <skipStagingRepositoryClose>true</skipStagingRepositoryClose>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+
+                </pluginManagement>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+
+            <distributionManagement>
+                <repository>
+                    <id>sonatype</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+
+        </profile>
+
+    </profiles>
 </project>

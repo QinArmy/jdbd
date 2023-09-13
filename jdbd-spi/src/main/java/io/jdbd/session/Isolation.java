@@ -10,8 +10,22 @@ import java.io.ObjectStreamException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
+/**
+ * <p>
+ * This class representing transaction isolation level.
+ * </p>
+ *
+ * @since 1.0
+ */
 public final class Isolation {
 
+    /**
+     * <p>
+     * Get or create a {@link Isolation} instance.
+     * </p>
+     *
+     * @throws IllegalArgumentException throw when value have no text.
+     */
     public static Isolation from(final String value) {
         if (JdbdUtils.hasNoText(value)) {
             throw new IllegalArgumentException("no text");

@@ -3,6 +3,13 @@ package io.jdbd.session;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 
+/**
+ * <p>
+ * Emit(or throw) when XA transaction occur error,see {@link RmDatabaseSession}.
+ * </p>
+ *
+ * @since 1.0
+ */
 public class XaException extends JdbdException {
 
 

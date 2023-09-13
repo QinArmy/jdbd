@@ -3,7 +3,13 @@ package io.jdbd;
 
 import io.jdbd.lang.Nullable;
 
-
+/**
+ * <p>
+ * Emit(or throw) when driver occur error.
+ * </p>
+ *
+ * @since 1.0
+ */
 public class JdbdException extends RuntimeException {
 
     private final String sqlState;

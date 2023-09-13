@@ -1,6 +1,5 @@
 package io.jdbd.type;
 
-import io.jdbd.JdbdException;
 import io.jdbd.lang.NonNull;
 import io.jdbd.lang.Nullable;
 import org.reactivestreams.Publisher;
@@ -8,7 +7,6 @@ import org.reactivestreams.Publisher;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.function.Function;
 
 abstract class JdbdTypes {
 
@@ -23,12 +21,11 @@ abstract class JdbdTypes {
         return new JdbdBlob(source);
     }
 
-    @SuppressWarnings("unchecked")
-    static <T extends CharSequence> Clob clobParam(@Nullable Publisher<T> source) {
+    static Clob clobParam(@Nullable Publisher<String> source) {
         if (source == null) {
             throw new NullPointerException("source must non-null");
         }
-        return new JdbdClob((Publisher<CharSequence>) source);
+        return new JdbdClob(source);
     }
 
 
@@ -49,21 +46,6 @@ abstract class JdbdTypes {
     }
 
 
-    /**
-     * @return {@link NullPointerException} not {@link JdbdException}
-     */
-    static NullPointerException fluxFuncIsNull() {
-        return new NullPointerException("fluxFunc must be non-null");
-    }
-
-    /**
-     * @return {@link NullPointerException} not {@link JdbdException}
-     */
-    static NullPointerException fluxFuncReturnNull(Function<?, ?> fluxFunc) {
-        return new NullPointerException(String.format("%s must return non-null", fluxFunc));
-    }
-
-
     private static final class JdbdBlob implements Blob {
 
         private final Publisher<byte[]> source;
@@ -78,46 +60,21 @@ abstract class JdbdTypes {
             return this.source;
         }
 
-        @Override
-        public <F extends Publisher<byte[]>> F value(final @Nullable Function<Publisher<byte[]>, F> fluxFunc) {
-            if (fluxFunc == null) {
-                throw fluxFuncIsNull();
-            }
-            final F flux;
-            flux = fluxFunc.apply(this.source);
-            if (flux == null) {
-                throw fluxFuncReturnNull(fluxFunc);
-            }
-            return flux;
-        }
 
     }//JdbdBlob
 
     private static final class JdbdClob implements Clob {
 
-        private final Publisher<CharSequence> source;
+        private final Publisher<String> source;
 
-        private JdbdClob(Publisher<CharSequence> source) {
+        private JdbdClob(Publisher<String> source) {
             this.source = source;
         }
 
         @NonNull
         @Override
-        public Publisher<CharSequence> value() {
+        public Publisher<String> value() {
             return this.source;
-        }
-
-        @Override
-        public <F extends Publisher<CharSequence>> F value(final @Nullable Function<Publisher<CharSequence>, F> fluxFunc) {
-            if (fluxFunc == null) {
-                throw fluxFuncIsNull();
-            }
-            final F flux;
-            flux = fluxFunc.apply(this.source);
-            if (flux == null) {
-                throw fluxFuncReturnNull(fluxFunc);
-            }
-            return flux;
         }
 
     }//JdbdBlob

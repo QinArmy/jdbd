@@ -19,6 +19,9 @@ import io.jdbd.lang.Nullable;
  * </ul>
  * the conversion process of {@link RmDatabaseSession#recover(int, java.util.function.Function)} is the reverse of above.
  * </p>
+ * <p>
+ *     Application developer can get the instance of {@link Xid} by {@link #from(String, String, int)} method.
+ * </p>
  *
  * @see Option#XID
  * @see RmDatabaseSession
