@@ -614,7 +614,9 @@ public abstract class JdbdExceptions {
         return e;
     }
 
-
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
     public static NullPointerException columnIsNull(ColumnMeta meta) {
         String m = String.format("column[index:%s,label:%s] is null", meta.getColumnIndex(), meta.getColumnLabel());
         return new NullPointerException(m);

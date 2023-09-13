@@ -78,13 +78,7 @@ public interface ResultItem {
         int getColumnCount();
 
         /**
-         * Gets the designated column's suggested title for use in printouts and
-         * displays. The suggested title is usually specified by the SQL <code>AS</code>
-         * clause.  If a SQL <code>AS</code> is not specified, the value returned from
-         * <code>getColumnLabel</code> will be the same as the value returned by the
-         * <code>getColumnName</code> method.
-         *
-         * @param indexBasedZero base 0,the first column is 0, the second is 1, ..
+         * @param indexBasedZero index based zero,the first value is 0 .
          * @return the suggested column title              .
          * @throws JdbdException if a database access error occurs
          */
@@ -96,7 +90,7 @@ public interface ResultItem {
          * Get column index , if columnLabel duplication ,then return last index that have same columnLabel.
          * </p>
          *
-         * @param columnLabel column alias
+         * @param columnLabel column label
          * @return index based 0,the first column is 0, the second is 1, ..
          * @throws JdbdException if a database access error occurs
          */

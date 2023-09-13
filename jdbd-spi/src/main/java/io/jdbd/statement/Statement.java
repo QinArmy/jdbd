@@ -4,11 +4,13 @@ package io.jdbd.statement;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DataType;
+import io.jdbd.meta.JdbdType;
 import io.jdbd.session.*;
 import io.jdbd.type.*;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,6 +47,261 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * <li>While statement variable exist, they can be accessed on the server side.</li>
      * </ul>
      * </p>
+     * <p>
+     * Each {@link JdbdType} instance support java type rule:
+     *     <ul>
+     *         <li>{@link JdbdType#NULL} support only {@code null}</li>
+     *         <li>{@link JdbdType#BOOLEAN} support following java types :
+     *             <ol>
+     *                 <li>{@code null}</li>
+     *                 <li>{@link Boolean}</li>
+     *                 <li>{@link Number} , zero value : convert to {@link Boolean#FALSE} ; non-zero value : convert to {@link Boolean#TRUE}</li>
+     *                 <li>{@link String},ignore case 'TRUE','T','ON','YES' :  convert to {@link Boolean#TRUE} ; ignore case 'FALSE','F','OFF','NO' :  convert to {@link Boolean#FALSE}; other : the executeXxx() method emit(not throw) {@link JdbdException}</li>
+     *             </ol>
+     *              if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#BIT} and {@link JdbdType#VARBIT}  support following java types :
+     *            <ol>
+     *                <li>{@code null}</li>
+     *                <li>{@link Byte}</li>
+     *                <li>{@link Short}</li>
+     *                <li>{@link Integer}</li>
+     *                <li>{@link Long}</li>
+     *                <li>{@link java.util.BitSet} , convert to binary string</li>
+     *                <li>{@link String} the string only '0' and '1'</li>
+     *            </ol>
+     *             if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li> integer number types :
+     *              <ul>
+     *                  <li>{@link JdbdType#TINYINT}</li>
+     *                  <li>{@link JdbdType#SMALLINT}</li>
+     *                  <li>{@link JdbdType#MEDIUMINT}</li>
+     *                  <li>{@link JdbdType#INTEGER}</li>
+     *                  <li>{@link JdbdType#BIGINT}</li>
+     *                  <li>{@link JdbdType#TINYINT_UNSIGNED}</li>
+     *                  <li>{@link JdbdType#SMALLINT_UNSIGNED}</li>
+     *                  <li>{@link JdbdType#MEDIUMINT_UNSIGNED}</li>
+     *                  <li>{@link JdbdType#INTEGER_UNSIGNED}</li>
+     *                  <li>{@link JdbdType#BIGINT_UNSIGNED}</li>
+     *              </ul>
+     *                support following java types :
+     *                <ol>
+     *                    <li>{@code null}</li>
+     *                    <li>{@link Byte}</li>
+     *                    <li>{@link Short}</li>
+     *                    <li>{@link Integer}</li>
+     *                    <li>{@link Long}</li>
+     *                    <li>{@link java.math.BigInteger}</li>
+     *                    <li>{@link java.math.BigDecimal} , fractional part must be 0 </li>
+     *                    <li>{@link String}</li>
+     *                    <li>{@link Boolean} , true : 1 ; false : 0</li>
+     *                </ol>
+     *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#DECIMAL} and {@link JdbdType#DECIMAL_UNSIGNED} and {@link JdbdType#NUMERIC} support following java types :
+     *              <ol>
+     *                    <li>{@code null}</li>
+     *                    <li>{@link Byte}</li>
+     *                    <li>{@link Short}</li>
+     *                    <li>{@link Integer}</li>
+     *                    <li>{@link Long}</li>
+     *                    <li>{@link java.math.BigInteger}</li>
+     *                    <li>{@link java.math.BigDecimal} </li>
+     *                    <li>{@link Float}, use {@link java.math.BigDecimal#BigDecimal(String)} constructor</li>
+     *                    <li>{@link Double}, use {@link java.math.BigDecimal#BigDecimal(String)} constructor</li>
+     *                    <li>{@link String}</li>
+     *                    <li>{@link Boolean} , true : {@link java.math.BigDecimal#ONE} ; false : {@link java.math.BigDecimal#ZERO}</li>
+     *              </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#FLOAT} and {@link JdbdType#DOUBLE} and {@link JdbdType#REAL}  support following java types :
+     *              <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link Float}</li>
+     *                  <li>{@link Double}</li>
+     *                  <li>{@link String}</li>
+     *                  <li>{@link Boolean} , true : 1.0 ; false : 0.0</li>
+     *              </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>text string types
+     *              <ul>
+     *                  <li>{@link JdbdType#CHAR}</li>
+     *                  <li>{@link JdbdType#VARCHAR}</li>
+     *                  <li>{@link JdbdType#TINYTEXT}</li>
+     *                  <li>{@link JdbdType#TEXT}</li>
+     *                  <li>{@link JdbdType#MEDIUMTEXT}</li>
+     *                  <li>{@link JdbdType#LONGTEXT}</li>
+     *                  <br/>
+     *                  <li>{@link JdbdType#XML}</li>
+     *                  <li>{@link JdbdType#JSON}</li>
+     *                  <li>{@link JdbdType#JSONB}</li>
+     *              </ul>
+     *                support following java types :
+     *                <ol>
+     *                    <li>{@code null}</li>
+     *                    <li>{@link String}</li>
+     *                    <li>{@link Byte}</li>
+     *                    <li>{@link Short}</li>
+     *                    <li>{@link Integer}</li>
+     *                    <li>{@link Long}</li>
+     *                    <li>{@link java.math.BigInteger}</li>
+     *                    <li>{@link java.math.BigDecimal} </li>
+     *                    <li>{@link Float}</li>
+     *                    <li>{@link Double}</li>
+     *                    <li>{@link Boolean}</li>
+     *                    <li>{@link Enum#name()}</li>
+     *                    <li>{@link LocalDate}</li>
+     *                    <li>{@link java.time.LocalTime}</li>
+     *                    <li>{@link java.time.LocalDateTime}</li>
+     *                    <li>{@link java.time.OffsetTime}</li>
+     *                    <li>{@link java.time.OffsetDateTime}</li>
+     *                    <li>{@link java.time.ZonedDateTime}</li>
+     *                    <li>{@link java.time.YearMonth}</li>
+     *                    <li>{@link java.time.MonthDay}</li>
+     *                    <li>{@link java.util.BitSet}, convert to binary string</li>
+     *                </ol>
+     *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>binary types
+     *              <ul>
+     *                  <li>{@link JdbdType#BINARY}</li>
+     *                  <li>{@link JdbdType#VARBINARY}</li>
+     *                  <li>{@link JdbdType#TINYBLOB}</li>
+     *                  <li>{@link JdbdType#BLOB}</li>
+     *                  <li>{@link JdbdType#MEDIUMBLOB}</li>
+     *                  <li>{@link JdbdType#LONGBLOB}</li>
+     *              </ul>
+     *               support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@code byte[]}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#TIME}  support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.LocalTime}</li>
+     *                  <li>{@link String}</li>
+     *                  <li>{@link java.time.OffsetTime},if database don't support time with timezone,then convert, like MySQL,else (eg: PostgreSQL) overflow</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#TIME_WITH_TIMEZONE}  support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.OffsetTime}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#DATE} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.LocalDate}</li>
+     *                  <li>{@link java.time.YearMonth}</li>
+     *                  <li>{@link java.time.MonthDay}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#TIMESTAMP}  support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.LocalDateTime}</li>
+     *                  <li>{@link String}</li>
+     *                  <li>{@link java.time.OffsetTime},if database don't support timestamp with timezone,then convert, like MySQL,else (eg: PostgreSQL) overflow</li>
+     *                  <li>{@link java.time.ZonedDateTime},if database don't support timestamp with timezone,then convert, like MySQL,else (eg: PostgreSQL) overflow</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#TIMESTAMP_WITH_TIMEZONE}  support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link String}</li>
+     *                  <li>{@link java.time.OffsetTime}</li>
+     *                  <li>{@link java.time.ZonedDateTime}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#YEAR_MONTH} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.YearMonth}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#MONTH_DAY} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.MonthDay}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#YEAR} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.Year}</li>
+     *                  <li>{@link Short}</li>
+     *                  <li>{@link Integer}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#DURATION} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.Duration}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#PERIOD} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link java.time.Period}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#INTERVAL} support following java types :
+     *               <ol>
+     *                  <li>{@code null}</li>
+     *                  <li>{@link String}</li>
+     *               </ol>
+     *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *         <li>{@link JdbdType#ROWID} support following java types :
+     *                <ol>
+     *                    <li>{@code null}</li>
+     *                    <li>{@link Byte}</li>
+     *                    <li>{@link Short}</li>
+     *                    <li>{@link Integer}</li>
+     *                    <li>{@link Long}</li>
+     *                    <li>{@link java.math.BigInteger}</li>
+     *                    <li>{@link String}</li>
+     *                </ol>
+     *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *         </li>
+     *     </ul>
+     *     <li>{@link JdbdType#GEOMETRY}  support following java types :
+     *                <ol>
+     *                    <li>{@code null}</li>
+     *                    <li>{@link Point} WKB or WKT</li>
+     *                    <li>{@link String} WKT</li>
+     *                    <li>{@code  byte[]} WKB</li>
+     *                    <li>{@link Blob} WKB</li>
+     *                    <li>{@link Clob} WKT</li>
+     *                    <li>{@link BlobPath} WKB</li>
+     *                    <li>{@link TextPath} WKT</li>
+     *                </ol>
+     *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
+     *     </li>
+     * </p>
      *
      * @param name     statement variable name,must have text.
      * @param dataType parameter type is following type : <ul>
@@ -52,8 +309,8 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                 <li>{@link io.jdbd.meta.SQLType} driver have known database build-in data type. It is defined by driver developer.</li>
      *                 <li>the {@link DataType} that application developer define type and it's {@link DataType#typeName()} is supported by database.
      *                       <ul>
-     *                           <li>If {@link DataType#typeName()} is database build-in type,this method convert dataType to appropriate {@link io.jdbd.meta.SQLType} . now {@link DataType#isUserDefined()} return false, or throw {@link JdbdException}.</li>
-     *                           <li>Else if database support user_defined type,then use dataType. now {@link DataType#isUserDefined()} should return true,if it's user_defined type</li>
+     *                           <li>If {@link DataType#typeName()} is database build-in type,this method convert dataType to appropriate {@link io.jdbd.meta.SQLType} . now dataType shouldn't be {@link io.jdbd.meta.UserDefinedType} type, or throw {@link JdbdException}.</li>
+     *                           <li>Else if database support user_defined type,then use dataType. now dataType should be {@link io.jdbd.meta.UserDefinedType} type,if it's user_defined type</li>
      *                           <li>Else throw {@link JdbdException}</li>
      *                       </ul>
      *                 </li>
@@ -91,11 +348,9 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                                   <ul>
      *                                                <li>{@link io.jdbd.meta.JdbdType#UNKNOWN}</li>
      *                                                <li>{@link io.jdbd.meta.JdbdType#DIALECT_TYPE}</li>
-     *                                                <li>{@link io.jdbd.meta.JdbdType#USER_DEFINED}</li>
      *                                                <li>{@link io.jdbd.meta.JdbdType#REF_CURSOR}</li>
      *                                                <li>{@link io.jdbd.meta.JdbdType#ARRAY}</li>
      *                                                <li>{@link io.jdbd.meta.JdbdType#COMPOSITE}</li>
-     *                                                <li>{@link io.jdbd.meta.JdbdType#INTERNAL_USE}</li>
      *                                     </ul>
      *                              </li>
      *                              <li>dataType isn't supported by database.</li>
@@ -108,7 +363,6 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * @see Point
      * @see Blob
      * @see Clob
-     * @see Text
      * @see BlobPath
      * @see TextPath
      */
@@ -158,10 +412,10 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * </p>
      *
      * @param fetchSize <ul>
-     *                                                                                                                            <li>0 : fetch all, this is default value</li>
-     *                                                                                                                            <li>positive : fetch size</li>
-     *                                                                                                                            <li>negative : error</li>
-     *                                                                                                                        </ul>
+     *                                                                                                                                                                               <li>0 : fetch all, this is default value</li>
+     *                                                                                                                                                                               <li>positive : fetch size</li>
+     *                                                                                                                                                                               <li>negative : error</li>
+     *                                                                                                                                                                           </ul>
      * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when fetchSize is negative.
      */

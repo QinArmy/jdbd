@@ -564,6 +564,11 @@ public abstract class ColumnConverts {
             value = BitSet.valueOf(new long[]{((Byte) source) & 0xFFL});
         } else if (source instanceof BigInteger) {
             value = JdbdStrings.bitStringToBitSet(((BigInteger) source).toString(2), true);
+        } else if (source instanceof Boolean) {
+            value = new BitSet(1);
+            if ((Boolean) source) {
+                value.set(0);
+            }
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, BitSet.class, null);
         }

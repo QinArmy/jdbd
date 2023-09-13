@@ -364,14 +364,17 @@ public abstract class VendorDataRow implements DataRow {
         return new JdbdException(m);
     }
 
-    private static <T> JdbdException defaultValueTypeNotMatch(ColumnMeta meta, Class<T> columnClass, T defaultValue) {
+    /**
+     * @return {@link NullPointerException} not {@link JdbdException}
+     */
+    private static <T> NullPointerException defaultValueTypeNotMatch(ColumnMeta meta, Class<T> columnClass, T defaultValue) {
         final String m = String.format("%s isn't the type of %s ,column[index : %s , label : %s]",
                 JdbdClasses.safeClassName(defaultValue),
                 columnClass.getName(),
                 meta.getColumnIndex(),
                 meta.getColumnLabel()
         );
-        return new JdbdException(m);
+        return new NullPointerException(m);
     }
 
     private static JdbdException stringDefaultNullError(final ColumnMeta meta) {

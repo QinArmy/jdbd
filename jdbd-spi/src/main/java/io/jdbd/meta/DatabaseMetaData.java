@@ -2,7 +2,6 @@ package io.jdbd.meta;
 
 import io.jdbd.DriverVersion;
 import io.jdbd.JdbdException;
-import io.jdbd.lang.Nullable;
 import io.jdbd.session.DatabaseMetaSpec;
 import io.jdbd.session.Option;
 import io.jdbd.session.OptionSpec;
@@ -21,17 +20,8 @@ import java.util.function.Function;
  */
 public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, OptionSpec {
 
+    Option<String> CATALOG = Option.from("CATALOG", String.class);
 
-    /**
-     * <p>
-     * Typical types are :
-     *     <ul>
-     *         <li>BTREE</li>
-     *         <li>HASH</li>
-     *     </ul>
-     * </p>
-     */
-    Option<String> INDEX_TYPE = Option.from("INDEX TYPE", String.class);
 
     /**
      * A possible return value for the method
@@ -72,86 +62,250 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
 
     DriverVersion driverVersion();
 
+    /**
+     * <p>
+     * Get current schema info of {@link #getSession()}
+     * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     *
+     * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
     Publisher<SchemaMeta> currentSchema();
 
+    /**
+     * <p>
+     * Get schemas info of database.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     * <p>
+     * optionFunc at least support following options :
+     *     <ul>
+     *         <li>{@link #CATALOG},representing catalog name,catalog name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing catalog name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple catalog name : driver will use '=' operator</li>
+     *             </ul>
+     *         </li>
+     *         <li>{@link Option#NAME},representing schema name,schema name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing schema name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple schema name : driver will use '=' operator</li>
+     *             </ul>
+     *         </li>
+     *     </ul>
+     * </p>
+     *
+     * @param optionFunc func can always return {@code null}
+     * @return the {@link Publisher} emit 0-N {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
     Publisher<SchemaMeta> schemas(Function<Option<?>, ?> optionFunc);
 
-
+    /**
+     * <p>
+     * Get tables info of current schema.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     * <p>
+     * optionFunc at least support following options :
+     *     <ul>
+     *         <li>{@link Option#NAME},representing table name,table name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing table name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple table name : driver will use '=' operator</li>
+     *             </ul>
+     *         </li>
+     *         <li>{@link Option#TYPE_NAME},representing table type name,table type name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing table type name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple table type name : driver will use '=' operator</li>
+     *             </ul>
+     *             table type name see {@link TableMeta#valueOf(Option)}
+     *         </li>
+     *     </ul>
+     * </p>
+     *
+     * @param optionFunc func can always return {@code null}
+     * @return the {@link Publisher} emit 0-N {@link TableMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
     Publisher<TableMeta> tablesOfCurrentSchema(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
-     * The implementation of this method must support following :
-     * <ul>
-     *     <li>{@link Option#NAME}</li>
-     *     <li>{@link Option#TYPE_NAME},Typical types are :
-     *     <ul>
-     *         <li>TABLE</li>
-     *         <li>VIEW</li>
-     *         <li>SYSTEM TABLE</li>
-     *         <li>SYSTEM VIEW</li>
-     *         <li>GLOBAL TEMPORARY</li>
-     *         <li>LOCAL TEMPORARY</li>
-     *         <li>ALIAS</li>
-     *         <li>SYNONYM</li>
-     *     </ul>
-     *     </li>
-     * </ul>
+     * Get tables info of schemaMeta.
      * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     * <p>
+     * optionFunc at least support following options :
+     *     <ul>
+     *         <li>{@link Option#NAME},representing table name,table name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing table name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple table name : driver will use '=' operator</li>
+     *             </ul>
+     *         </li>
+     *         <li>{@link Option#TYPE_NAME},representing table type name,table type name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing table type name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple table type name : driver will use '=' operator</li>
+     *             </ul>
+     *             table type name see {@link TableMeta#valueOf(Option)}
+     *         </li>
+     *     </ul>
+     * </p>
+     *
+     * @param optionFunc func can always return {@code null}
+     * @return the {@link Publisher} emit 0-N {@link TableMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
      */
     Publisher<TableMeta> tablesOfSchema(SchemaMeta schemaMeta, Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
-     * The implementation of this method must support following :
-     * <ul>
-     *     <li>{@link Option#NAME}</li>
-     * </ul>
+     * Get column info of tableMeta.
      * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     * <p>
+     * optionFunc at least support following options :
+     *     <ul>
+     *         <li>{@link Option#NAME},representing column name,column name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing column name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple column name : driver will use '=' operator</li>
+     *             </ul>
+     *         </li>
+     *     </ul>
+     * </p>
+     *
+     * @param optionFunc func can always return {@code null}
+     * @return the {@link Publisher} emit 0-N {@link TableColumnMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
      */
     Publisher<TableColumnMeta> columnsOfTable(TableMeta tableMeta, Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
-     * The implementation of this method must support following :
-     * <ul>
-     *     <li>{@link Option#NAME}</li>
-     *     <li>{@link #INDEX_TYPE}</li>
-     * </ul>
+     * Get index info of tableMeta.
      * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     * <p>
+     * optionFunc at least support following options :
+     *     <ul>
+     *         <li>{@link Option#NAME},representing index name,index name can be following format:
+     *             <ul>
+     *                 <li>contain comma(,) : representing index name set,driver will use IN operator</li>
+     *                 <li>contain '%' : driver will use LIKE operator.</li>
+     *                 <li>simple index name : driver will use '=' operator</li>
+     *             </ul>
+     *         </li>
+     *     </ul>
+     * </p>
+     *
+     * @param optionFunc func can always return {@code null}
+     * @return the {@link Publisher} emit 0-N {@link TableIndexMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
      */
     Publisher<TableIndexMeta> indexesOfTable(TableMeta tableMeta, Function<Option<?>, ?> optionFunc);
 
 
     /**
      * <p>
-     * This implementation of this method must support following :
+     * Get the info of option
+     * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     * <p>
+     * This implementation of this method at least support following :
      *     <ul>
-     *         <li>{@link Option#USER} : representing current user name of session</li>
+     *         <li>{@link Option#USER} : representing current user info of session,now the {@link Publisher} emit just one element or {@link Throwable}, Like {@code reactor.core.publisher.Mono} . </li>
      *     </ul>
      * </p>
+     *
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
      */
     <R> Publisher<R> queryOption(Option<R> option);
 
-
+    /**
+     * <p>
+     * Get database key words
+     * </p>
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * </p>
+     *
+     * @param onlyReserved true : just only query reserved key words.
+     * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono}.
+     * The map is unmodified, key : upper case key word ; value : true representing reserved.
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>session have closed</li>
+     *                           <li>network error</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
     Publisher<Map<String, Boolean>> sqlKeyWords(boolean onlyReserved);
 
     /**
      * @return the quoting string or a space if quoting is not supported
      */
     String identifierQuoteString();
-
-    Publisher<FunctionMeta> sqlFunctions(@Nullable SchemaMeta metaData, Function<Option<?>, ?> optionFunc);
-
-    Publisher<FunctionColumnMeta> sqlFunctionColumn(@Nullable SchemaMeta metaData, Function<Option<?>, ?> optionFunc);
-
-    Publisher<FunctionColumnMeta> sqlFunctionColumnOf(FunctionMeta functionMeta, Function<Option<?>, ?> optionFunc);
-
-    Publisher<ProcedureMeta> sqlProcedures(@Nullable SchemaMeta metaData, Function<Option<?>, ?> optionFunc);
-
-    Publisher<ProcedureColumnMeta> sqlProcedureColumn(@Nullable SchemaMeta metaData, Function<Option<?>, ?> optionFunc);
-
-    Publisher<ProcedureColumnMeta> sqlProcedureColumnOf(FunctionMeta functionMeta, Function<Option<?>, ?> optionFunc);
 
 
     /**
@@ -169,20 +323,6 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      */
     int sqlStateType() throws JdbdException;
 
-
-    Publisher<DataTypeMeta> sqlDataTypes();
-
-
-    /**
-     * <p>
-     * The implementation of this method must support following :
-     * <ul>
-     *     <li>{@link Option#USER}</li>
-     * </ul>
-     * </p>
-     */
-    @Override
-    <T> T valueOf(Option<T> option);
 
 
 }

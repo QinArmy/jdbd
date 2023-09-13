@@ -14,10 +14,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
-import java.util.BitSet;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class JdbdBinds {
 
@@ -103,8 +100,6 @@ public abstract class JdbdBinds {
 //            default:
 
 
-
-
     @Deprecated
     public static void readFileAndWrite(final FileChannel channel, final ByteBuffer buffer, final ByteBuf packet,
                                         int restBytes, final Charset textCharset, final Charset clientCharset)
@@ -135,7 +130,6 @@ public abstract class JdbdBinds {
 
 
     }
-
 
 
     @Nullable
@@ -176,14 +170,21 @@ public abstract class JdbdBinds {
             value = ((Number) nonNull).longValue() != 0;
         } else if (nonNull instanceof String) {
             final String v = (String) nonNull;
-            if (v.equalsIgnoreCase("TRUE")
-                    || v.equalsIgnoreCase("T")) {
-                value = true;
-            } else if (v.equalsIgnoreCase("FALSE")
-                    || v.equalsIgnoreCase("F")) {
-                value = false;
-            } else {
-                throw JdbdExceptions.outOfTypeRange(batchIndex, paramValue);
+            switch (v.toUpperCase(Locale.ROOT)) {
+                case "TRUE":
+                case "T":
+                case "ON":
+                case "YES":
+                    value = true;
+                    break;
+                case "FALSE":
+                case "F":
+                case "OFF":
+                case "NO":
+                    value = false;
+                    break;
+                default:
+                    throw JdbdExceptions.outOfTypeRange(batchIndex, paramValue);
             }
         } else if (nonNull instanceof BigDecimal) {
             value = BigDecimal.ZERO.compareTo((BigDecimal) nonNull) != 0;
@@ -464,6 +465,7 @@ public abstract class JdbdBinds {
         } else if (nonNull instanceof BigDecimal) {
             value = ((BigDecimal) nonNull).toPlainString();
         } else if (nonNull instanceof Number
+                || nonNull instanceof Boolean
                 || nonNull instanceof LocalDate
                 || nonNull instanceof UUID
                 || nonNull instanceof YearMonth

@@ -15,7 +15,6 @@ import io.jdbd.statement.ParametrizedStatement;
  *     The Known superinterfaces:
  *     <ul>
  *         <li>{@link SQLType} representing database build-in type</li>
- *         <li>{@link InternalUseType} representing internal-use data type</li>
  *         <li>{@link UserDefinedType} representing user-defined type</li>
  *     </ul>
  * </p>
@@ -85,38 +84,6 @@ public interface DataType {
         return DataTypeFactory.buildIn(typeName, caseSensitivity);
     }
 
-    /**
-     * <p>
-     * This method is equivalent to {@code DataType.internalUse(typeName,false)} :
-     * </p>
-     * <p>
-     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
-     * It means you should prefer {@link JdbdType}.
-     * </p>
-     *
-     * @see #internalUse(String, boolean)
-     */
-    static InternalUseType internalUse(String typeName) {
-        return DataTypeFactory.internalUse(typeName, false);
-    }
-
-    /**
-     * <p>
-     * Get database internal-use {@link DataType} instance by typeName.
-     * </p>
-     * <p>
-     * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
-     * It means you should prefer {@link JdbdType}.
-     * </p>
-     *
-     * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
-     * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.
-     * @return {@link DataType} that representing database internal-use type.
-     * @throws IllegalArgumentException throw when typeName have no text.
-     */
-    static InternalUseType internalUse(String typeName, boolean caseSensitivity) {
-        return DataTypeFactory.internalUse(typeName, caseSensitivity);
-    }
 
     /**
      * <p>

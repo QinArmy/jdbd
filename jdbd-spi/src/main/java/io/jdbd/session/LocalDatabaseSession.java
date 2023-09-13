@@ -2,6 +2,7 @@ package io.jdbd.session;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
+import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
 
 import java.util.function.Function;
@@ -262,5 +263,18 @@ public interface LocalDatabaseSession extends DatabaseSession {
      */
     @Override
     LocalDatabaseSession appendIdentifier(String identifier, StringBuilder builder) throws JdbdException;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    LocalDatabaseSession appendTableName(String tableName, NameMode mode, StringBuilder builder) throws JdbdException;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    LocalDatabaseSession appendColumnName(String columnName, NameMode mode, StringBuilder builder) throws JdbdException;
+
 
 }

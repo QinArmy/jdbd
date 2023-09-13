@@ -29,16 +29,6 @@ abstract class DataTypeFactory {
         return DatabaseBuildInType.INSTANCE_MAP.computeIfAbsent(typeName, DatabaseBuildInType.CONSTRUCTOR);
     }
 
-    static InternalUseType internalUse(String typeName, boolean caseSensitivity) {
-        // currently, same
-        if (JdbdUtils.hasNoText(typeName)) {
-            throw JdbdUtils.requiredText(typeName);
-        }
-        if (!caseSensitivity) {
-            typeName = typeName.toUpperCase(Locale.ROOT);
-        }
-        return DatabaseInternalUseType.INSTANCE_MAP.computeIfAbsent(typeName, DatabaseInternalUseType.CONSTRUCTOR);
-    }
 
     static UserDefinedType userDefined(String typeName, boolean caseSensitivity) {
         if (JdbdUtils.hasNoText(typeName)) {
@@ -95,19 +85,6 @@ abstract class DataTypeFactory {
 
 
     }// DatabaseBuildInType
-
-    private static final class DatabaseInternalUseType extends JdbdDataType implements InternalUseType {
-
-        private static final ConcurrentMap<String, DatabaseInternalUseType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
-
-        private static final Function<String, DatabaseInternalUseType> CONSTRUCTOR = DatabaseInternalUseType::new;
-
-        private DatabaseInternalUseType(String dataTypeName) {
-            super(dataTypeName);
-        }
-
-
-    }//DatabaseInternalUseType
 
 
     private static final class JdbdUserDefinedType extends JdbdDataType implements UserDefinedType {

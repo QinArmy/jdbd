@@ -26,60 +26,79 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
 
 
     /**
+     * <p>
+     * Get the {@link DataType} of appropriate column.
+     * </p>
+     *
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @return can be following sub type:
+     * <ul>
+     *     <li>{@link io.jdbd.meta.SQLType},database build-in type</li>
+     *     <li>{@link io.jdbd.meta.UserDefinedType},developer defined type</li>
+     * </ul>
+     * @throws JdbdException throw when indexBasedZero error
      * @see #getJdbdType(int)
      */
     DataType getDataType(int indexBasedZero) throws JdbdException;
 
     /**
+     * <p>
+     * Get the appropriate {@link JdbdType} of appropriate column.
+     * </p>
+     *
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      * @see #getDataType(int)
      */
     JdbdType getJdbdType(int indexBasedZero) throws JdbdException;
 
-
+    /**
+     * <p>
+     * Get the  {@link FieldType} of appropriate column.
+     * </p>
+     *
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
+     */
     FieldType getFieldType(int indexBasedZero) throws JdbdException;
 
 
     /**
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      */
     BooleanMode getAutoIncrementMode(int indexBasedZero) throws JdbdException;
 
 
     /**
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      */
     @Nullable
     String getCatalogName(int indexBasedZero) throws JdbdException;
 
 
     /**
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      */
     @Nullable
     String getSchemaName(int indexBasedZero) throws JdbdException;
 
 
     /**
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      */
     @Nullable
     String getTableName(int indexBasedZero) throws JdbdException;
 
     /**
-     * Get the designated column's name.
+     * Get the column's name.
      *
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ..
+     * @param indexBasedZero index based zero,the first value is 0 .
      * @return column name
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @throws JdbdException throw when indexBasedZero error
      */
     @Nullable
     String getColumnName(int indexBasedZero) throws JdbdException;
@@ -90,78 +109,101 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * <p>
      * follow below principle:
      * <ul>
-     *     <li>decimal type: max precision</li>
-     *     <li>integer type: -1</li>
-     *     <li>float type: - 1</li>
-     *     <li>boolean type: -1</li>
-     *     <li>character type: maximum character length</li>
-     *     <li>datetime type: maximum allowed precision of the fractional seconds component</li>
-     *     <li>binary type: maximum length of byte</li>
-     *     <li>ROWID type: maximum length of byte</li>
-     *     <li>other : -1</li>
+     *     <li>decimal type : return precision of decimal,for example decimal(14,2),return 14</li>
+     *     <li>text string type : return maximum char length</li>
+     *     <li>binary type : return maximum byte length</li>
+     *     <li>bit string type : return maximum bit length</li>
+     *     <li>integer and float :  return 0</li>
+     *     <li>time/date : return 0</li>
+     *     <li>other dialect type : it's up to driver developer</li>
      * </ul>
      * </p>
      *
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ..
+     * @param indexBasedZero index based zero,the first value is 0 .
      * @return precision
-     * @throws JdbdException if a database access error occurs
-     *                       @see #getColumnIndex(String)
+     * @throws JdbdException throw when indexBasedZero error
      */
     int getPrecision(int indexBasedZero) throws JdbdException;
 
 
     /**
-     * Gets the designated column's number of digits to right of the decimal point.
-     * 0 is returned for data types where the scale is not applicable.
+     * get precision of column.
+     * <p>
+     * follow below principle:
+     * <ul>
+     *     <li>decimal type : return scale of decimal,for example decimal(14,2),return 2</li>
+     *     <li>integer and float :  return 0</li>
+     *     <li>time and timestamp : return micro second precision,for example : time(5) return 5</li>
+     *     <li>other dialect type : it's up to driver developer</li>
+     * </ul>
+     * </p>
      *
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ..
-     * @return scale ,-1 or scale
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @return precision
+     * @throws JdbdException throw when indexBasedZero error
      */
     int getScale(int indexBasedZero) throws JdbdException;
 
+    /**
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
+     */
     KeyType getKeyMode(int indexBasedZero) throws JdbdException;
 
     /**
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      */
     BooleanMode getNullableMode(int indexBasedZero) throws JdbdException;
 
 
     /**
-     * <p>Returns the fully-qualified name of the Java class whose instances
-     * are manufactured if the method <code>ResultSet.getObject</code>
-     * is called to retrieve a value
-     * from the column.  <code>io.jdbd.result.ResultRow.getObject</code> may return a subclass of the
-     * class returned by this method.
+     * <p>
+     * Get the first java type of appropriate column.
+     * For example :
+     *    <ul>
+     *        <li>{@link JdbdType#BIGINT} first java type is {@link Long},second java type is null</li>
+     *        <li>{@link JdbdType#LONGTEXT} first java type is {@link String},second java type is {@link io.jdbd.type.TextPath}</li>
+     *         <li>{@link JdbdType#LONGBLOB} first java type is {@code  byte[]},second java type is {@link io.jdbd.type.BlobPath}</li>
+     *        <li>MySQL time first java type is {@link java.time.LocalTime},second java type is {@link java.time.Duration}</li>
+     *    </ul>
+     * </p>
      *
-     * @param indexBasedZero base 0,the first column is 0, the second is 1, ..
-     * @return the class in the Java programming
-     * language that would be used by the method
-     * <code>io.jdbd.result.ResultRow.getObject</code> to retrieve the value in the specified
-     * column. This is the class name used for custom mapping.
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
      */
     Class<?> getFirstJavaType(int indexBasedZero) throws JdbdException;
 
+    /**
+     * <p>
+     * Get the second java type of appropriate column.
+     * For example :
+     *    <ul>
+     *        <li>{@link JdbdType#BIGINT} first java type is {@link Long},second java type is null</li>
+     *        <li>{@link JdbdType#LONGTEXT} first java type is {@link String},second java type is {@link io.jdbd.type.TextPath}</li>
+     *         <li>{@link JdbdType#LONGBLOB} first java type is {@code  byte[]},second java type is {@link io.jdbd.type.BlobPath}</li>
+     *        <li>MySQL time first java type is {@link java.time.LocalTime},second java type is {@link java.time.Duration}</li>
+     *    </ul>
+     * </p>
+     *
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @throws JdbdException throw when indexBasedZero error
+     */
     @Nullable
     Class<?> getSecondJavaType(int indexBasedZero) throws JdbdException;
 
 
     /**
      * <p>
-     * This must support following:
+     * This at least support following:
      *     <ul>
      *         <li>{@link Option#PRECISION},this option representing column precision greater than {@link Integer#MAX_VALUE},for example :  MySQL LONG TEXT</li>
      *     </ul>
      * </p>
      *
+     * @param indexBasedZero index based zero,the first value is 0 .
      * @return null if value is null or option isn't supported driver.
-     * @throws JdbdException throw when indexBasedZero error.
+     * @throws JdbdException throw when indexBasedZero error
      */
     @Nullable
     <T> T getOf(int indexBasedZero, Option<T> option) throws JdbdException;
@@ -172,7 +214,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * This method is equivalent to following :
      * <pre>
      *         <code><br/>
-     *             // rowMeta is instance of ResultRowMeta
+     *             // rowMeta is instance of {@link ResultRowMeta}
      *             final T value;
      *             value = rowMeta.getOf(indexBasedZero,option) ;
      *             if(value == null){
@@ -182,6 +224,8 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
+     * @throws JdbdException        throw when {@link #getOf(int, Option)} throw error
+     * @throws NullPointerException throw when {@link #getOf(int, Option)} return null.
      * @see #getOf(int, Option)
      */
     <T> T getNonNullOf(int indexBasedZero, Option<T> option) throws JdbdException, NullPointerException;
@@ -189,90 +233,59 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
 
     /*-------------------below column label method-------------------*/
 
-
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getDataType(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
     DataType getDataType(String columnLabel) throws JdbdException;
 
-
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getJdbdType(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
     JdbdType getJdbdType(String columnLabel) throws JdbdException;
 
-
-    FieldType getFieldType(String columnLabel) throws JdbdException;
-
-
     /**
-     * @see #getPrecision(int)
-     */
-    int getPrecision(String columnLabel) throws JdbdException;
-
-
-    int getScale(String columnLabel) throws JdbdException;
-
-
-    KeyType getKeyMode(String columnLabel) throws JdbdException;
-
-
-    /**
-     * @see #getNullableMode(int)
-     */
-    BooleanMode getNullableMode(String columnLabel) throws JdbdException;
-
-
-    /**
-     * @see #getAutoIncrementMode(int)
-     */
-    BooleanMode getAutoIncrementMode(String columnLabel) throws JdbdException;
-
-
-    /**
-     * @param columnLabel base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
-     */
-    @Nullable
-    String getCatalogName(String columnLabel) throws JdbdException;
-
-
-    /**
-     * @param columnLabel base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
-     */
-    @Nullable
-    String getSchemaName(String columnLabel) throws JdbdException;
-
-
-    /**
-     * @param columnLabel base 0,the first column is 0, the second is 1, ...
-     * @throws JdbdException if a database access error occurs
-     * @see #getColumnIndex(String)
-     */
-    @Nullable
-    String getTableName(String columnLabel) throws JdbdException;
-
-    /**
-     * Get the designated column's name.
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getFieldType(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
      *
-     * @param columnLabel base 0,the first column is 0, the second is 1, ..
-     * @return column name
-     * @throws JdbdException if a database access error occurs
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
      */
-    @Nullable
-    String getColumnName(String columnLabel) throws JdbdException;
-
-
-    Class<?> getFirstJavaType(String columnLabel) throws JdbdException;
-
-    @Nullable
-    Class<?> getSecondJavaType(String columnLabel) throws JdbdException;
-
-    /*-------------------below column label end-------------------*/
-
-
-    /**
-     * @return a unmodifiable list
-     */
-    List<String> getColumnLabelList();
+    FieldType getFieldType(String columnLabel) throws JdbdException;
 
 
     /**
@@ -280,16 +293,226 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * This method is equivalent to following :
      * <pre>
      *         <code><br/>
-     *             // rowMeta is instance of ResultRowMeta
-     *             final int columnIndex;
-     *             columnIndex = rowMeta.getColumnIndex(columnLabel);
-     *             rowMeta.getOf(columnIndex,option) ;
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getPrecision(index) ;
      *         </code>
      *     </pre>
      * </p>
      *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
-     * @see #getOf(int, Option)
+     */
+    int getPrecision(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getScale(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    int getScale(String columnLabel) throws JdbdException;
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getKeyMode(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    KeyType getKeyMode(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getNullableMode(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    BooleanMode getNullableMode(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getAutoIncrementMode(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    BooleanMode getAutoIncrementMode(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getCatalogName(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    @Nullable
+    String getCatalogName(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getSchemaName(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    @Nullable
+    String getSchemaName(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getTableName(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    @Nullable
+    String getTableName(String columnLabel) throws JdbdException;
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getColumnName(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    @Nullable
+    String getColumnName(String columnLabel) throws JdbdException;
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getFirstJavaType(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    Class<?> getFirstJavaType(String columnLabel) throws JdbdException;
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getSecondJavaType(index) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
+     */
+    @Nullable
+    Class<?> getSecondJavaType(String columnLabel) throws JdbdException;
+
+
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getOf(index,option) ;
+     *         </code>
+     *     </pre>
+     * </p>
+     *
+     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @see #getColumnIndex(String)
      */
     @Nullable
     <T> T getOf(String columnLabel, Option<T> option) throws JdbdException;
@@ -299,18 +522,32 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * This method is equivalent to following :
      * <pre>
      *         <code><br/>
-     *             // rowMeta is instance of ResultRowMeta
-     *             final int columnIndex;
-     *             columnIndex = rowMeta.getColumnIndex(columnLabel);
-     *             rowMeta.getNonNullOf(columnIndex,option) ;
+     *             // rowMeta is instance of {@link ResultRowMeta}
+     *             final int index;
+     *             index = rowMeta.getColumnIndex(columnLabel);
+     *             rowMeta.getNonNullOf(index,option) ;
      *         </code>
      *     </pre>
      * </p>
      *
+     * @throws JdbdException        throw when {@link #getColumnIndex(String)} throw error
+     * @throws NullPointerException throw when {@link #getNonNullOf(int, Option)}
      * @see #getColumnIndex(String)
-     * @see #getNonNullOf(int, Option)
      */
     <T> T getNonNullOf(String columnLabel, Option<T> option) throws JdbdException, NullPointerException;
+
+
+    /*-------------------below column label end-------------------*/
+
+
+    /**
+     * <p>
+     * Get the column label list of row meta
+     * </p>
+     *
+     * @return a unmodifiable list
+     */
+    List<String> getColumnLabelList();
 
 
 }

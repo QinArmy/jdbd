@@ -5,6 +5,7 @@ import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DatabaseMetaData;
 import io.jdbd.result.RefCursor;
 import io.jdbd.statement.*;
+import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
 
 import java.util.Map;
@@ -346,7 +347,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * </p>
      *
      * @return <strong>this</strong>
-     * @throws JdbdException throw when session have closed.
+     * @throws JdbdException throw when the implementation of this method need session is open and session have closed
      */
     DatabaseSession appendLiteral(@Nullable String text, StringBuilder builder) throws JdbdException;
 
@@ -362,11 +363,61 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * @return <strong>this</strong>
      * @throws JdbdException throw when
      *                       <ul>
-     *                           <li>session have closed</li>
+     *                           <li>the implementation of this method need session is open and session have closed</li>
      *                           <li>identifier contain identifier quote char and driver couldn't escape.</li>
      *                       </ul>
      */
     DatabaseSession appendIdentifier(String identifier, StringBuilder builder) throws JdbdException;
+
+    /**
+     * <p>
+     * append tableName to builder,driver will quote and escape if need.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: driver don't append space before tableName.
+     * </p>
+     *
+     * @param tableName non-null
+     * @param mode      tableName handle mode,if tableName must be quoted and escaped,then mode will be ignored ,else :
+     *                  <ul>
+     *                       <li>{@link NameMode#LOWER_CASE} append lower case tableName</li>
+     *                       <li>{@link NameMode#UPPER_CASE} append upper case tableName</li>
+     *                       <li>{@link NameMode#DEFAULT} append tableName</li>
+     *                  </ul>
+     * @return <strong>this</strong>
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>the implementation of this method need session is open and session have closed</li>
+     *                           <li>tableName contain identifier quote char and driver couldn't escape.</li>
+     *                           <li>tableName is illegal</li>
+     *                       </ul>
+     */
+    DatabaseSession appendTableName(String tableName, NameMode mode, StringBuilder builder) throws JdbdException;
+
+    /**
+     * <p>
+     * append columnName to builder,driver will quote and escape if need.
+     * </p>
+     * <p>
+     * <strong>NOTE</strong>: driver don't append space before columnName.
+     * </p>
+     *
+     * @param columnName non-null
+     * @param mode       columnName handle mode,if columnName must be quoted and escaped,then mode will be ignored ,else :
+     *                   <ul>
+     *                        <li>{@link NameMode#LOWER_CASE} append lower case columnName</li>
+     *                        <li>{@link NameMode#UPPER_CASE} append upper case columnName</li>
+     *                        <li>{@link NameMode#DEFAULT} append columnName</li>
+     *                   </ul>
+     * @return <strong>this</strong>
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>the implementation of this method need session is open and session have closed</li>
+     *                           <li>columnName contain identifier quote char and driver couldn't escape.</li>
+     *                           <li>columnName is illegal</li>
+     *                       </ul>
+     */
+    DatabaseSession appendColumnName(String columnName, NameMode mode, StringBuilder builder) throws JdbdException;
 
     /**
      * <p>

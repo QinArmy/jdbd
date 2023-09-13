@@ -67,42 +67,48 @@ public enum JdbdType implements DataType {
     VARBIT,
 
     /**
-     * Identifies the generic SQL type {@code TINYINT}.
+     * Identifies the generic SQL type {@code TINYINT}, one byte integer number.
      */
     TINYINT,
 
     /**
-     * Identifies the generic SQL type {@code SMALLINT}.
+     * Identifies the generic SQL type {@code SMALLINT}, two byte integer number.
      */
     SMALLINT,
 
+    /**
+     * Identifies the generic SQL type {@code MEDIUMINT}, three byte integer number.
+     */
     MEDIUMINT,
     /**
-     * Identifies the generic SQL type {@code INTEGER}.
+     * Identifies the generic SQL type {@code INTEGER}, four byte integer number.
      */
     INTEGER,
     /**
-     * Identifies the generic SQL type {@code BIGINT}.
+     * Identifies the generic SQL type {@code BIGINT}, eight byte integer number.
      */
     BIGINT,
 
     /**
-     * Identifies the generic SQL type {@code TINYINT}.
+     * Identifies the generic SQL type {@code TINYINT_UNSIGNED}, one byte integer number.
      */
     TINYINT_UNSIGNED,
 
     /**
-     * Identifies the generic SQL type {@code SMALLINT}.
+     * Identifies the generic SQL type {@code SMALLINT_UNSIGNED}, two byte integer number.
      */
     SMALLINT_UNSIGNED,
 
+    /**
+     * Identifies the generic SQL type {@code MEDIUMINT_UNSIGNED}, three byte integer number.
+     */
     MEDIUMINT_UNSIGNED,
     /**
-     * Identifies the generic SQL type {@code INTEGER}.
+     * Identifies the generic SQL type {@code INTEGER_UNSIGNED}, four byte integer number.
      */
     INTEGER_UNSIGNED,
     /**
-     * Identifies the generic SQL type {@code BIGINT}.
+     * Identifies the generic SQL type {@code BIGINT_UNSIGNED}, eight byte integer number.
      */
     BIGINT_UNSIGNED,
 
@@ -146,9 +152,24 @@ public enum JdbdType implements DataType {
      */
     ENUM,
 
+    /**
+     * min precision text type
+     */
     TINYTEXT,
-    MEDIUMTEXT,
+
+    /**
+     * precision greater than {@link #TINYTEXT} text type
+     */
     TEXT,
+
+    /**
+     * precision greater than {@link #TEXT} text type
+     */
+    MEDIUMTEXT,
+
+    /**
+     * max precision text type
+     */
     LONGTEXT,
 
     /**
@@ -160,9 +181,23 @@ public enum JdbdType implements DataType {
      */
     VARBINARY,
 
+    /**
+     * min precision blob type
+     */
     TINYBLOB,
-    MEDIUMBLOB,
+
+    /**
+     * precision greater than {@link #TINYBLOB} blob type
+     */
     BLOB,
+
+    /**
+     * precision greater than {@link #BLOB} blob type
+     */
+    MEDIUMBLOB,
+    /**
+     * max precision blob type
+     */
     LONGBLOB,
 
     /**
@@ -276,34 +311,6 @@ public enum JdbdType implements DataType {
      * </p>
      */
     COMPOSITE,
-
-
-    /**
-     * Indicates that the user-defined data type  , this enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}.
-     * This enum instance representing the data type that couldn't be expressed other instance of {@link JdbdType}.
-     * <p>
-     *     <ul>
-     *         <li>{@link io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)} don't support this enum instance.</li>
-     *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
-     *     </ul>
-     *     If application developer want to bind user-defined data type ,then application developer should define the new {@link DataType} type
-     *     that it's {@link #typeName()} is supported by database and it's {@link UserDefinedType}.
-     * </p>
-     */
-    USER_DEFINED,
-
-
-    /**
-     * <p>
-     * Identifies the SQL type that is used by database internal-use.
-     *     <ul>
-     *         <li>{@link io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)} don't support this enum instance.</li>
-     *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
-     *     </ul>
-     *  This enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}
-     * </p>
-     */
-    INTERNAL_USE,
 
 
     /**
