@@ -5,7 +5,7 @@
     <parent>
         <artifactId>jdbd</artifactId>
         <groupId>io.jdbd</groupId>
-        <version>0.8.0</version><!-- jdbd version find and replace-->
+        <version>0.8.0-SNAPSHOT</version><!-- jdbd version find and replace-->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -25,12 +25,6 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.r2dbc</groupId>
-            <artifactId>r2dbc-spi</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
