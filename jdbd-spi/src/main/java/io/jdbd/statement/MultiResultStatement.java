@@ -100,7 +100,7 @@ public interface MultiResultStatement extends Statement {
      *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
      *
-     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 &lt; ? LIMIT ?")
      *
      *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
@@ -141,8 +141,8 @@ public interface MultiResultStatement extends Statement {
      *    public void executeBatchQuery(final DatabaseSession session) {
      *
      *        final String sql = "SELECT t.* FROM mysql_types AS t WHERE t.id > ? AND t.my_text LIKE ? " +
-     *                "AND t.my_time < ? AND t.my_time1 < ? AND t.my_date = ? AND t.my_datetime < ? " +
-     *                "AND t.my_datetime6 < ? LIMIT ? ";
+     *                "AND t.my_time &lt; ? AND t.my_time1 &lt; ? AND t.my_date = ? AND t.my_datetime &lt; ? " +
+     *                "AND t.my_datetime6 &lt; ? LIMIT ? ";
      *        BindSingleStatement statement;
      *
      *        //        way 1:
@@ -204,13 +204,13 @@ public interface MultiResultStatement extends Statement {
      *        final MultiStatement statement;
      *        statement = session.multiStatement();
      *
-     *        statement.addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *        statement.addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 &lt; ? AND t.my_decimal &lt; ? LIMIT ? ")
      *
      *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
      *                .bind(2, JdbdType.INTEGER, 20)
      *
-     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 &lt; ? AND t.my_decimal &lt; ? LIMIT ? ")
      *
      *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now().minusDays(2))
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("999999.66"))
@@ -219,7 +219,7 @@ public interface MultiResultStatement extends Statement {
      *        final QueryResults queryResults;
      *        queryResults = statement.executeBatchQuery();
      *
-     *        final Function<CurrentRow, Map<String, ?>> function = this::mapCurrentRowToMap;
+     *        final Function&lt;CurrentRow, Map&lt;String, ?>> function = this::mapCurrentRowToMap;
      *
      *        final List&lt;Map&lt;String, ?>> rowList;
      *
@@ -289,10 +289,10 @@ public interface MultiResultStatement extends Statement {
      *        multiResult = statement.executeBatchAsMulti();
      *
      *         // here, don't need thread safe list,because main thread blocking.
-     *        final List&lt;Map&lt;String, ?>> outParamMapList = new ArrayList<>(batchItemCount);
+     *        final List&lt;Map&lt;String, ?>> outParamMapList = new ArrayList&lt;>(batchItemCount);
      *
      *        // here, don't need thread safe list,because main thread blocking.
-     *        final List&lt;ResultStates> statesList = new ArrayList<>(batchItemCount);
+     *        final List&lt;ResultStates> statesList = new ArrayList&lt;>(batchItemCount);
      *
      *        // following first batch item results
      *        Flux.from(multiResult.nextQuery(this::mapCurrentRowToMap))
@@ -347,14 +347,14 @@ public interface MultiResultStatement extends Statement {
      *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
      *
-     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 &lt; ? LIMIT ?")
      *
      *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
      *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(3, JdbdType.INTEGER, 3)
      *
-     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 &lt; ? AND t.my_decimal &lt; ? LIMIT ? ")
      *
      *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
@@ -460,23 +460,23 @@ public interface MultiResultStatement extends Statement {
      *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
      *
-     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+     *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 &lt; ? LIMIT ?")
      *
      *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
      *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(3, JdbdType.INTEGER, 3)
      *
-     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+     *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 &lt; ? AND t.my_decimal &lt; ? LIMIT ? ")
      *
      *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
      *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
      *                .bind(2, JdbdType.INTEGER, 20);
      *
      *
-     *         final AtomicReference&lt;ResultStates> insertStatesHolder = new AtomicReference<>(null);
+     *         final AtomicReference&lt;ResultStates> insertStatesHolder = new AtomicReference&lt;>(null);
      *
-     *        final AtomicReference&lt;ResultStates> updateStatesHolder = new AtomicReference<>(null);
+     *        final AtomicReference&lt;ResultStates> updateStatesHolder = new AtomicReference&lt;>(null);
      *
      *        final List&lt;? extends Map&lt;String, ?>> rowList;
      *

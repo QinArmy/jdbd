@@ -152,6 +152,10 @@ public abstract class JdbdExceptions {
         return new JdbdException(m);
     }
 
+    public static JdbdException identifierNoText() {
+        return new JdbdException("sql identifier must have text.");
+    }
+
     public static JdbdException dontSupportDataType(DataType dataType, String database) {
         return new JdbdException(String.format("%s don't support %s[%s]", database, DataType.class.getName(), dataType));
     }

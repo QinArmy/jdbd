@@ -46,14 +46,14 @@ import java.util.function.Function;
  *                .bind(4, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
  *                .bind(5, JdbdType.TEXT, "QinArmy's army \\")
  *
- *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 < ? LIMIT ?")
+ *                .addStatement("UPDATE mysql_types AS t SET t.my_datetime = ? , t.my_decimal = t.my_decimal + ? WHERE t.my_datetime6 &lt; ? LIMIT ?")
  *
  *                .bind(0, JdbdType.TIMESTAMP, LocalDateTime.now())
  *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))
  *                .bind(2, JdbdType.TIMESTAMP_WITH_TIMEZONE, OffsetDateTime.now(ZoneOffset.UTC))
  *                .bind(3, JdbdType.INTEGER, 3)
  *
- *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 < ? AND t.my_decimal < ? LIMIT ? ")
+ *                .addStatement("SELECT t.* FROM mysql_types AS t WHERE t.my_datetime6 &lt; ? AND t.my_decimal &lt; ? LIMIT ? ")
  *
  *                .bind(0, JdbdType.TIMESTAMP, OffsetDateTime.now(ZoneOffset.UTC))
  *                .bind(1, JdbdType.DECIMAL, new BigDecimal("88.66"))

@@ -10,7 +10,10 @@ import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
 import java.nio.file.Path;
 import java.time.*;
-import java.util.*;
+import java.util.BitSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
@@ -531,10 +534,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      * </p>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
-     * @return <ul>
-     * <li>null : always {@link Collections#emptyList()}</li>
-     * <li>the instance that constructor return</li>
-     * </ul>
+     * @return the instance that constructor return
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>indexBasedZero error</li>
@@ -567,10 +567,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      * </p>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
-     * @return <ul>
-     * <li>null : always {@link Collections#emptySet()}</li>
-     * <li>the instance that constructor return</li>
-     * </ul>
+     * @return the instance that constructor return
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>indexBasedZero error</li>
@@ -603,10 +600,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      * </p>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
-     * @return <ul>
-     * <li>null : always {@link Collections#emptyMap()}</li>
-     * <li>the instance that constructor return</li>
-     * </ul>
+     * @return the instance that constructor return
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>indexBasedZero error</li>
