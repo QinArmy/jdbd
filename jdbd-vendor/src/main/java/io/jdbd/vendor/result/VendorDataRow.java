@@ -1,7 +1,6 @@
 package io.jdbd.vendor.result;
 
 import io.jdbd.JdbdException;
-import io.jdbd.lang.Nullable;
 import io.jdbd.result.CurrentRow;
 import io.jdbd.result.DataRow;
 import io.jdbd.result.QueryResults;
@@ -66,44 +65,6 @@ public abstract class VendorDataRow implements DataRow {
         return value;
     }
 
-    @Override
-    public final String getStringOrDefault(final int indexBasedZero, final @Nullable String defaultValue)
-            throws JdbdException {
-        String value;
-        value = getString(indexBasedZero);
-        if (value == null) {
-            if (defaultValue == null) {
-                throw stringDefaultNullError(getColumnMeta(indexBasedZero));
-            }
-            value = defaultValue;
-        }
-        return value;
-    }
-
-
-    @Override
-    public final String getStringOrSupplier(final int indexBasedZero, final Supplier<String> supplier)
-            throws JdbdException {
-        String value;
-        value = getString(indexBasedZero);
-        if (value == null) {
-            value = supplier.get();
-            if (value == null) {
-                throw stringDefaultNullError(getColumnMeta(indexBasedZero));
-            }
-        }
-        return value;
-    }
-
-    @Override
-    public final String getNonNullString(final int indexBasedZero) throws JdbdException, NullPointerException {
-        final String value;
-        value = getString(indexBasedZero);
-        if (value == null) {
-            throw JdbdExceptions.columnIsNull(getColumnMeta(indexBasedZero));
-        }
-        return value;
-    }
 
     @Override
     public final Object getOrDefault(final int indexBasedZero, final Object defaultValue) throws JdbdException {
@@ -204,26 +165,6 @@ public abstract class VendorDataRow implements DataRow {
     @Override
     public final <T> T get(String columnLabel, Class<T> columnClass) throws JdbdException {
         return this.get(getRowMeta().getColumnIndex(columnLabel), columnClass);
-    }
-
-    @Override
-    public final String getString(String columnLabel) {
-        return getString(getRowMeta().getColumnIndex(columnLabel));
-    }
-
-    @Override
-    public final String getStringOrDefault(String columnLabel, String defaultValue) {
-        return getStringOrDefault(getRowMeta().getColumnIndex(columnLabel), defaultValue);
-    }
-
-    @Override
-    public final String getStringOrSupplier(String columnLabel, Supplier<String> supplier) {
-        return getStringOrSupplier(getRowMeta().getColumnIndex(columnLabel), supplier);
-    }
-
-    @Override
-    public final String getNonNullString(String columnLabel) {
-        return getNonNullString(getRowMeta().getColumnIndex(columnLabel));
     }
 
     @Override

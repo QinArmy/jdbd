@@ -64,7 +64,6 @@ public interface Driver {
     String CLIENT_INFO = "clientInfo";
 
 
-
     /**
      * @param url jdbc url
      * @return true: accept
@@ -74,6 +73,14 @@ public interface Driver {
 
 
     /**
+     * <p>
+     * Create {@link DatabaseSessionFactory} for application developer.The factory don't create pool {@link io.jdbd.session.DatabaseSession}.
+     * Because driver developers are not responsible for pooling.
+     * </p>
+     * <p>
+     * Pool vendor developer should use {@link #forPoolVendor(String, Map)} create {@link DatabaseSessionFactory}.
+     * </p>
+     *
      * @param url format :jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
      *              <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
@@ -96,7 +103,7 @@ public interface Driver {
      * </p>
      * <p>
      *     This method is used by pool vendor,application developer shouldn't use this method.
-     *     <strong>NOTE</strong> : driver developer are not responsible for pooling.
+     *     <strong>NOTE</strong> : driver developers are not responsible for pooling.
      * </p>
      *
      * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:

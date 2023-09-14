@@ -64,6 +64,9 @@ public abstract class JdbdUtils {
         return optionSet;
     }
 
+    public static BufferedReader newBufferedReader(final TextPath textPath) throws IOException {
+        return newBufferedReader(textPath, 4096);
+    }
 
     public static BufferedReader newBufferedReader(final TextPath textPath, final int bufferSize) throws IOException {
         final SeekableByteChannel channel;

@@ -2,7 +2,7 @@
 <suite name="jdbd-vendor" verbose="1" parallel="methods" thread-count="20">
     <test name="feature">
         <classes>
-            <class name="io.jdbd.vendor.util.GeometryUtilsSuiteTests"/>
+            <class name="io.jdbd.vendor.util.JdbdStringsSuiteTests"/>
 
 
         </classes>

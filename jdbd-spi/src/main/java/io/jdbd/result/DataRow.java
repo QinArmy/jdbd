@@ -6,6 +6,7 @@ import io.jdbd.type.TextPath;
 import org.reactivestreams.Publisher;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.nio.file.CopyOption;
 import java.nio.file.Path;
 import java.time.*;
@@ -30,7 +31,6 @@ import java.util.function.Supplier;
  *     <ul>
  *         <li>{@link #get(int)}</li>
  *         <li>{@link #get(int, Class)}</li>
- *         <li>{@link #getString(int)} ,this method is similar to {@linkplain  #get(int, Class String.class)}, except that binary or blob return normal string not hex string.</li>
  *         <li>{@link #getList(int, Class, IntFunction)}</li>
  *         <li>{@link #getSet(int, Class, IntFunction)}</li>
  *         <li>{@link #getMap(int, Class, Class, IntFunction)}</li>
@@ -75,6 +75,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     boolean isBigColumn(int indexBasedZero) throws JdbdException;
 
     /**
+     * @return true : appropriate column value is null
      * @throws JdbdException throw when indexBasedZero error
      */
     boolean isNull(int indexBasedZero) throws JdbdException;
@@ -172,8 +173,8 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *                  <li>{@link MonthDay}</li>
      *                  <li>{@link LocalTime}</li>
      *                  <li>{@link OffsetTime}</li>
-     *                  <li>{@code byte[]} convert to hex string</li>
-     *                  <li>{@link io.jdbd.type.BlobPath} convert to hex string</li>
+     *                  <li>{@code byte[]} convert to normal string not hex string,use {@link String#String(byte[], Charset)}</li>
+     *                  <li>{@link io.jdbd.type.BlobPath} convert to normal string not hex string,use {@link String#String(byte[], Charset)}</li>
      *                  <li>{@link BitSet}</li>
      *                  <li>{@link TextPath}</li>
      *              </ol>
@@ -395,6 +396,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *           </ol>
      *              if overflow ,throw {@link JdbdException}
      *         </li>
+     *         <li>columnClass is {@link io.jdbd.session.Isolation} ,column value can be following type:
+     *           <ol>
+     *               <li>{@code null}</li>
+     *               <li>{@link String}</li>
+     *           </ol>
+     *              if overflow ,throw {@link JdbdException}
+     *         </li>
      *     </ul>
      * </p>
      *
@@ -408,90 +416,6 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      */
     @Nullable
     <T> T get(int indexBasedZero, Class<T> columnClass) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is similar to {@linkplain  #get(int, Class String.class)}, except that binary or blob return normal string not hex string.
-     * </p>
-     *
-     * @param indexBasedZero index based zero,the first value is 0 .
-     * @throws JdbdException throw when
-     *                       <ul>
-     *                           <li>indexBasedZero error</li>
-     *                           <li>appropriate column value couldn't convert to {@link String} type</li>
-     *                       </ul>
-     */
-    @Nullable
-    String getString(int indexBasedZero) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *             // row is instance of {@link DataRow}
-     *             String value;
-     *             value = row.getString(indexBasedZero);
-     *              if(value == null){
-     *                  value = defaultValue;
-     *              }
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @param indexBasedZero index based zero,the first value is 0 .
-     * @param defaultValue   non-null
-     * @return non-null value
-     * @throws JdbdException throw when {@link #getString(int)} throw {@link JdbdException}
-     * @see #getString(int)
-     */
-    String getStringOrDefault(int indexBasedZero, String defaultValue) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *             // row is instance of {@link DataRow}
-     *             String value;
-     *             value = row.getString(indexBasedZero);
-     *              if(value == null){
-     *                  value = supplier.get();
-     *              }
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @param indexBasedZero index based zero,the first value is 0 .
-     * @param supplier       return non-null
-     * @return non-null value
-     * @throws JdbdException throw when {@link #getString(int)} throw {@link JdbdException}
-     * @see #getString(int)
-     */
-    String getStringOrSupplier(int indexBasedZero, Supplier<String> supplier) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *             // row is instance of {@link DataRow}
-     *             String value;
-     *             value = row.getString(indexBasedZero);
-     *              if(value == null){
-     *                  throw new NullPointerException();
-     *              }
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @param indexBasedZero index based zero,the first value is 0 .
-     * @return non-null value
-     * @throws JdbdException        throw when {@link #getString(int)} throw {@link JdbdException}
-     * @throws NullPointerException throw when {@link #getString(int)} return null.
-     * @see #getString(int)
-     */
-    String getNonNullString(int indexBasedZero) throws JdbdException, NullPointerException;
 
     /**
      * <p>
@@ -722,6 +646,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
+     * @see #isBigColumn(int)
      */
     boolean isBigColumn(String columnLabel);
 
@@ -740,6 +665,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
+     * @see #isNull(int)
      */
     boolean isNull(String columnLabel) throws JdbdException;
 
@@ -758,6 +684,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
+     * @see #get(int)
      */
     @Nullable
     Object get(String columnLabel) throws JdbdException;
@@ -776,8 +703,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <li>{@link #getOrDefault(int, Object)}</li>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getOrDefault(int, Object)
      */
     Object getOrDefault(String columnLabel, Object defaultValue) throws JdbdException;
 
@@ -794,8 +726,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <li>{@link #getOrSupplier(int, Supplier)}</li>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getOrSupplier(int, Supplier)
      */
     Object getOrSupplier(String columnLabel, Supplier<Object> supplier) throws JdbdException;
 
@@ -813,84 +750,17 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <li>{@link #get(int, Class)} throw error</li>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #get(int, Class)
      */
     @Nullable
     <T> T get(String columnLabel, Class<T> columnClass) throws JdbdException;
 
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *              // row is instance of {@link DataRow}
-     *             final int index;
-     *             index = row.getColumnIndex(columnLabel);
-     *             return row.getString(index) ;
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
-     * @see #getColumnIndex(String)
-     */
-    @Nullable
-    String getString(String columnLabel) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *              // row is instance of {@link DataRow}
-     *             final int index;
-     *             index = row.getColumnIndex(columnLabel);
-     *             return row.getStringOrDefault(index,defaultValue) ;
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
-     * @see #getColumnIndex(String)
-     */
-    String getStringOrDefault(String columnLabel, String defaultValue) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *              // row is instance of {@link DataRow}
-     *             final int index;
-     *             index = row.getColumnIndex(columnLabel);
-     *             return row.getStringOrSupplier(index,supplier) ;
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
-     * @see #getColumnIndex(String)
-     */
-    String getStringOrSupplier(String columnLabel, Supplier<String> supplier) throws JdbdException;
-
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *              // row is instance of {@link DataRow}
-     *             final int index;
-     *             index = row.getColumnIndex(columnLabel);
-     *             return row.getNonNullString(index) ;
-     *         </code>
-     *     </pre>
-     * </p>
-     *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
-     * @see #getColumnIndex(String)
-     */
-    String getNonNullString(String columnLabel) throws JdbdException, NullPointerException;
 
     /**
      * <p>
@@ -905,8 +775,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <li>{@link #getOrDefault(int, Class, Object)}</li>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getOrDefault(int, Class, Object)
      */
     <T> T getOrDefault(String columnLabel, Class<T> columnClass, T defaultValue) throws JdbdException;
 
@@ -925,6 +800,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
+     * @see #getOrSupplier(int, Class, Supplier)
      */
     <T> T getOrSupplier(String columnLabel, Class<T> columnClass, Supplier<T> supplier) throws JdbdException;
 
@@ -941,8 +817,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException        throw when {@link #getColumnIndex(String)} throw error
+     * @throws NullPointerException throw when {@link #getNonNull(int)} throw error
      * @see #getColumnIndex(String)
+     * @see #getNonNull(int)
      */
     Object getNonNull(String columnLabel) throws NullPointerException, JdbdException;
 
@@ -959,8 +837,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException        throw when {@link #getColumnIndex(String)} throw error
+     * @throws NullPointerException throw when {@link #getNonNull(int, Class)} throw error
      * @see #getColumnIndex(String)
+     * @see #getNonNull(int, Class)
      */
     <T> T getNonNull(String columnLabel, Class<T> columnClass) throws NullPointerException, JdbdException;
 
@@ -973,13 +853,18 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              // row is instance of {@link DataRow}
      *             final int index;
      *             index = row.getColumnIndex(columnLabel);
-     *             return row.getList(index,elementClass) ;
+     *             return row.getList(index,elementClass,ArrayList::new) ;
      *         </code>
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <i>{@link #getList(int, Class, IntFunction)} throw error</i>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getList(int, Class, IntFunction)
      */
     <T> List<T> getList(String columnLabel, Class<T> elementClass) throws JdbdException;
 
@@ -996,8 +881,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <i>{@link #getList(int, Class, IntFunction)} throw error</i>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getList(int, Class, IntFunction)
      */
     <T> List<T> getList(String columnLabel, Class<T> elementClass, IntFunction<List<T>> constructor) throws JdbdException;
 
@@ -1009,13 +899,18 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              // row is instance of {@link DataRow}
      *             final int index;
      *             index = row.getColumnIndex(columnLabel);
-     *             return row.getSet(index,elementClass) ;
+     *             return row.getSet(index,elementClass,HashSet::new) ;
      *         </code>
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <i>{@link #getSet(int, Class, IntFunction)} throw error</i>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getSet(int, Class, IntFunction)
      */
     <T> Set<T> getSet(String columnLabel, Class<T> elementClass) throws JdbdException;
 
@@ -1032,8 +927,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <i>{@link #getSet(int, Class, IntFunction)} throw error</i>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getSet(int, Class, IntFunction)
      */
     <T> Set<T> getSet(String columnLabel, Class<T> elementClass, IntFunction<Set<T>> constructor) throws JdbdException;
 
@@ -1046,13 +946,18 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              // row is instance of {@link DataRow}
      *             final int index;
      *             index = row.getColumnIndex(columnLabel);
-     *             return row.getMap(index,keyClass,keyClass) ;
+     *             return row.getMap(index,keyClass,keyClass,HashMap::new) ;
      *         </code>
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <i>{@link #getMap(int, Class, Class, IntFunction)} throw error</i>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getMap(int, Class, Class, IntFunction)
      */
     <K, V> Map<K, V> getMap(String columnLabel, Class<K> keyClass, Class<V> valueClass) throws JdbdException;
 
@@ -1069,8 +974,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
-     * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link #getColumnIndex(String)} throw error</li>
+     *                           <i>{@link #getMap(int, Class, Class, IntFunction)} throw error</i>
+     *                       </ul>
      * @see #getColumnIndex(String)
+     * @see #getMap(int, Class, Class, IntFunction)
      */
     <K, V> Map<K, V> getMap(String columnLabel, Class<K> keyClass, Class<V> valueClass, IntFunction<Map<K, V>> constructor) throws JdbdException;
 
@@ -1087,6 +997,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *     </pre>
      * </p>
      *
+     * @return if column value is null,then return empty {@link Publisher}.
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
@@ -1094,6 +1005,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getPublisher(int, Class)
+     * @see #isNull(int)
      */
     <T> Publisher<T> getPublisher(String columnLabel, Class<T> valueClass) throws JdbdException;
 

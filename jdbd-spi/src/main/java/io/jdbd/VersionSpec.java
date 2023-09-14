@@ -2,6 +2,17 @@ package io.jdbd;
 
 import io.jdbd.session.OptionSpec;
 
+/**
+ * <p>
+ * This interface is base interface of following
+ *     <ul>
+ *         <li>{@link DriverVersion}</li>
+ *         <li>{@link io.jdbd.session.ServerVersion}</li>
+ *     </ul>
+ * </p>
+ *
+ * @since 1.0
+ */
 public interface VersionSpec extends OptionSpec {
 
     /**

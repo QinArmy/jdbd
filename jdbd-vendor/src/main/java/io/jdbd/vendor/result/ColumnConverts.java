@@ -83,9 +83,9 @@ public abstract class ColumnConverts {
             } else if (!(source instanceof String)) {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
             } else if (targetClass.isAnonymousClass()) {
-                value = convertToEnum(targetClass.getSuperclass(), (String) source);
+                value = convertToEnum(meta, targetClass.getSuperclass(), (String) source);
             } else {
-                value = convertToEnum(targetClass, (String) source);
+                value = convertToEnum(meta, targetClass, (String) source);
             }
         } else if (targetClass == BitSet.class) {
             value = convertToBitSet(meta, source);
@@ -99,8 +99,12 @@ public abstract class ColumnConverts {
 
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<T>> T convertToEnum(Class<?> enumClass, String source) {
-        return Enum.valueOf((Class<T>) enumClass, source);
+    public static <T extends Enum<T>> T convertToEnum(final ColumnMeta meta, Class<?> enumClass, String source) {
+        try {
+            return Enum.valueOf((Class<T>) enumClass, source);
+        } catch (Exception e) {
+            throw JdbdExceptions.cannotConvertColumnValue(meta, source, enumClass, e);
+        }
     }
 
 
@@ -359,8 +363,6 @@ public abstract class ColumnConverts {
             } else {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
             }
-        } else if (source instanceof byte[]) {
-            value = JdbdBuffers.hexEscapesText(true, (byte[]) source);
         } else if (source instanceof BitSet) {
             value = JdbdStrings.bitSetToBitString((BitSet) source, true);
         } else if (source instanceof TextPath) {
@@ -371,17 +373,6 @@ public abstract class ColumnConverts {
                 final byte[] bytes;
                 bytes = Files.readAllBytes(((TextPath) source).value());
                 value = new String(bytes, ((TextPath) source).charset());
-            } catch (Throwable e) {
-                throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, e);
-            }
-        } else if (source instanceof BlobPath) {
-            try {
-                if (Files.size(((BlobPath) source).value()) > (Integer.MAX_VALUE - 128)) {
-                    throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, null);
-                }
-                final byte[] bytes;
-                bytes = Files.readAllBytes(((BlobPath) source).value());
-                value = JdbdBuffers.hexEscapesText(true, bytes);
             } catch (Throwable e) {
                 throw JdbdExceptions.cannotConvertColumnValue(meta, source, String.class, e);
             }

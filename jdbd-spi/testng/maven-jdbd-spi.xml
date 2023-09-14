@@ -1,9 +1,0 @@
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
-<suite name="jdbd-spi" verbose="1" parallel="methods" thread-count="30">
-    <test name="feature">
-        <classes>
-            <class name="io.jdbd.type.IntervalSuiteTests"/>
-
-        </classes>
-    </test>
-</suite>

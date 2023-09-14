@@ -1,5 +1,12 @@
 package io.jdbd;
 
+/**
+ * <p>
+ * This interface representing driver version,see {@link Driver#version()}
+ * </p>
+ *
+ * @since 1.0
+ */
 public interface DriverVersion extends VersionSpec {
 
     /**
@@ -11,8 +18,6 @@ public interface DriverVersion extends VersionSpec {
      * </p>
      */
     String getName();
-
-
 
 
 }

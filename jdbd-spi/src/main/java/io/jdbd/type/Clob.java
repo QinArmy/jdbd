@@ -17,9 +17,14 @@ import org.reactivestreams.Publisher;
  */
 public interface Clob extends PublisherParameter {
 
-
+    /**
+     * @return {@link String} {@link Publisher}
+     */
     Publisher<String> value();
 
+    /**
+     * create {@link Blob} instance.
+     */
     static Clob from(Publisher<String> source) {
         return JdbdTypes.clobParam(source);
     }
