@@ -8,7 +8,7 @@ import io.jdbd.util.JdbdUtils;
 import io.jdbd.vendor.util.*;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.SynchronousSink;
 
 import java.io.BufferedReader;
 import java.math.BigDecimal;
@@ -836,25 +836,25 @@ public abstract class ColumnConverts {
 
     public static Flux<byte[]> convertToBlobPublisher(final ColumnMeta meta, final BlobPath path,
                                                       final int bufferLength) {
-        return Flux.create(sink -> emitBlobFile(meta, path, bufferLength, sink));
+        return Flux.generate(sink -> emitBlobFile(meta, path, bufferLength, sink));
     }
 
     public static Flux<String> convertToClobPublisher(final ColumnMeta meta, final TextPath path,
                                                       final int bufferLength) {
-        return Flux.create(sink -> emitTextFile(meta, path, bufferLength, sink));
+        return Flux.generate(sink -> emitTextFile(meta, path, bufferLength, sink));
     }
 
     /**
      * convert path to {@link Blob}
      */
     public static void emitBlobFile(final ColumnMeta meta, final BlobPath path, final int bufferLength,
-                                    final FluxSink<byte[]> sink) {
+                                    final SynchronousSink<byte[]> sink) {
 
         try (FileChannel channel = FileChannel.open(path.value(), JdbdUtils.openOptionSet(path))) {
 
             final ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
             byte[] dataBytes;
-            for (int i = 0; channel.read(buffer) > 0; i++) {
+            while (channel.read(buffer) > 0) {
                 buffer.flip();
                 dataBytes = new byte[buffer.remaining()];
                 buffer.get(dataBytes);
@@ -862,10 +862,6 @@ public abstract class ColumnConverts {
                 sink.next(dataBytes);
 
                 buffer.clear();
-
-                if ((i & 31) == 0 && sink.isCancelled()) {
-                    break;
-                }
             }
 
             sink.complete();
@@ -879,18 +875,14 @@ public abstract class ColumnConverts {
      * convert path to {@link Clob}
      */
     public static void emitTextFile(final ColumnMeta meta, final TextPath path, final int bufferLength,
-                                    final FluxSink<String> sink) {
+                                    final SynchronousSink<String> sink) {
 
         try (BufferedReader reader = JdbdUtils.newBufferedReader(path)) {
 
             final char[] charArray = new char[bufferLength];
-            for (int i = 0, length; (length = reader.read(charArray)) > 0; i++) {
+            for (int length; (length = reader.read(charArray)) > 0; ) {
 
                 sink.next(new String(charArray, 0, length));
-
-                if ((i & 31) == 0 && sink.isCancelled()) {
-                    break;
-                }
             }
             sink.complete();
         } catch (Throwable e) {
