@@ -269,6 +269,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             }
             this.sinkQueue.offer(new QuerySink<>(nextSinkNo, sink, func, consumer));
         } else if (error == null) {
+            // TODO , fiex me ,may be has cache
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
@@ -288,6 +289,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             }
             this.sinkQueue.offer(new UpdateSink(nextSinkNo, sink));
         } else if (error == null) {
+            // TODO , fiex me ,may be has cache
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
@@ -307,6 +309,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             }
             this.sinkQueue.offer(new OrderedFluxSink(nextSinkNo, sink));
         } else if (error == null) {
+            // TODO , fiex me ,may be has cache
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {

@@ -3,13 +3,18 @@ package io.jdbd.vendor.result;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.BooleanMode;
-import io.jdbd.type.BlobPath;
-import io.jdbd.type.Point;
-import io.jdbd.type.TextPath;
+import io.jdbd.type.*;
+import io.jdbd.util.JdbdUtils;
 import io.jdbd.vendor.util.*;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
+import java.io.BufferedReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
@@ -91,6 +96,22 @@ public abstract class ColumnConverts {
             value = convertToBitSet(meta, source);
         } else if (targetClass == Point.class) {
             value = convertToPoint(meta, source);
+        } else if (targetClass == Clob.class) {
+            if (source instanceof String) {
+                value = Clob.from(Flux.just((String) source));
+            } else if (source instanceof TextPath) {
+                value = convertToClobPublisher(meta, (TextPath) source, 2048);
+            } else {
+                throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
+            }
+        } else if (targetClass == Blob.class) {
+            if (source instanceof byte[]) {
+                value = Blob.from(Flux.just((byte[]) source));
+            } else if (source instanceof BlobPath) {
+                value = convertToBlobPublisher(meta, (BlobPath) source, 2048);
+            } else {
+                throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
+            }
         } else {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, targetClass, null);
         }
@@ -811,6 +832,70 @@ public abstract class ColumnConverts {
             throw JdbdExceptions.cannotConvertColumnValue(meta, source, Point.class, null);
         }
         return value;
+    }
+
+    public static Flux<byte[]> convertToBlobPublisher(final ColumnMeta meta, final BlobPath path,
+                                                      final int bufferLength) {
+        return Flux.create(sink -> emitBlobFile(meta, path, bufferLength, sink));
+    }
+
+    public static Flux<String> convertToClobPublisher(final ColumnMeta meta, final TextPath path,
+                                                      final int bufferLength) {
+        return Flux.create(sink -> emitTextFile(meta, path, bufferLength, sink));
+    }
+
+    /**
+     * convert path to {@link Blob}
+     */
+    public static void emitBlobFile(final ColumnMeta meta, final BlobPath path, final int bufferLength,
+                                    final FluxSink<byte[]> sink) {
+
+        try (FileChannel channel = FileChannel.open(path.value(), JdbdUtils.openOptionSet(path))) {
+
+            final ByteBuffer buffer = ByteBuffer.allocate(bufferLength);
+            byte[] dataBytes;
+            for (int i = 0; channel.read(buffer) > 0; i++) {
+                buffer.flip();
+                dataBytes = new byte[buffer.remaining()];
+                buffer.get(dataBytes);
+
+                sink.next(dataBytes);
+
+                buffer.clear();
+
+                if ((i & 31) == 0 && sink.isCancelled()) {
+                    break;
+                }
+            }
+
+            sink.complete();
+        } catch (Throwable e) {
+            sink.error(JdbdExceptions.cannotConvertColumnValue(meta, path, Publisher.class, e));
+        }
+
+    }
+
+    /**
+     * convert path to {@link Clob}
+     */
+    public static void emitTextFile(final ColumnMeta meta, final TextPath path, final int bufferLength,
+                                    final FluxSink<String> sink) {
+
+        try (BufferedReader reader = JdbdUtils.newBufferedReader(path)) {
+
+            final char[] charArray = new char[bufferLength];
+            for (int i = 0, length; (length = reader.read(charArray)) > 0; i++) {
+
+                sink.next(new String(charArray, 0, length));
+
+                if ((i & 31) == 0 && sink.isCancelled()) {
+                    break;
+                }
+            }
+            sink.complete();
+        } catch (Throwable e) {
+            sink.error(JdbdExceptions.cannotConvertColumnValue(meta, path, Publisher.class, e));
+        }
     }
 
 

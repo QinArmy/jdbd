@@ -406,6 +406,22 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *           </ol>
      *              if overflow ,throw {@link JdbdException}
      *         </li>
+     *         <li>columnClass is {@link io.jdbd.type.Clob} ,column value can be following type:
+     *           <ol>
+     *               <li>{@code null}</li>
+     *               <li>{@link String}</li>
+     *               <li>{@link TextPath},<strong>NOTE</strong>: you should in time subscribe,else the file will be deleted after result set end</li>
+     *           </ol>
+     *              if overflow ,throw {@link JdbdException}
+     *         </li>
+     *         <li>columnClass is {@link io.jdbd.type.Blob} ,column value can be following type:
+     *           <ol>
+     *               <li>{@code null}</li>
+     *               <li>{@link String}</li>
+     *               <li>{@link io.jdbd.type.BlobPath},<strong>NOTE</strong>: you should in time subscribe,else the file will be deleted after result set end</li>
+     *           </ol>
+     *              if overflow ,throw {@link JdbdException}
+     *         </li>
      *     </ul>
      * </p>
      *
