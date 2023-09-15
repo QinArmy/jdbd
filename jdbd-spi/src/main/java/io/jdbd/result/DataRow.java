@@ -176,8 +176,8 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *                  <li>{@link MonthDay}</li>
      *                  <li>{@link LocalTime}</li>
      *                  <li>{@link OffsetTime}</li>
-     *                  <li>{@code byte[]} convert to normal string not hex string,use {@link String#String(byte[], Charset)}</li>
-     *                  <li>{@link io.jdbd.type.BlobPath} convert to normal string not hex string,use {@link String#String(byte[], Charset)}</li>
+     *                  <li>{@code byte[]} convert to normal string not hex string,use {@link String#String(byte[], Charset)} constructor;Need hex string,use {@link io.jdbd.util.JdbdUtils#hexEscapesText(boolean, byte[])}</li>
+     *                  <li>{@link io.jdbd.type.BlobPath} convert to normal string not hex string,use {@link String#String(byte[], Charset)} constructor;Need hex string,use {@link io.jdbd.util.JdbdUtils#hexEscapesText(boolean, byte[])}</li>
      *                  <li>{@link BitSet}</li>
      *                  <li>{@link TextPath}</li>
      *              </ol>
@@ -410,7 +410,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *           <ol>
      *               <li>{@code null}</li>
      *               <li>{@link String}</li>
-     *               <li>{@link TextPath},<strong>NOTE</strong>: you should in time subscribe,else the file will be deleted after result set end</li>
+     *               <li>{@link TextPath},e.g: {@code  reactor.core.publisher.Flux#generate(Consumer)} ,<strong>NOTE</strong>: you should in time subscribe,else the file will be deleted after result set end</li>
      *           </ol>
      *              if overflow ,throw {@link JdbdException}
      *         </li>
@@ -418,7 +418,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *           <ol>
      *               <li>{@code null}</li>
      *               <li>{@link String}</li>
-     *               <li>{@link io.jdbd.type.BlobPath},<strong>NOTE</strong>: you should in time subscribe,else the file will be deleted after result set end</li>
+     *               <li>{@link io.jdbd.type.BlobPath},e.g: {@code  reactor.core.publisher.Flux#generate(Consumer)} ,<strong>NOTE</strong>: you should in time subscribe,else the file will be deleted after result set end</li>
      *           </ol>
      *              if overflow ,throw {@link JdbdException}
      *         </li>
