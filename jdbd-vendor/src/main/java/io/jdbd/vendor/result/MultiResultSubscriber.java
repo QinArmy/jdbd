@@ -101,34 +101,12 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             this.receiveItem = true;
         }
 
-        final Queue<ResultItem> resultItemQueue = this.resultItemQueue;
-        DownstreamSink currentSink = this.currentSink;
-        if (currentSink == null) {
-            this.currentSink = currentSink = this.sinkQueue.poll();
-        }
-        // drain queue
-        for (ResultItem queueItem; currentSink != null && (queueItem = resultItemQueue.poll()) != null; ) {
-
-            if (queueItem.getResultNo() != currentSink.resultNo) {
-                String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
-                        currentSink.resultNo, queueItem.getResultNo());
-                this.handleError(new JdbdException(m));
-                break;
-            }
-
-            currentSink.next(queueItem);
-            if (queueItem instanceof ResultStates) {
-                currentSink.complete();
-                this.currentSink = currentSink = this.sinkQueue.poll();
-            }
-
-        }
+         drianQueueToDownstream();
 
         if (this.error != null) {
-            this.currentSink = currentSink;
             return;
         }
-
+        final DownstreamSink currentSink = this.currentSink;
         if (currentSink == null) {
             final ResultItem actualItem;
             if (upstreamItem instanceof CurrentRow) {
@@ -136,19 +114,18 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             } else {
                 actualItem = upstreamItem;
             }
-            if (!resultItemQueue.offer(actualItem)) {
+            if (!this.resultItemQueue.offer(actualItem)) {
                 // no bug, never here
                 throw new IllegalStateException("capacity error");
             }
         } else {
             currentSink.next(upstreamItem);
             if (upstreamItem instanceof ResultStates) {
+                this.currentSink = null;
                 currentSink.complete();
-                currentSink = null;
+
             }
         }
-
-        this.currentSink = currentSink;
 
     }
 
@@ -180,20 +157,34 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         if (error != null) {
             drainError(JdbdExceptions.wrapIfNonJvmFatal(error));
         } else if (this.receiveItem) {
-            DownstreamSink currentSink = this.currentSink;
-            this.currentSink = null;
-
-            if (currentSink != null) {
-                currentSink.complete();
-            }
-            String m;
-            while ((currentSink = this.sinkQueue.poll()) != null) {
-                m = String.format("expected resultNo[%s],but no more result.", currentSink.resultNo);
-                currentSink.error(new NoMoreResultException(m));
-            }
-
+            drianQueueToDownstream();
         } else {
             drainError(MultiResults.noReceiveAnyItem());
+        }
+    }
+
+    private void drianQueueToDownstream() {
+        final Queue<ResultItem> resultItemQueue = this.resultItemQueue;
+        DownstreamSink currentSink = this.currentSink;
+        if (currentSink == null) {
+            this.currentSink = currentSink = this.sinkQueue.poll();
+        }
+        // drain queue
+        for (ResultItem queueItem; currentSink != null && (queueItem = resultItemQueue.poll()) != null; ) {
+
+            if (queueItem.getResultNo() != currentSink.resultNo) {
+                String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
+                        currentSink.resultNo, queueItem.getResultNo());
+                this.handleError(new JdbdException(m));
+                break;
+            }
+
+            currentSink.next(queueItem);
+            if (queueItem instanceof ResultStates) {
+                currentSink.complete();
+                this.currentSink = currentSink = this.sinkQueue.poll();
+            }
+
         }
     }
 
@@ -218,6 +209,8 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         while ((currentSink = this.sinkQueue.poll()) != null) {
             currentSink.error(error);
         }
+
+        this.resultItemQueue.clear();
 
     }
 
@@ -262,18 +255,20 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
     private <R> void addQuerySubscriberInEventLoop(FluxSink<R> sink, @Nullable Function<CurrentRow, R> func,
                                                    @Nullable Consumer<ResultStates> consumer) {
         final int nextSinkNo = this.sinkNo++;
-        final Throwable error = this.error;
+        final Throwable error;
         if (!this.done) {
             if (this.sinkQueue.size() == 0) {
                 subscribeUpstreamIfNeedInEventLoop();
             }
             this.sinkQueue.offer(new QuerySink<>(nextSinkNo, sink, func, consumer));
-        } else if (error == null) {
-            // TODO , fiex me ,may be has cache
+        } else if ((error = this.error) != null) {
+            sink.error(error);
+        } else if (this.resultItemQueue.isEmpty()) {
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
-            sink.error(error);
+            this.sinkQueue.offer(new QuerySink<>(nextSinkNo, sink, func, consumer));
+            this.drianQueueToDownstream();
         }
     }
 
@@ -282,18 +277,20 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
      */
     private void addUpdateSubscriberInEventLoop(MonoSink<ResultStates> sink) {
         final int nextSinkNo = this.sinkNo++;
-        final Throwable error = this.error;
+        final Throwable error;
         if (!this.done) {
             if (this.sinkQueue.size() == 0) {
                 subscribeUpstreamIfNeedInEventLoop();
             }
             this.sinkQueue.offer(new UpdateSink(nextSinkNo, sink));
-        } else if (error == null) {
-            // TODO , fiex me ,may be has cache
+        } else if ((error = this.error) != null) {
+            sink.error(error);
+        } else if (this.resultItemQueue.isEmpty()) {
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
-            sink.error(error);
+            this.sinkQueue.offer(new UpdateSink(nextSinkNo, sink));
+            this.drianQueueToDownstream();
         }
     }
 
@@ -302,18 +299,20 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
      */
     private void addQueryFluxSubscriberInEventLoop(ResultSink sink) {
         final int nextSinkNo = this.sinkNo++;
-        final Throwable error = this.error;
+        final Throwable error;
         if (!this.done) {
             if (this.sinkQueue.size() == 0) {
                 subscribeUpstreamIfNeedInEventLoop();
             }
             this.sinkQueue.offer(new OrderedFluxSink(nextSinkNo, sink));
-        } else if (error == null) {
-            // TODO , fiex me ,may be has cache
+        } else if ((error = this.error) != null) {
+            sink.error(error);
+        } else if (this.resultItemQueue.isEmpty()) {
             String m = String.format("expected resultNo[%s],but no more result.", nextSinkNo);
             sink.error(new NoMoreResultException(m));
         } else {
-            sink.error(error);
+            this.sinkQueue.offer(new OrderedFluxSink(nextSinkNo, sink));
+            this.drianQueueToDownstream();
         }
     }
 
