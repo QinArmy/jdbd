@@ -419,7 +419,7 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         private QuerySink(int resultNo, FluxSink<R> sink, @Nullable Function<CurrentRow, R> function,
                           @Nullable Consumer<ResultStates> statesConsumer) {
             super(resultNo);
-            this.sink = sink;
+            this.sink = sink.onRequest(this::onRequrest);
             this.function = function;
             this.statesConsumer = statesConsumer;
 
@@ -505,6 +505,10 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         private void handleError(Throwable error) {
             this.disposable = true;
             this.error = error;
+        }
+
+        private void onRequrest(long n) {
+            // currently,no-op
         }
 
 

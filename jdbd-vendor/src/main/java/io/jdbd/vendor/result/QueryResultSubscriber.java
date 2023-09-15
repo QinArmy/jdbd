@@ -32,12 +32,14 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
         } else if (stateConsumer == null) {
             flux = Flux.error(JdbdExceptions.statesConsumerIsNull());
         } else {
-            flux = Flux.create(sink -> FluxResult.create(callback, false)
-                    .subscribe(new QueryResultSubscriber<>(function, sink, stateConsumer))
-            );
+            flux = Flux.create(sink -> {
+                FluxResult.create(callback, false)
+                        .subscribe(new QueryResultSubscriber<>(function, sink, stateConsumer));
+            });
         }
         return flux;
     }
+
 
     private final Function<CurrentRow, R> function;
 
@@ -58,9 +60,10 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
     private QueryResultSubscriber(Function<CurrentRow, R> function, FluxSink<R> sink,
                                   Consumer<ResultStates> statesConsumer) {
         this.function = function;
-        this.sink = sink;
+        this.sink = sink.onRequest(this::onRequrest);
         this.statesConsumer = statesConsumer;
     }
+
 
     @Override
     public void onSubscribe(Subscription s) {
@@ -145,6 +148,10 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
         this.disposable = true;
         this.error = error;
         this.subscription.cancel();
+    }
+
+    private void onRequrest(long n) {
+        // currently,no-op
     }
 
 }
