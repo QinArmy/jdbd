@@ -364,6 +364,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>the implementation of this method need session is open and session have closed</li>
+     *                           <li>identifier have no text</li>
      *                           <li>identifier contain identifier quote char and driver couldn't escape.</li>
      *                       </ul>
      */
