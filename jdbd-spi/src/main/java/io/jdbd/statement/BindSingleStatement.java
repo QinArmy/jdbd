@@ -47,25 +47,40 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * Add current parameter group to batch item list.
-     * <br/>
+     * <p>This method is invoked after {@link #bind(int, DataType, Object)},if no parameter ,you can directly invoke this method.
+     * <p>This method is provide only for following methods:
+     * <ul>
+     *     <li>{@link #executeBatchUpdate()}</li>
+     *     <li>{@link #executeBatchQuery()}</li>
+     *     <li>{@link #executeBatchAsMulti()}</li>
+     *     <li>{@link #executeBatchAsFlux()}</li>
+     * </ul>
      *
      * @return <strong>this</strong>
+     * @throws JdbdException emit(or throw)
+     *                       <ul>
+     *                           <li>you reuse this {@link BindSingleStatement} instance</li>
+     *                           <li>parameter group size not match</li>
+     *                       </ul>
      */
     BindSingleStatement addBatch() throws JdbdException;
 
     /**
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
+     * <p>Execute a sql statement and server response just one update result, the result is a {@link ResultStates} instance<br/>
+     * whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#getResultNo()} always return 1 .
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
      *
      * @return the {@link Publisher} emit just one {@link ResultStates} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
+     *                           <li>you reuse this {@link BindSingleStatement} instance</li>
      *                           <li>param bind error</li>
-     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Clob}</li>
+     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                           <li>sql error</li>
+     *                           <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                           <li>server response error ,see {@link ServerException}</li>
+     *                           <li>server response result not match,e.g: response multi-result,or query result</li>
      *                       </ul>
-     * @see BindStatement#executeUpdate()
-     * @see PreparedStatement#executeUpdate()
      */
     Publisher<ResultStates> executeUpdate();
 
@@ -137,21 +152,28 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * </ol>
      * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
      * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.
-     *
+     * <p><strong>NOTE</strong>: if use {@link #setFetchSize(int)},then will produce multi {@link ResultStates} instance and the {@link ResultStates#getResultNo()} always return 1 .
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
      * <br/>
      *
-     * @param rowFunc        current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
-     *                       for example :
+     * @param rowFunc        current row map function.Using rowFunc to avoid create {@link ResultRow} instance for improving performance.<br/>
+     *                       <strong>NOTE</strong>:
      *                       <ul>
-     *                            <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
-     *                            <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
+     *                           <li>rowFunc couldn't return {@link CurrentRow} instance.</li>
+     *                           <li>driver will invoke rowFunc in an ordered / serial fashion. Typically ,rowFunc run in {@code  io.netty.channel.EventLoop} </li>
+     *                           <li>you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}. For example :
+     *                                  <ul>
+     *                                      <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
+     *                                      <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
+     *                                  </ul>
+     *                           </li>
      *                       </ul>
-     *                       Using rowFunc to avoid create {@link ResultRow} instance for improving performance.
      * @param statesConsumer a consumer to receive the {@link ResultStates},if don't use {@link #setFetchSize(int)} ,<br/>
      *                       then will be invoked just once by driver,else will be invoked multi-times by driver. <br/>
-     *                       <strong>NOTE</strong>: even if use
+     *                       <strong>NOTE</strong>: even if use {@link #setFetchSize(int)} the {@link ResultStates#getResultNo()} always return 1 .
+     * @param <R>            the row java type,it is returned by rowFunc.
+     * @return the {@link Publisher} emit 0-N element or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException        emmit(not throw) when
      *                              <ul>
      *                                  <li>you reuse this {@link BindSingleStatement} instance</li>
@@ -163,6 +185,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *                                  <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
      *                                  <li>server response error ,see {@link ServerException}</li>
      *                                  <li>server response result not match,e.g: response multi-result,or update result</li>
+     *                                  <li>rowFunc return {@link CurrentRow} instance</li>
      *                              </ul>
      * @throws NullPointerException emit(not throw) when
      *                              <ul>
@@ -190,16 +213,27 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
-     * @return Flux that emit just one element or {@link Throwable}.
+     * @return {@link Publisher} that emit 0-N element or {@link Throwable}.
      * @see #executeQuery(Function, Consumer)
      */
     <R, F extends Publisher<R>> F executeQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer, Function<Publisher<R>, F> fluxFunc);
 
 
     /**
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
+     * <p>Execute a sql statement and server response 1-N result.The result can be update result or query result.
+     * <p>More info see {@link OrderedFlux}.
+     * <p>Typically,in most case, only procedure can produce multi-result.
+     *
+     * @return {@link OrderedFlux} that emit 1-N result or {@link Throwable}
+     * @throws JdbdException emmit(not throw) when
+     *                       <ul>
+     *                           <li>you reuse this {@link BindSingleStatement} instance</li>
+     *                           <li>param bind error</li>
+     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                           <li>sql error</li>
+     *                           <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                           <li>server response error ,see {@link ServerException}</li>
+     *                       </ul>
      */
     OrderedFlux executeAsFlux();
 
@@ -220,7 +254,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * <br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
-     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
+     * @param <F>      F representing {@link Publisher} that emit 0-N element or {@link Throwable}.
      * @return Flux that emit just one element or {@link Throwable}.
      * @see #executeAsFlux()
      */

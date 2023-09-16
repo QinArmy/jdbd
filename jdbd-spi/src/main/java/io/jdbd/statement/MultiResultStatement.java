@@ -29,10 +29,11 @@ public interface MultiResultStatement extends Statement {
 
 
     /**
+     * <p>Execute sql with batch/multi-statement and server response multi update result.
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     *<br/>
+     * <br/>
      * <p>
      * For example 1 :
      * <pre>
@@ -80,7 +81,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -120,8 +121,9 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return the {@link Publisher} emit 1-N {@link ResultStates} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
@@ -129,10 +131,11 @@ public interface MultiResultStatement extends Statement {
 
 
     /**
+     * <p>Execute sql with batch/multi-statement and server response multi query result.
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     *<br/>
+     * <br/>
      * <p>
      * For example 1 :
      * <pre>
@@ -194,7 +197,7 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -234,18 +237,20 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return {@link QueryResults} that can subscribe multi query result.
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
     QueryResults executeBatchQuery();
 
     /**
+     * Execute sql with batch/multi-statement and server response multi  result.
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     *<br/>
+     * <br/>
      * <p>
      * For example 1 :
      * <pre>
@@ -327,7 +332,7 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -374,18 +379,20 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return {@link QueryResults} that can subscribe multi query/update result.
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
     MultiResult executeBatchAsMulti();
 
     /**
+     * Execute sql with batch/multi-statement and server response multi-result.
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     *<br/>
+     * <br/>
      * <p>
      * <pre>
      * For example 1 :
@@ -440,7 +447,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -508,35 +515,14 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return {@link OrderedFlux} that emit 1-N {@link ResultItem} instance.
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
     OrderedFlux executeBatchAsFlux();
 
-    /**
-     * <p>
-     * This method is equivalent to following :
-     * <pre>
-     *         <code><br/>
-     *             // statement is a instance of {@link BindSingleStatement}
-     *              R flux  = fluxFunc.apply(statement.executeBatchAsFlux()) ;
-     *
-     *              // for example ,if use Project reactor , reactor.core.publisher.Flux
-     *              statement.executeBatchAsFlux(Flux::from)
-     *                 .collectList()
-     *
-     *         </code>
-     *     </pre>
-     *<br/>
-     *
-     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
-     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
-     * @return Flux that emit just one element or {@link Throwable}.
-     * @see #executeBatchAsFlux()
-     */
-    <F extends Publisher<ResultItem>> F executeBatchAsFlux(Function<OrderedFlux, F> fluxFunc);
 
     /**
      * {@inheritDoc }

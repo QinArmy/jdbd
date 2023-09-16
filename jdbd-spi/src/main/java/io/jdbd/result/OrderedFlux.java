@@ -15,12 +15,12 @@ import java.util.List;
  * <p>
  * <strong>NOTE</strong>: never {@link CurrentRow} in {@link OrderedFlux}.
  * <ul>
- *     <li>The update result always is represented by just one {@link ResultStates} instance.</li>
+ *     <li>The update result always is represented by just one {@link ResultStates} instance,the {@link ResultStates#hasColumn()} always return false.</li>
  *     <li>The query result is represented by following sequence :
  *         <ol>
  *             <li>one {@link ResultRowMeta} instance.</li>
- *             <li>0-N {@link ResultRow} instance.</li>
- *             <li>one {@link ResultStates} instance.</li>
+ *             <li>0-N {@link ResultRow} instance,the {@link ResultRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+ *             <li>one {@link ResultStates} instance,the {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()} and the {@link ResultStates#hasColumn()} always return true.</li>
  *         </ol>
  *         in {@link OrderedFlux}.
  *     </li>
@@ -34,9 +34,9 @@ import java.util.List;
  * </ul>
  * The order of result is match with sql statement.
  * <pre><br/>
- *      example 1 : SELECT * FROM user AS u LIMIT 100 ; UPDATE user AS u SET u.nick_name = ? WHERE u.id = ?
+ *      example 1 : SELECT u.* FROM user AS u LIMIT 100 ; UPDATE user AS u SET u.nick_name = ? WHERE u.id = ?
  *       The {@link OrderedFlux} emit one query result and one update result.
- *      example 2 :  UPDATE user AS u SET u.nick_name = ? WHERE u.id = ?  ; SELECT * FROM user AS u LIMIT 100
+ *      example 2 :  UPDATE user AS u SET u.nick_name = ? WHERE u.id = ?  ; SELECT u.* FROM user AS u LIMIT 100
  *       The {@link OrderedFlux} emit one update result and one query result.
  * </pre>
  * <br/>
