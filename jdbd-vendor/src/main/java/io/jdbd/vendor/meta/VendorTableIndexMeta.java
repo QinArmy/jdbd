@@ -22,7 +22,7 @@ public final class VendorTableIndexMeta implements TableIndexMeta {
      *         <li>{@link Option#UNIQUE},see {@link #isUnique()}</li>
      *         <li>{@link VendorOptions#COMMENT},see {@link #comment()}</li>
      *     </ul>
-     * </p>
+     * <br/>
      *
      * @param name index name
      */

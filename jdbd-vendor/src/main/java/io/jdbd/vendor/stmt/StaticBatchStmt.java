@@ -13,7 +13,7 @@ import java.util.function.Function;
  * <li>{@link io.jdbd.statement.StaticStatement#executeQuery(String, Function)}</li>
  * <li>{@link io.jdbd.statement.StaticStatement#executeQuery(String, Function, Consumer)}</li>
  * </u>
- * </p>
+ * <br/>
  */
 public interface StaticBatchStmt extends BatchStmt {
 

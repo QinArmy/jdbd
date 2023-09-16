@@ -14,7 +14,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface provider the methods for database meta data.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -47,7 +47,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *     <li>this method return value probably equals {@link #productName()} , For example : MySQL</li>
      *     <li>this method return value probably not equals {@link #productName()} , For example : SQL Server</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @return database product family name. For example : MySQL , PostgreSQL , SQL Server .
      * @see #productName()
@@ -65,10 +65,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get current schema info of {@link #getSession()}
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
@@ -83,10 +83,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get schemas info of database.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * optionFunc at least support following options :
      *     <ul>
@@ -105,7 +105,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *             </ul>
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param optionFunc func can always return {@code null}
      * @return the {@link Publisher} emit 0-N {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
@@ -121,10 +121,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get tables info of current schema.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * optionFunc at least support following options :
      *     <ul>
@@ -144,7 +144,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *             table type name see {@link TableMeta#valueOf(Option)}
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param optionFunc func can always return {@code null}
      * @return the {@link Publisher} emit 0-N {@link TableMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
@@ -160,10 +160,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get tables info of schemaMeta.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * optionFunc at least support following options :
      *     <ul>
@@ -183,7 +183,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *             table type name see {@link TableMeta#valueOf(Option)}
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param optionFunc func can always return {@code null}
      * @return the {@link Publisher} emit 0-N {@link TableMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
@@ -199,10 +199,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get column info of tableMeta.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * optionFunc at least support following options :
      *     <ul>
@@ -214,7 +214,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *             </ul>
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param optionFunc func can always return {@code null}
      * @return the {@link Publisher} emit 0-N {@link TableColumnMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
@@ -230,10 +230,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get index info of tableMeta.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * optionFunc at least support following options :
      *     <ul>
@@ -245,7 +245,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *             </ul>
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param optionFunc func can always return {@code null}
      * @return the {@link Publisher} emit 0-N {@link TableIndexMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
@@ -262,16 +262,16 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get the info of option
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * This implementation of this method at least support following :
      *     <ul>
      *         <li>{@link Option#USER} : representing current user info of session,now the {@link Publisher} emit just one element or {@link Throwable}, Like {@code reactor.core.publisher.Mono} . </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -285,10 +285,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     /**
      * <p>
      * Get database key words
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param onlyReserved true : just only query reserved key words.
      * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono}.

@@ -7,7 +7,7 @@ import org.reactivestreams.Publisher;
 /**
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory#localSession()} method.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

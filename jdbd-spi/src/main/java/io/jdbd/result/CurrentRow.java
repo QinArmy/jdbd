@@ -14,11 +14,11 @@ import java.util.function.Function;
  *     <li>{@link MultiResult#nextQuery(Function, Consumer)}</li>
  *     <li>{@link QueryResults#nextQuery(Function, Consumer)}</li>
  * </ul>
- * </p>
+ * <br/>
  * <p>
  * The {@link #getResultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
  * See {@link #getRowMeta()}
- * </p>
+ * <br/>
  *
  * @see ResultRow
  * @since 1.0
@@ -35,7 +35,7 @@ public interface CurrentRow extends DataRow {
     /**
      * <p>
      * Create one {@link ResultRow} with coping all column data.
-     * </p>
+     *<br/>
      */
     ResultRow asResultRow();
 

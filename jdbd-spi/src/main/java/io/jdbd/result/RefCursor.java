@@ -13,10 +13,10 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing reference of server database cursor.
- * </p>
+ * <br/>
  * <p>
  * This interface is similar to {@code java.sql.ResultSet}, except that this interface is reactive.
- * </p>
+ * <br/>
  * <p>
  * Application developer can get the instance of this interface by following method:
  * <ul>
@@ -24,7 +24,7 @@ import java.util.function.Function;
  *     <li>{@link DataRow#get(int, Class)}</li>
  *     <li>{@link ResultStates#valueOf(Option)}, see {@link Option#CURSOR}</li>
  * </ul>
- * </p>
+ * <br/>
  * <p>
  * The cursor will be close in following scenarios :
  *     <ul>
@@ -37,7 +37,7 @@ import java.util.function.Function;
  * If the methods of {@link RefCursor} don't emit any {@link Throwable},then you should close cursor.
  * If you don't close cursor ,the {@link io.jdbd.session.DatabaseSession} that create this {@link RefCursor} can still execute new {@link io.jdbd.statement.Statement},
  * but you shouldn't do this.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.session.Option#AUTO_CLOSE_ON_ERROR
  * @see io.jdbd.meta.JdbdType#REF_CURSOR
@@ -68,7 +68,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *             cursor.fetch(direction,function,states->{}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #fetch(CursorDirection, Function, Consumer)
      */
@@ -77,10 +77,10 @@ public interface RefCursor extends OptionSpec, Closeable {
     /**
      * <p>
      * Retrieve rows from a query using a cursor {@link #name()}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param direction must be one of following :
      *                  <ul>
@@ -107,10 +107,10 @@ public interface RefCursor extends OptionSpec, Closeable {
     /**
      * <p>
      * Retrieve rows from a query using a cursor {@link #name()}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param direction must be one of following :
      *                  <ul>
@@ -141,7 +141,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *             cursor.fetch(direction,count,function,states->{}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #fetch(CursorDirection, long, Function, Consumer)
      */
@@ -150,10 +150,10 @@ public interface RefCursor extends OptionSpec, Closeable {
     /**
      * <p>
      * Retrieve rows from a query using a cursor {@link #name()}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param direction must be one of following :
      *                  <ul>
@@ -220,7 +220,7 @@ public interface RefCursor extends OptionSpec, Closeable {
     /**
      * <p>
      * Retrieve rows from a query using a cursor {@link #name()}.
-     * </p>
+     *<br/>
      *
      * @param direction must be one of following :
      *                  <ul>
@@ -287,17 +287,17 @@ public interface RefCursor extends OptionSpec, Closeable {
      *             cursor.forwardAllAndClosed(function,states->{}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      */
     <T> Publisher<T> forwardAllAndClosed(Function<CurrentRow, T> function);
 
     /**
      * <p>
      * This method is equivalent to {@link #fetch(CursorDirection FORWARD_ALL, Function, Consumer)} and {@link #close()}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * This method is equivalent to following :
      * <pre>
@@ -313,17 +313,17 @@ public interface RefCursor extends OptionSpec, Closeable {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      */
     <T> Publisher<T> forwardAllAndClosed(Function<CurrentRow, T> function, Consumer<ResultStates> consumer);
 
     /**
      * <p>
      * This method is equivalent to {@link #fetch(CursorDirection FORWARD_ALL)} and {@link #close()}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      * <p>
      * This method is equivalent to following :
      * <pre>
@@ -339,17 +339,17 @@ public interface RefCursor extends OptionSpec, Closeable {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      */
     OrderedFlux forwardAllAndClosed();
 
     /**
      * <p>
      * MOVE  a cursor without retrieving any data.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param direction must be one of following :
      *                  <ul>
@@ -377,10 +377,10 @@ public interface RefCursor extends OptionSpec, Closeable {
     /**
      * <p>
      * MOVE  a cursor without retrieving any data.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param direction must be one of following :
      *                  <ul>
@@ -448,10 +448,10 @@ public interface RefCursor extends OptionSpec, Closeable {
      *     <li>If cursor have closed,emit nothing</li>
      *     <li>If cursor don't need to close (eg : postgre - current transaction is aborted, commands ignored until end of transaction ),emit nothing</li>
      * </ul>
-     * </p>
+     *<br/>
      * <p>
      *     <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @return the {@link Publisher} that emit nothing or emit {@link JdbdException}
      * @throws JdbdException emit(not throw) when only server response error,see {@link ServerException}.

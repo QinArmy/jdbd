@@ -4,7 +4,7 @@ package io.jdbd.vendor.stmt;
  * <p>
  * This interface representing object that wrap sql and parameter and option(eg: timeout).
  * The implementation of this interface is used by the implementation of {@link io.jdbd.statement.Statement}
- * </p>
+ * <br/>
  * <p>
  * This interface is a base interface of :
  *     <ul>
@@ -14,8 +14,8 @@ package io.jdbd.vendor.stmt;
  *         <li>{@link ParamBatchStmt}</li>
  *         <li>{@link ParamMultiStmt}</li>
  *     </ul>
- * </p>
- * </p>
+ * <br/>
+ * <br/>
  */
 public interface Stmt extends StmtOption {
 

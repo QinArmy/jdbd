@@ -5,7 +5,7 @@ import io.jdbd.lang.Nullable;
 /**
  * <p>
  * This interface representing database server host from jdbd url.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

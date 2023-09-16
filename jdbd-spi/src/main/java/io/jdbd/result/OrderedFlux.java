@@ -11,10 +11,10 @@ import java.util.List;
 /**
  * <p>
  * The interface representing the {@link ResultItem} stream of the result of sql statement.
- * </p>
+ * <br/>
  * <p>
  * <strong>NOTE</strong>: never {@link CurrentRow} in {@link OrderedFlux}.
- * </p>
+ * <br/>
  * <p>
  * <ul>
  *     <li>The update result always is represented by just one {@link ResultStates} instance.</li>
@@ -27,7 +27,7 @@ import java.util.List;
  *         in {@link OrderedFlux}.
  *     </li>
  * </ul>
- * </p>
+ * <br/>
  * <p>
  * The {@link OrderedFlux} emit :
  * <ul>
@@ -41,7 +41,7 @@ import java.util.List;
  *      example 2 :  UPDATE user AS u SET u.nick_name = ? WHERE u.id = ?  ; SELECT * FROM user AS u LIMIT 100
  *       The {@link OrderedFlux} emit one update result and one query result.
  * </pre>
- * </p>
+ * <br/>
  * <p>
  *     The 'Ordered' of {@link OrderedFlux} mean that the direct {@link Subscriber}
  *     (<strong>NOTE</strong> : is <strong>direct</strong> not indirect) can safely modify the field of
@@ -53,7 +53,7 @@ import java.util.List;
  *     </ul>
  *      of the direct (<strong>NOTE</strong> : is <strong>direct</strong> not indirect) {@link Subscriber} always run
  *      in an ordered / serial fashion. Typical above method run in {@code io.netty.channel.EventLoop}.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.statement.StaticStatementSpec#executeBatchAsFlux(List)
  * @see io.jdbd.statement.StaticStatementSpec#executeMultiStmt(String)

@@ -3,7 +3,7 @@ package io.jdbd.meta;
 /**
  * <p>
  * This enum representing the rule of the nulls sort
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

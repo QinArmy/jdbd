@@ -11,7 +11,7 @@ import java.util.function.Function;
  * <p>
  * emit(not throw) when subscribe executeQuery() method but database server response not match.
  * For example : subscribe {@link BindSingleStatement#executeQuery(Function, Consumer)} but database server response update result.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

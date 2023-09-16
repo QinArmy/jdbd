@@ -10,10 +10,10 @@ import java.util.function.Function;
  *         <li>{@link io.jdbd.statement.Statement#setImportPublisher(Function)}</li>
  *         <li>{@link io.jdbd.statement.Statement#setExportSubscriber(Function)}</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  *      Currently only one method,maybe add new method in the future.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -22,7 +22,7 @@ public interface ChunkOption extends OptionSpec {
     /**
      * <p>
      * If chunk is binary , the {@link Charset} should be {@link java.nio.charset.StandardCharsets#ISO_8859_1}
-     * </p>
+     *<br/>
      */
     Charset charset();
 

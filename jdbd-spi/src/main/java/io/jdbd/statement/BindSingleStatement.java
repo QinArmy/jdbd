@@ -16,14 +16,14 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing the single sql statement that support sql parameter placeholder({@code ?}) .
- * </p>
+ * <br/>
  * <p>
  * This interface is base interface of following:
  *     <ul>
  *         <li>{@link BindStatement}</li>
  *         <li>{@link PreparedStatement}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @see BindStatement
  * @see PreparedStatement
@@ -47,7 +47,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * Add current parameter group to batch item list.
-     * </p>
+     *<br/>
      *
      * @return <strong>this</strong>
      */
@@ -56,7 +56,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
@@ -82,7 +82,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param monoFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Mono#from(org.reactivestreams.Publisher)}
      * @param <M>      M representing Mono that emit just one element or {@link Throwable}.
@@ -100,7 +100,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *             stmt.executeQuery(CurrentRow::asResultRow,states -> {}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #executeQuery(Function, Consumer)
      */
@@ -116,7 +116,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *             stmt.executeQuery(function,states -> {}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #executeQuery(Function, Consumer)
      */
@@ -126,7 +126,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      *
      * @param rowFunc current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
      *                for example :
@@ -156,7 +156,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
@@ -169,7 +169,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * </p>
+     *<br/>
      */
     OrderedFlux executeAsFlux();
 
@@ -187,7 +187,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.

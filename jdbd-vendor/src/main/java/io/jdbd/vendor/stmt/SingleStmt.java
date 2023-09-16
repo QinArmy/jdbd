@@ -4,7 +4,7 @@ package io.jdbd.vendor.stmt;
 /**
  * <p>
  * This interface representing this {@link Stmt} only one sql.
- * </p>
+ * <br/>
  * <p>
  * This is a base interface of :
  *     <ul>
@@ -12,7 +12,7 @@ package io.jdbd.vendor.stmt;
  *         <li>{@link ParamStmt}</li>
  *         <li>{@link ParamBatchStmt}</li>
  *     </ul>
- * </p>
+ * <br/>
  */
 public interface SingleStmt extends Stmt {
 

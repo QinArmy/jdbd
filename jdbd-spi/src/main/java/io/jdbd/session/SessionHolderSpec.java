@@ -7,7 +7,7 @@ package io.jdbd.session;
  *         <li>{@link io.jdbd.meta.DatabaseMetaData}</li>
  *         <li>{@link io.jdbd.statement.Statement}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

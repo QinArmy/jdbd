@@ -10,7 +10,7 @@ import io.jdbd.meta.DataType;
  *         <li>{@link io.jdbd.type.LongParameter}</li>
  *         <li>{@link OutParameter}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @see ParametrizedStatement#bind(int, DataType, Object)
  * @since 1.0

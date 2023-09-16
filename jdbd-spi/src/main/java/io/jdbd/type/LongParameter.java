@@ -9,7 +9,7 @@ import io.jdbd.statement.Parameter;
  *         <li>{@link PublisherParameter}</li>
  *         <li>{@link PathParameter}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

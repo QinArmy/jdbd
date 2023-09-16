@@ -17,7 +17,7 @@ import java.util.function.Function;
  * <li>{@link io.jdbd.statement.BindStatement#executeQuery()}</li>
  * <li>{@link io.jdbd.statement.BindStatement#executeQuery(Function, Consumer)}</li>
  * </u>
- * </p>
+ *<br/>
  */
 public interface ParamStmt extends ParamSingleStmt, SingleStmt {
 

@@ -7,7 +7,7 @@ import io.jdbd.statement.BindSingleStatement;
  * <p>
  * emit(not throw) when subscribe executeUpdate() method but database server response not match.
  * For example : subscribe {@link BindSingleStatement#executeUpdate()} but database server response query result.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

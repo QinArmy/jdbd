@@ -5,7 +5,7 @@ import io.jdbd.session.OptionSpec;
 /**
  * <p>
  * This interface representing the index column.
- * </p>
+ * <br/>
  *
  * @see TableIndexMeta
  * @since 1.0

@@ -11,7 +11,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing table column meta data.
- * </p>
+ * <br/>
  *
  * @see DatabaseMetaData#columnsOfTable(TableMeta, Function)
  * @since 1.0
@@ -60,7 +60,7 @@ public interface TableColumnMeta extends OptionSpec {
     /**
      * <p>
      * The privilege set you have for the table,if driver don't support this method,then always empty.
-     * </p>
+     *<br/>
      *
      * @return a unmodified set ,empty set or privilege set.
      */
@@ -75,7 +75,7 @@ public interface TableColumnMeta extends OptionSpec {
      *         <li>{@link Option#COLLATION}</li>
      *         <li>{@link Option#PRIVILEGE}</li>
      *     </ul>
-     * </p>
+     *<br/>
      */
     @Override
     <T> T valueOf(Option<T> option);

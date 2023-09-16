@@ -3,7 +3,7 @@ package io.jdbd.meta;
 /**
  * <p>
  * This enum representing key type
- * </p>
+ * <br/>
  *
  * @see TableIndexMeta
  * @since 1.0

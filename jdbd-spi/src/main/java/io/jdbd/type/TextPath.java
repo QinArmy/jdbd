@@ -10,13 +10,13 @@ import java.nio.file.Path;
 /**
  * <p>
  * This interface representing the holder of text file.
- * </p>
+ * <br/>
  * <p>
  * Application developer can get the instance of this interface by {@link #from(boolean, Charset, Path)} method.
- * </p>
+ * <br/>
  * <p>
  * Application developer can create {@link java.io.BufferedReader} by {@link io.jdbd.util.JdbdUtils#newBufferedReader(TextPath)}
- * </p>
+ * <br/>
  *
  * @see io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)
  * @see io.jdbd.result.DataRow#get(int, Class)

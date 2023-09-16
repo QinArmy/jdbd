@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * <p>
  * <strong>NOTE</strong> : driver don't send message to database server before first subscribing.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -38,7 +38,7 @@ public interface MultiResult extends MultiResultSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param monoFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Mono#from(org.reactivestreams.Publisher)}
      * @param <M>      M representing Mono that emit just one element or {@link Throwable}.

@@ -19,7 +19,7 @@ import java.util.function.Function;
  *         <li>{@link PreparedStatement}</li>
  *         <li>{@link MultiStatement}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @see BindStatement
  * @see PreparedStatement
@@ -32,7 +32,7 @@ public interface MultiResultStatement extends Statement {
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * </p>
+     *<br/>
      * <p>
      * For example 1 :
      * <pre>
@@ -80,7 +80,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -120,7 +120,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
@@ -132,7 +132,7 @@ public interface MultiResultStatement extends Statement {
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * </p>
+     *<br/>
      * <p>
      * For example 1 :
      * <pre>
@@ -194,7 +194,7 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -234,7 +234,7 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
@@ -245,7 +245,7 @@ public interface MultiResultStatement extends Statement {
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * </p>
+     *<br/>
      * <p>
      * For example 1 :
      * <pre>
@@ -327,7 +327,7 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -374,7 +374,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
@@ -385,7 +385,7 @@ public interface MultiResultStatement extends Statement {
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * </p>
+     *<br/>
      * <p>
      * <pre>
      * For example 1 :
@@ -440,7 +440,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      * <p>
      * For example 2 :
      * <pre>
@@ -508,7 +508,7 @@ public interface MultiResultStatement extends Statement {
      *    }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
@@ -529,7 +529,7 @@ public interface MultiResultStatement extends Statement {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.

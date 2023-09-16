@@ -5,7 +5,7 @@ import io.jdbd.lang.Nullable;
 /**
  * <p>
  * This interface representing driver have known database build-in / internal-use data type.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -27,7 +27,7 @@ public interface SQLType extends DataType {
      *        <li>one dimension BIGINT_ARRAY return BIGINT</li>
      *        <li>tow dimension BIGINT_ARRAY return BIGINT too</li>
      *    </ul>
-     * </p>
+     *<br/>
      *
      * @return element type of array(1-n dimension)
      */

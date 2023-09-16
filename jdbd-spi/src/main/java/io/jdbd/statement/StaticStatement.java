@@ -20,16 +20,16 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing static sql statement with statement option (eg: timeout).
- * </p>
+ * <br/>
  * <p>
  * This interface is similar to {@code java.sql.Statement}, except that this interface is reactive.
- * </p>
+ * <br/>
  * <p>
  * This interface representing the statement couldn't contain any sql parameter placeholder({@code ?}) .
- * </p>
+ * <br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSession#statement()} method.
- * </p>
+ * <br/>
  *
  * @see DatabaseSession#statement()
  * @since 1.0
@@ -51,7 +51,7 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param monoFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Mono#from(org.reactivestreams.Publisher)}
      * @param <M>      M representing Mono that emit just one element or {@link Throwable}.
@@ -79,7 +79,7 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
@@ -108,7 +108,7 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
@@ -136,7 +136,7 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
@@ -164,7 +164,7 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.

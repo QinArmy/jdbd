@@ -5,7 +5,7 @@ import io.jdbd.lang.NonNull;
 /**
  * <p>
  * This interface representing {@link DatabaseSession}'s transaction status,see {@link DatabaseSession#transactionStatus()}.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -15,7 +15,7 @@ public interface TransactionStatus extends TransactionOption {
     /**
      * <p>
      * {@link DatabaseSession}'s transaction isolation level.
-     * </p>
+     *<br/>
      *
      * @return non-null
      */
@@ -37,7 +37,7 @@ public interface TransactionStatus extends TransactionOption {
      *         <li>{@code flag} of last phase</li>
      *     </ul>
      *     when {@link RmDatabaseSession} in XA transaction block.
-     * </p>
+     *<br/>
      */
     @Override
     <T> T valueOf(Option<T> option);

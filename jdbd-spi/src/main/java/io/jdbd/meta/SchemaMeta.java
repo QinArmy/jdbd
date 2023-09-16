@@ -8,7 +8,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing database schema meta data.
- * </p>
+ * <br/>
  *
  * @see DatabaseMetaData#tablesOfSchema(SchemaMeta, Function)
  * @since 1.0

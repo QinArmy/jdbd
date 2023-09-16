@@ -22,7 +22,7 @@ public interface TimeoutTask {
     /**
      * <p>
      * suspend timeout task
-     * </p>
+     * <br/>
      *
      * @return true :  timeout
      */
@@ -32,7 +32,7 @@ public interface TimeoutTask {
     /**
      * <p>
      * resume timeout task
-     * </p>
+     *<br/>
      *
      * @return true :  timeout
      */

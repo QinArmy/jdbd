@@ -4,7 +4,7 @@ package io.jdbd.vendor.task;
 /**
  * <p>
  * Representing {@link CommunicationTaskExecutor} encryption mode.
- * </p>
+ * <br/>
  *
  * @see CommunicationTaskExecutor
  */

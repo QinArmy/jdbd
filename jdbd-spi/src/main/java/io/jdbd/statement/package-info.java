@@ -7,7 +7,7 @@
  *         <li>{@link io.jdbd.statement.PreparedStatement}</li>
  *         <li>{@link io.jdbd.statement.MultiStatement}</li>
  *     </ul>
- * </p>
+ * <br/>
  */
 @io.jdbd.lang.NonNullApi
 package io.jdbd.statement;

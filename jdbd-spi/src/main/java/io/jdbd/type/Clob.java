@@ -6,10 +6,10 @@ import org.reactivestreams.Publisher;
 /**
  * <p>
  * This interface representing the holder of {@link String} {@link Publisher}.
- * </p>
+ * <br/>
  * <p>
  * Application developer can get the instance of this interface by {@link #from(Publisher)} method.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)
  * @see io.jdbd.result.DataRow#get(int, Class)

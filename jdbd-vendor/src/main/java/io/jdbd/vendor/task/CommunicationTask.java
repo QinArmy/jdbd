@@ -43,7 +43,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * If use this constructor ,then must override {@link #emitError(Throwable)}
-     * </p>
+     * <br/>
      */
     protected CommunicationTask(ITaskAdjutant adjutant) {
         this.adjutant = adjutant;
@@ -54,7 +54,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * {@link CommunicationTaskExecutor} invoke this method start task.
-     * </p>
+     *<br/>
      *
      * @return <ul>
      * <li>if non-null {@link CommunicationTaskExecutor} will send this {@link Publisher}.</li>
@@ -84,7 +84,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * {@link CommunicationTaskExecutor} invoke this method read response from database server.
-     * </p>
+     *<br/>
      *
      * @return true : task end.
      */
@@ -138,7 +138,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * This is package method ,{@link CommunicationTaskExecutor} invoke this method get more send packet.
-     * </p>
+     *<br/>
      *
      * @return if non-null {@link CommunicationTaskExecutor} will send this {@link Publisher}.
      */
@@ -155,7 +155,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * when network channel close,{@link CommunicationTaskExecutor} invoke this method.
-     * </p>
+     *<br/>
      */
     final void channelCloseEvent() {
         this.taskPhase = TaskPhase.END;
@@ -172,7 +172,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * sub class invoke this method submit task to {@link CommunicationTaskExecutor}
-     * </p>
+     *<br/>
      */
     protected final void submit(Consumer<Throwable> consumer) {
         if (this.adjutant.inEventLoop()) {
@@ -209,7 +209,7 @@ public abstract class CommunicationTask {
      *             </ol>
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @return <ul>
      *     <li>{@link Action#MORE_SEND_AND_END} :task end after {@link CommunicationTaskExecutor} invoke {@link #moreSendPacket()} and sent</li>
@@ -265,7 +265,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * for {@link Consumer} interface.
-     * </p>
+     *<br/>
      */
     protected final void sendPacket(Publisher<ByteBuf> publisher) {
         this.packetPublisher = publisher;
@@ -358,7 +358,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * this method shouldn't throw {@link Throwable} ,because that will cause network channel close.
-     * </p>
+     *<br/>
      */
     protected abstract Action onError(Throwable e);
 
@@ -366,7 +366,7 @@ public abstract class CommunicationTask {
     /**
      * <p>
      * this method shouldn't throw {@link Throwable} ,because that will cause network channel close.
-     * </p>
+     *<br/>
      */
     @Nullable
     protected abstract Publisher<ByteBuf> start();
@@ -378,7 +378,7 @@ public abstract class CommunicationTask {
      * But if this method throw {@link Throwable} ,{@link CommunicationTaskExecutor} will invoke
      * {@link CommunicationTaskExecutor#clearChannel(ByteBuf, Class)} clear network channel,
      *
-     * </p>
+     *<br/>
      *
      * @return true ,task end.
      */

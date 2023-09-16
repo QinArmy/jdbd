@@ -6,7 +6,7 @@ import io.jdbd.result.ResultItem;
 /**
  * <p>
  * upstream must invoke {@link #complete()} or {@link #error(Throwable)} ,even if {@link #isCancelled()} return true.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

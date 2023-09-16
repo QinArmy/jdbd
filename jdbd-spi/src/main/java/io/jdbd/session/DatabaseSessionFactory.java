@@ -14,7 +14,7 @@ import java.util.Map;
  *         <li>{@link #localSession()}</li>
  *         <li>{@link #rmSession()}</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  * The instance of this interface is created by :
  * <ul>
@@ -22,7 +22,7 @@ import java.util.Map;
  *     <li>{@link Driver#forPoolVendor(String, Map)}</li>
  *     <li>pool vendor</li>
  * </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -31,7 +31,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
     /**
      * <p>
      * This method return factory name ,if you don't specified then return 'unnamed' .
-     * </p>
+     *<br/>
      *
      * @return factory name. see {@link io.jdbd.Driver#FACTORY_NAME}
      */
@@ -40,11 +40,11 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
     /**
      * <p>
      * Get the instance of {@link LocalDatabaseSession}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * </p>
+     *<br/>
      * @return emit just one {@link LocalDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>
      * <li>If the instance of {@link DatabaseSessionFactory} is created pool vendor , then always emit non-{@link io.jdbd.pool.PoolLocalDatabaseSession} instance.</li>
@@ -69,11 +69,11 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
     /**
      * <p>
      * Get the instance of {@link RmDatabaseSession}.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * </p>
+     *<br/>
      *
      * @return emit just one {@link RmDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>

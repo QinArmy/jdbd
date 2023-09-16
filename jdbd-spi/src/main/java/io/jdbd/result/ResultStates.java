@@ -15,13 +15,13 @@ import java.util.function.Consumer;
  *         <li>If {@link #hasColumn()} is true ,then this instance representing the terminator of query result (eg: SELECT command)</li>
  *         <li>Else this instance representing the update result (eg: INSERT/UPDATE/DELETE command)</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  *  The instance of this interface always is the last item of same query result in the {@link OrderedFlux}.
- * </p>
+ * <br/>
  * <p>
  * The {@link #getResultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
- * </p>
+ * <br/>
  *
  * @see ResultRowMeta
  * @see ResultRow
@@ -83,7 +83,7 @@ public interface ResultStates extends ResultItem, OptionSpec {
      *         <li>{@link Option#AUTO_COMMIT}</li>
      *         <li>{@link Option#CURSOR}</li>
      *     </ul>
-     * </p>
+     *<br/>
      */
     @Nullable
     @Override

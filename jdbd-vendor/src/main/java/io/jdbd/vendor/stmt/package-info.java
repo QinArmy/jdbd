@@ -8,7 +8,7 @@
  *         <li>{@link io.jdbd.vendor.stmt.ParamBatchStmt}</li>
  *         <li>{@link io.jdbd.vendor.stmt.ParamMultiStmt}</li>
  *     </ul>
- * </p>
+ * <br/>
  */
 @io.jdbd.lang.NonNullApi
 package io.jdbd.vendor.stmt;

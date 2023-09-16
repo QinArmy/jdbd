@@ -11,7 +11,7 @@ import org.reactivestreams.Publisher;
  *         <li>{@link DatabaseSession}</li>
  *         <li>{@link io.jdbd.result.RefCursor}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -20,14 +20,14 @@ public interface Closeable {
     /**
      * <p>
      * Close underlying resource.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> :
      *     <ul>
      *         <li>driver don't send message to database server before subscribing.</li>
      *         <li>If have closed emit nothing</li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param <T> representing any java type,because this method usually is used with concatWith(Publisher) method.
      * @return the {@link Publisher} that emit nothing or emit {@link JdbdException}

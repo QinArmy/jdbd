@@ -29,7 +29,7 @@ public interface TableMeta extends OptionSpec {
     /**
      * <p>
      * The privilege set you have for the column,if driver don't support this method,then always empty.
-     * </p>
+     * <br/>
      *
      * @return a unmodified set ,empty set or privilege set.
      */
@@ -53,7 +53,7 @@ public interface TableMeta extends OptionSpec {
      *              </ul>
      *         </li>
      *     </ul>
-     * </p>
+     *<br/>
      * <p>
      *     The implementation of this method perhaps support some of following :
      *     <ul>
@@ -61,7 +61,7 @@ public interface TableMeta extends OptionSpec {
      *         <li>{@link Option#COLLATION}</li>
      *         <li>{@link Option#PRIVILEGE}</li>
      *     </ul>
-     * </p>
+     *<br/>
      */
     @Override
     <T> T valueOf(Option<T> option);

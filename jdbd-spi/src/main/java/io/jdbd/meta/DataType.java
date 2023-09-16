@@ -10,20 +10,20 @@ import io.jdbd.statement.ParametrizedStatement;
  *         <li>{@link io.jdbd.result.ResultRowMeta#getDataType(int)}</li>
  *     </ul>
  *     {@link ParametrizedStatement#bind(int, DataType, Object)} use {@link #typeName()} bind parameter, if not {@link JdbdType}.
- * </p>
+ * <br/>
  * <p>
  *     The Known superinterfaces:
  *     <ul>
  *         <li>{@link SQLType} representing database build-in type</li>
  *         <li>{@link UserDefinedType} representing user-defined type</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  *     The Known implementations:
  *     <ul>
  *         <li>{@link JdbdType} generic sql type</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @see SQLType
  * @see JdbdType
@@ -44,7 +44,7 @@ public interface DataType {
     /**
      * <p>
      * <strong>NOTE</strong> : if {@link #isUnknown()} return true ,this method always return false.
-     * </p>
+     *<br/>
      */
     boolean isArray();
 
@@ -54,11 +54,11 @@ public interface DataType {
     /**
      * <p>
      * This method is equivalent to {@code DataType.buildIn(typeName,false)} :
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * It means you should prefer {@link JdbdType}.
-     * </p>
+     *<br/>
      *
      * @see #buildIn(String, boolean)
      */
@@ -69,11 +69,11 @@ public interface DataType {
     /**
      * <p>
      * Get database build-in dialect {@link DataType} instance by typeName.
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * It means you should prefer {@link JdbdType}.
-     * </p>
+     *<br/>
      *
      * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
      * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.
@@ -88,11 +88,11 @@ public interface DataType {
     /**
      * <p>
      * This method is equivalent to {@code DataType.userDefined(typeName,false)} :
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * It means you should prefer {@link JdbdType}.
-     * </p>
+     *<br/>
      *
      * @see #userDefined(String, boolean)
      */
@@ -103,11 +103,11 @@ public interface DataType {
     /**
      * <p>
      * Get user-defined {@link DataType} instance by typeName.
-     * </p>
+     *<br/>
      * * <p>
      * * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * * It means you should prefer {@link JdbdType}.
-     * * </p>
+     * *<br/>
      *
      * @param typeName        database build-in dialect type name,if typeName endWith '[]',then {@link DataType#isArray()} always return true.
      * @param caseSensitivity if false ,then {@link DataType#typeName()} always return upper case.

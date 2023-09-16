@@ -15,18 +15,18 @@ import java.util.function.Function;
  * <p>
  * This interface representing the multi sql statement (separated by semicolons {@code ;})
  * that support sql parameter placeholder({@code ?}) with client-prepare.
- * </p>
+ *<br/>
  * <p>
  * If you invoke only once {@link #addStatement(String)} ,then this interface is similar to {@link BindStatement},
  * except that don't support server-prepare.
- * </p>
+ *<br/>
  * <p>
  * This interface is similar to {@link StaticStatementSpec#executeMultiStmt(String)} method,
  * except that support sql parameter placeholder({@code ?}) with client-prepare.
- * </p>
+ *<br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSession#multiStatement()} method.
- * </p>
+ *<br/>
  * <p>
  * For example 1 :
  * <pre>
@@ -73,7 +73,7 @@ import java.util.function.Function;
  *    }
  *         </code>
  *     </pre>
- * </p>
+ *<br/>
  * @since 1.0
  */
 public interface MultiStatement extends MultiResultStatement, ParametrizedStatement {

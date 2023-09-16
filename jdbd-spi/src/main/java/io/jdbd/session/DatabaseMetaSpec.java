@@ -11,7 +11,7 @@ import io.jdbd.meta.DatabaseMetaData;
  *         <li>{@link DatabaseSession}</li>
  *         <li>{@link DatabaseMetaData}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

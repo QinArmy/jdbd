@@ -14,7 +14,7 @@ import io.jdbd.JdbdException;
  * <p>
  * This interface is similar to {@code java.sql.Savepoint}
  * ,except that throw {@link JdbdException} not {@code java.sql.SQLException}.
- * </p>
+ *<br/>
  *
  * @since 1.0
  */

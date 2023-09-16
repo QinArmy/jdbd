@@ -28,7 +28,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is underlying api of {@link StaticStatementSpec#executeUpdate(String)} method.
-     * </p>
+     * <br/>
      */
     Mono<ResultStates> update(StaticStmt stmt);
 
@@ -40,7 +40,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      *     <li>{@link StaticStatementSpec#executeQuery(String, Function)}</li>
      *     <li>{@link StaticStatementSpec#executeQuery(String, Function, Consumer)}</li>
      * </ul>
-     * </p>
+     *<br/>
      */
     <R> Flux<R> query(StaticStmt stmt, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
@@ -48,7 +48,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is underlying api of {@link StaticStatement#executeBatchUpdate(List)} method.
-     * </p>
+     *<br/>
      */
     Flux<ResultStates> batchUpdate(StaticBatchStmt stmt);
 
@@ -57,14 +57,14 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is underlying api of {@link StaticStatement#executeBatchAsMulti(List)} method.
-     * </p>
+     *<br/>
      */
     MultiResult batchAsMulti(StaticBatchStmt stmt);
 
     /**
      * <p>
      * This method is underlying api of {@link StaticStatement#executeBatchAsFlux(List)} method.
-     * </p>
+     *<br/>
      */
     OrderedFlux batchAsFlux(StaticBatchStmt stmt);
 
@@ -73,14 +73,14 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is one of underlying api of {@link BindStatement#executeUpdate()} method.
-     * </p>
+     *<br/>
      */
     Mono<ResultStates> paramUpdate(ParamStmt stmt, boolean usePrepare);
 
     /**
      * <p>
      * This method is one of underlying api of below methods:
-     * </p>
+     *<br/>
      */
     <R> Flux<R> paramQuery(ParamStmt stmt, boolean usePrepare, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
@@ -89,7 +89,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is one of underlying api of {@link BindStatement#executeBatchUpdate()} method.
-     * </p>
+     *<br/>
      */
     Flux<ResultStates> paramBatchUpdate(ParamBatchStmt stmt, boolean usePrepare);
 
@@ -98,21 +98,21 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is one of underlying api of {@link BindStatement#executeBatchAsMulti()} method.
-     * </p>
+     *<br/>
      */
     MultiResult paramBatchAsMulti(ParamBatchStmt stmt, boolean usePrepare);
 
     /**
      * <p>
      * This method is one of underlying api of {@link BindStatement#executeBatchAsFlux()} method.
-     * </p>
+     *<br/>
      */
     OrderedFlux paramBatchAsFlux(ParamBatchStmt stmt, boolean usePrepare);
 
     /**
      * <p>
      * This method is underlying api of {@link MultiStatement#executeBatchUpdate()} method.
-     * </p>
+     *<br/>
      */
     Flux<ResultStates> multiStmtBatchUpdate(ParamMultiStmt stmt);
 
@@ -121,21 +121,21 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     /**
      * <p>
      * This method is underlying api of {@link MultiStatement#executeBatchAsMulti()} method.
-     * </p>
+     *<br/>
      */
     MultiResult multiStmtAsMulti(ParamMultiStmt stmt);
 
     /**
      * <p>
      * This method is underlying api of {@link MultiStatement#executeBatchAsFlux()} method.
-     * </p>
+     *<br/>
      */
     OrderedFlux multiStmtAsFlux(ParamMultiStmt stmt);
 
     /**
      * <p>
      * This method is underlying api of {@link DatabaseSession#prepareStatement(String)} methods:
-     * </p>
+     *<br/>
      */
     Mono<PrepareTask> prepare(String sql);
 

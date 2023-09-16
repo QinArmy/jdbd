@@ -8,7 +8,7 @@ package io.jdbd.vendor.stmt;
  * <li>{@link io.jdbd.statement.StaticStatement#executeUpdate(String)}</li>
  * <li>{@link io.jdbd.statement.StaticStatement#executeQuery(String)}</li>
  * </u>
- * </p>
+ * <br/>
  */
 public interface StaticStmt extends SingleStmt {
 

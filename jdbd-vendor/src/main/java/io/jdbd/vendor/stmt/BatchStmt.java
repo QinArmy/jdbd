@@ -3,7 +3,7 @@ package io.jdbd.vendor.stmt;
 /**
  * <p>
  * This interface this {@link Stmt} have more sql or bind group.
- * </p>
+ * <br/>
  * <p>
  * This is a base interface of :
  *     <ul>
@@ -11,7 +11,7 @@ package io.jdbd.vendor.stmt;
  *         <li>{@link StaticMultiStmt}</li>
  *         <li>{@link ParamBatchStmt}</li>
  *     </ul>
- * </p>
+ * <br/>
  */
 public interface BatchStmt extends Stmt {
 

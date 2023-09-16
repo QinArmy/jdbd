@@ -18,7 +18,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface is is similar to {@code java.sql.PreparedStatement}, except that this interface is reactive.
- * </p>
+ * <br/>
  * <p>
  * This interface is designed for providing following methods:
  *     <ul>
@@ -27,10 +27,10 @@ import java.util.function.Function;
  *         <li>{@link #waring()}</li>
  *     </ul>
  *     , so if you don't need above methods, then you can use {@link DatabaseSession#bindStatement(String, boolean)}.
- * </p>
+ * <br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSession#prepareStatement(String)} method.
- * </p>
+ * <br/>
  * <p>
  * You should invoke one of following :
  * <ul>
@@ -44,7 +44,7 @@ import java.util.function.Function;
  *     <li>{@link #executeBatchAsFlux()}</li>
  *     <li>{@link #abandonBind()}</li>
  * </ul>
- * </p>
+ * <br/>
  * <p>
  *     <strong>NOTE</strong>: this interface is auto closing when
  *     <ul>
@@ -53,7 +53,7 @@ import java.util.function.Function;
  *         <li>set statement option occur error,for example : {@link #setTimeout(int)}</li>
  *     </ul> ,
  *     so {@link PreparedStatement} have no close() method.
- * </p>
+ * <br/>
  *
  * @see DatabaseSession#prepareStatement(String)
  * @see BindStatement
@@ -93,10 +93,10 @@ public interface PreparedStatement extends BindSingleStatement {
     /**
      * <p>
      * This method close this  {@link PreparedStatement} if you don't invoke any executeXxx() method.
-     * </p>
+     *<br/>
      * <p>
      * Abandon binding before invoke executeXxx() method.
-     * </p>
+     *<br/>
      *
      * @return Publisher like {@code reactor.core.publisher.Mono} ,
      * if success emit {@link DatabaseSession} that create this {@link PreparedStatement}.

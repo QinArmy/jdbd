@@ -7,7 +7,7 @@ import io.jdbd.result.ServerException;
 /**
  * <p>
  * Throw when statement timeout
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

@@ -13,10 +13,10 @@ import java.util.List;
 /**
  * <p>
  * This interface representing the meta data of data row of query result (eg: SELECT command).
- * </p>
+ * <br/>
  * <p>
  * The instance of this interface always is the first item of same query result in the {@link OrderedFlux}.
- * </p>
+ * <br/>
  *
  * @see ResultRow
  * @see ResultStates
@@ -28,7 +28,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Get the {@link DataType} of appropriate column.
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @return can be following sub type:
@@ -44,7 +44,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Get the appropriate {@link JdbdType} of appropriate column.
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @throws JdbdException throw when indexBasedZero error
@@ -55,7 +55,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Get the  {@link FieldType} of appropriate column.
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @throws JdbdException throw when indexBasedZero error
@@ -117,7 +117,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *     <li>time/date : return 0</li>
      *     <li>other dialect type : it's up to driver developer</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @return precision
@@ -136,7 +136,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *     <li>time and timestamp : return micro second precision,for example : time(5) return 5</li>
      *     <li>other dialect type : it's up to driver developer</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @return precision
@@ -167,7 +167,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *         <li>{@link JdbdType#LONGBLOB} first java type is {@code  byte[]},second java type is {@link io.jdbd.type.BlobPath}</li>
      *        <li>MySQL time first java type is {@link java.time.LocalTime},second java type is {@link java.time.Duration}</li>
      *    </ul>
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @throws JdbdException throw when indexBasedZero error
@@ -184,7 +184,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *         <li>{@link JdbdType#LONGBLOB} first java type is {@code  byte[]},second java type is {@link io.jdbd.type.BlobPath}</li>
      *        <li>MySQL time first java type is {@link java.time.LocalTime},second java type is {@link java.time.Duration}</li>
      *    </ul>
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @throws JdbdException throw when indexBasedZero error
@@ -199,7 +199,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *     <ul>
      *         <li>{@link Option#PRECISION},this option representing column precision greater than {@link Integer#MAX_VALUE},for example :  MySQL LONG TEXT</li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @return null if value is null or option isn't supported driver.
@@ -222,7 +222,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException        throw when {@link #getOf(int, Option)} throw error
      * @throws NullPointerException throw when {@link #getOf(int, Option)} return null.
@@ -244,7 +244,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getDataType(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -262,7 +262,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getJdbdType(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -280,7 +280,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getFieldType(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -299,7 +299,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getPrecision(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -318,7 +318,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getScale(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -336,7 +336,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getKeyMode(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -355,7 +355,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getNullableMode(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -374,7 +374,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getAutoIncrementMode(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -393,7 +393,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getCatalogName(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -413,7 +413,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getSchemaName(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -433,7 +433,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getTableName(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -452,7 +452,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getColumnName(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -471,7 +471,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getFirstJavaType(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -489,7 +489,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getSecondJavaType(index) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -509,7 +509,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getOf(index,option) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
@@ -528,7 +528,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      *             rowMeta.getNonNullOf(index,option) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @throws JdbdException        throw when {@link #getColumnIndex(String)} throw error
      * @throws NullPointerException throw when {@link #getNonNullOf(int, Option)}
@@ -543,7 +543,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Get the column label list of row meta
-     * </p>
+     *<br/>
      *
      * @return a unmodifiable list
      */

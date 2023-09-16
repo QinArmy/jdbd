@@ -32,7 +32,7 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
      *         <li>{@link VendorOptions#DEFAULT_VALUE},see {@link #defaultValue()}</li>
      *         <li>{@link VendorOptions#COMMENT},see {@link #comment()}</li>
      *     </ul>
-     * </p>
+     *<br/>
      * <p>
      *      optionFunc optionally support following option:
      *      <ul>
@@ -40,7 +40,7 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
      *          <li>{@link Option#CHARSET}</li>
      *          <li>{@link Option#COLLATION}</li>
      *      </ul>
-     * </p>
+     *<br/>
      *
      * @param enumSetFunc the function must follow {@link TableColumnMeta#enumElementSet(Class)}.
      */

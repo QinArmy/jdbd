@@ -9,7 +9,7 @@ package io.jdbd.vendor.stmt;
  *     <li>{@link io.jdbd.statement.BindStatement}</li>
  *     <li>{@link io.jdbd.statement.MultiStatement}</li>
  * </ul>
- * </p>
+ * <br/>
  */
 public interface ParamValue extends Value {
 

@@ -12,16 +12,16 @@ import org.reactivestreams.Publisher;
  *         <li>{@link PoolLocalDatabaseSession}</li>
  *         <li>{@link PoolRmDatabaseSession}</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory}.
- * </p>
+ * <br/>
  * <p>
  *     This interface is used by pool vendor,application developer shouldn't use this interface.
  *     Driver developer create the instance of this interface,but driver developer don't use this interface,
  *     because driver developer are not responsible for pooling.
- *
- * </p>
+ * <p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -45,7 +45,7 @@ public interface PoolDatabaseSession extends DatabaseSession {
      *          </ul>
      *     <li>if database support user-defined data type,then should check whether exists new data type or not.</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @return {@link Publisher} that emit <strong>this</strong> when success.
      */
@@ -54,7 +54,7 @@ public interface PoolDatabaseSession extends DatabaseSession {
     /**
      * <p>
      * cancel all have not executed statement,emit {@link io.jdbd.session.SessionCloseException} to the downstream of statement.
-     * </p>
+     *<br/>
      */
     Publisher<? extends PoolDatabaseSession> logicallyClose();
 

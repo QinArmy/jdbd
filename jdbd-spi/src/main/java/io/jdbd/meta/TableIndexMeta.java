@@ -9,7 +9,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing table index meta.
- * </p>
+ * <br/>
  *
  * @see DatabaseMetaData#indexesOfTable(TableMeta, Function)
  * @since 1.0
@@ -44,7 +44,7 @@ public interface TableIndexMeta extends OptionSpec {
     /**
      * <p>
      * Index column list,the order math the column sequence number in the index.
-     * </p>
+     *<br/>
      *
      * @return a unmodified list
      */

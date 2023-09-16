@@ -13,7 +13,7 @@ import java.util.Objects;
  * <p>
  * This enum is a standard implementation of {@link TransactionStatus}
  * that {@link TransactionStatus#inTransaction()} always is false.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

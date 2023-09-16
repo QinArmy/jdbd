@@ -5,7 +5,7 @@ import io.jdbd.session.DatabaseSession;
 /**
  * <p>
  * This enum is a implementation of {@link DataType} for the convenience that application bind parameter.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)
  * @see io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)
@@ -26,7 +26,7 @@ public enum JdbdType implements DataType {
      *         // stmt is io.jdbd.statement.ParametrizedStatement instance
      *         stmt.bind(0,JdbdType.BIGINT,null)
      *     </pre>
-     * </p>
+     *<br/>
      */
     NULL,
 
@@ -47,7 +47,7 @@ public enum JdbdType implements DataType {
      *     <li>{@link String}</li>
      *     <li>{@link java.util.BitSet}</li>
      * </ul>
-     * </p>
+     *<br/>
      */
     BIT,
 
@@ -62,7 +62,7 @@ public enum JdbdType implements DataType {
      *     <li>{@link String}</li>
      *     <li>{@link java.util.BitSet}</li>
      * </ul>
-     * </p>
+     *<br/>
      */
     VARBIT,
 
@@ -278,10 +278,10 @@ public enum JdbdType implements DataType {
      * Identifies the generic SQL type {@code REF_CURSOR}.
      * <p>
      * If {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)} is this enum instance,then {@link io.jdbd.result.DataRow#get(int)} always is {@link String} instance.
-     * </p>
+     *<br/>
      * <p>
      * Application developer can get the instance of {@link io.jdbd.result.RefCursor} by {@link DatabaseSession#refCursor(String)}
-     * </p>
+     *<br/>
      *
      * @see io.jdbd.result.RefCursor
      */
@@ -296,7 +296,7 @@ public enum JdbdType implements DataType {
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
      *     </ul>
      *  This enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}
-     * </p>
+     *<br/>
      */
     ARRAY,
 
@@ -308,7 +308,7 @@ public enum JdbdType implements DataType {
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
      *     </ul>
      *  This enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}
-     * </p>
+     *<br/>
      */
     COMPOSITE,
 
@@ -323,7 +323,7 @@ public enum JdbdType implements DataType {
      *     </ul>
      *     If application developer want to bind dialect type ,then application developer should define the new {@link DataType} type
      *     that it's {@link #typeName()} is supported by database.
-     * </p>
+     *<br/>
      */
     DIALECT_TYPE;
 

@@ -3,7 +3,7 @@ package io.jdbd.util;
 /**
  * <p>
  * This enum representing the handle mode to name text.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.session.DatabaseSession#appendTableName(String, NameMode, StringBuilder)
  * @see io.jdbd.session.DatabaseSession#appendColumnName(String, NameMode, StringBuilder)

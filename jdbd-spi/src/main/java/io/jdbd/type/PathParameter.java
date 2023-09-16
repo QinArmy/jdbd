@@ -9,7 +9,7 @@ import java.nio.file.Path;
  *         <li>{@link BlobPath}</li>
  *         <li>{@link TextPath}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

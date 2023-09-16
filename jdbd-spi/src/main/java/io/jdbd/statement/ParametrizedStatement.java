@@ -16,7 +16,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing parametrized statement that SQL parameter placeholder must be {@code ?} .
- * </p>
+ * <br/>
  * <p>
  * This interface is base interface of following :
  *     <ul>
@@ -24,7 +24,7 @@ import java.util.function.Function;
  *         <li>{@link PreparedStatement}</li>
  *         <li>{@link MultiStatement}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -34,14 +34,14 @@ public interface ParametrizedStatement extends Statement {
     /**
      * <p>
      * Bind parameter value to statement that exists SQL parameter placeholder and SQL parameter placeholder must be {@code ?}
-     * </p>
+     *<br/>
      * <p>
      * <strong>NOTE</strong> : the driver developer must provide the java doc(html list) in the implementation of this method for explaining :
      * <ul>
      *     <li>the rule of {@link DataType} converting </li>
      *     <li>the rule of {@link DataType} supporting java type</li>
      * </ul>
-     * </p>
+     *<br/>
      * <p>
      *     Each {@link JdbdType} instance support java type rule:
      *     <ul>
@@ -320,7 +320,7 @@ public interface ParametrizedStatement extends Statement {
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *     </li>
-     * </p>
+     *<br/>
      *
      * @param indexBasedZero parameter placeholder index based zero, the first value is 0 .
      * @param dataType       parameter type is following type : <ul>

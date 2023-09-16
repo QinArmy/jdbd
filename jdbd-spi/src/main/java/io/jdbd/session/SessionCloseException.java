@@ -5,7 +5,7 @@ import io.jdbd.JdbdException;
 /**
  * <p>
  * Emit(or throw) when session have closed.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

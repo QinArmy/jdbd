@@ -16,7 +16,7 @@ import java.util.function.Function;
  *         <li>{@link ParamBatchStmt}</li>
  *     </ul>
  *     The implementation of this interface is used by underlying implementation of {@link io.jdbd.statement.PreparedStatement}.
- * </p>
+ * <br/>
  *
  * @see DatabaseSession#prepareStatement(String)
  */

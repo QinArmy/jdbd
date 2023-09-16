@@ -23,7 +23,7 @@ public final class VendorIndexColumnMeta implements IndexColumnMeta {
      *         <li>{@link VendorTableColumnMeta#nullableMode()},see {@link #nullableMode()}</li>
      *         <li>{@link VendorOptions#VISIBLE},see {@link #visibleMode()}</li>
      *     </ul>
-     * </p>
+     * <br/>
      *
      * @param name column name
      */

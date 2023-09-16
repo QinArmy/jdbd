@@ -23,7 +23,7 @@ import io.jdbd.JdbdException;
  *         <li>{@link ResultStates}</li>
  *         <li>{@link CurrentRow}</li>
  *     </ul>
- * </p>
+ *<br/>
  *
  * @since 1.0
  */
@@ -64,7 +64,7 @@ public interface ResultItem {
      *         <li>{@link ResultRowMeta}</li>
      *         <li>{@link DataRow}</li>
      *     </ul>
-     * </p>
+     * <br/>
      *
      * @since 1.0
      */
@@ -88,7 +88,7 @@ public interface ResultItem {
         /**
          * <p>
          * Get column index , if columnLabel duplication ,then return last index that have same columnLabel.
-         * </p>
+         *<br/>
          *
          * @param columnLabel column label
          * @return index based 0,the first column is 0, the second is 1, ..

@@ -9,7 +9,7 @@ import io.jdbd.session.OptionSpec;
 /**
  * <p>
  * Emit(not throw), when server return error message.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -23,7 +23,7 @@ public abstract class ServerException extends JdbdException implements OptionSpe
     /**
      * <p>
      * Get one field value of server error message.
-     * </p>
+     *<br/>
      *
      * @return null , if field not exists.
      * @see Option#MESSAGE

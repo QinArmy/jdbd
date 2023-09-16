@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * <p>
  * This class representing transaction isolation level.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -22,7 +22,7 @@ public final class Isolation {
     /**
      * <p>
      * Get or create a {@link Isolation} instance.
-     * </p>
+     *<br/>
      *
      * @throws IllegalArgumentException throw when value have no text.
      */

@@ -10,7 +10,7 @@ import io.jdbd.lang.Nullable;
  *     <li>{@link #getBqual()}</li>
  *     <li>{@link #getFormatId()}</li>
  * </ul>
- * </p>
+ * <br/>
  * <p>
  * To be safe,{@link RmDatabaseSession} <strong>possibly</strong>  write gtrid and bqual as hex strings. steps :
  * <ul>
@@ -18,10 +18,10 @@ import io.jdbd.lang.Nullable;
  *     <li>write gtrid or bqual as hex strings</li>
  * </ul>
  * the conversion process of {@link RmDatabaseSession#recover(int, java.util.function.Function)} is the reverse of above.
- * </p>
+ * <br/>
  * <p>
  *     Application developer can get the instance of {@link Xid} by {@link #from(String, String, int)} method.
- * </p>
+ * <br/>
  *
  * @see Option#XID
  * @see RmDatabaseSession
@@ -31,12 +31,12 @@ public interface Xid extends OptionSpec {
     /**
      * <p>
      * The global transaction identifier string
-     * </p>
+     *<br/>
      * <p>
      *   <ul>
      *       <li>Global transaction identifier must have text</li>
      *   </ul>
-     * </p>
+     *<br/>
      *
      * @return a global transaction identifier.
      */
@@ -48,7 +48,7 @@ public interface Xid extends OptionSpec {
      *   <ul>
      *       <li>If non-null,branch transaction identifier must have text</li>
      *   </ul>
-     * </p>
+     *<br/>
      *
      * @return a branch qualifier
      */
@@ -70,7 +70,7 @@ public interface Xid extends OptionSpec {
      *         <li>{@link #getBqual()}</li>
      *         <li>{@link #getFormatId()}</li>
      *     </ul>
-     * </p>
+     *<br/>
      * <p>
      *     Like following :
      *     <pre>
@@ -81,7 +81,7 @@ public interface Xid extends OptionSpec {
      *               }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      */
     @Override
     int hashCode();
@@ -94,7 +94,7 @@ public interface Xid extends OptionSpec {
      *         <li>{@link #getBqual()}</li>
      *         <li>{@link #getFormatId()}</li>
      *     </ul>
-     * </p>
+     *<br/>
      * <p>
      *     Like following :
      *     <pre>
@@ -116,7 +116,7 @@ public interface Xid extends OptionSpec {
      *           }
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      */
     @Override
     boolean equals(Object obj);
@@ -139,7 +139,7 @@ public interface Xid extends OptionSpec {
     /**
      * <p>
      * {@link RmDatabaseSession#recover(int, java.util.function.Function) } maybe add some dialect value.
-     * </p>
+     *<br/>
      *
      * @return null or dialect option value.
      * @see RmDatabaseSession#recover(int, java.util.function.Function)
@@ -151,7 +151,7 @@ public interface Xid extends OptionSpec {
     /**
      * <p>
      * Create one {@link Xid} instance.
-     * </p>
+     *<br/>
      *
      * @param gtrid must have text
      * @param bqual null or must have text

@@ -3,7 +3,7 @@ package io.jdbd.meta;
 /**
  * <p>
  * This interface representing user-defined type.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

@@ -20,7 +20,7 @@ import java.util.Objects;
  *         <li>{@link ChunkOption}</li>
  *     </ul>
  *     ,it provider more dialectal driver.
- * </p>
+ *<br/>
  *
  * @see Option
  * @see io.jdbd.statement.Statement#setOption(Option, Object)
@@ -31,10 +31,10 @@ public interface OptionSpec {
     /**
      * <p>
      * This method can provider more dialectal driver.
-     * </p>
+     * <br/>
      * <p>
      * The implementation of this method must provide java doc(html list) for explaining supporting {@link Option} list.
-     * </p>
+     * <br/>
      *
      * @return null or the value of option.
      */

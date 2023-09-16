@@ -10,7 +10,7 @@ public interface ConnectionTask {
     /**
      * <p>
      * this method invoke before {@link CommunicationTask#startTask(TaskSignal)}.
-     * </p>
+     * <br/>
      *
      * @param sslConsumer function ,implementation can add ssl by this function.
      */
@@ -23,7 +23,7 @@ public interface ConnectionTask {
      *         <li>after {@link CommunicationTask#decodeMessage(ByteBuf, Consumer)},if return value is {@code true}</li>
      *         <li>after send packet failure</li>
      *     </ul>
-     * </p>
+     *<br/>
      *
      * @return true:connect database server failure, {@link TaskExecutor} will close channel.
      */

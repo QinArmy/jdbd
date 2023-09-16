@@ -27,7 +27,7 @@ import java.util.function.Supplier;
  *     <li>{@link MultiResults#batchQuery(ITaskAdjutant, Consumer)}</li>
  * </ul>
  * then you must extend this class,because {@link #copyCurrentRowIfNeed()} perhaps is invoked.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -260,7 +260,7 @@ public abstract class VendorDataRow implements DataRow {
      *     <li>If this current row is mutable,always copy this instance.</li>
      *     <li>Else return this</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @throws UnsupportedOperationException throw when this is the instance of {@link io.jdbd.result.ResultRow}.
      */

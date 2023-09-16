@@ -7,18 +7,18 @@ import io.jdbd.result.ResultStates;
  * <p>
  * This interface representing OUT (<strong>NOTE</strong>: is OUT not INOUT) parameter of stored procedure/function.
  * You create instance of {@link OutParameter} by {@link OutParameter#out(String)}.
- * </p>
+ *<br/>
  * <p>
  * OUT parameter is usually supported by following statement :
  *     <ul>
  *         <li>{@link PreparedStatement}</li>
  *         <li>{@link BindStatement}</li>
  *     </ul>
- * </p>
+ *<br/>
  * <p>
  *     <strong>NOTE</strong>: If procedure produce multi-result in single statement ,then out parameter usually present in last result,
  *     see {@link ResultStates#hasMoreResult()} is false.
- * </p>
+ *<br/>
  * <p>
  * For example :
  * <pre>
@@ -51,7 +51,7 @@ import io.jdbd.result.ResultStates;
  *       }
  *     </code>
  * </pre>
- * </p>
+ *<br/>
  *
  * <p>
  * <strong>NOTE</strong>: this interface can use in function..
@@ -86,7 +86,7 @@ import io.jdbd.result.ResultStates;
  *       }
  *     </code>
  * </pre>
- * </p>
+ *<br/>
  *
  * @see ParametrizedStatement#bind(int, DataType, Object)
  * @since 1.0

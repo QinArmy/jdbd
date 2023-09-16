@@ -14,8 +14,8 @@ import io.jdbd.statement.Parameter;
  * <li>{@link ParamValue}</li>
  * <li>{@link NamedValue }</li>
  * </UL>
- * </p>
- * </p>
+ * <br/>
+ * <br/>
  *
  * @see ParamValue
  * @see NamedValue

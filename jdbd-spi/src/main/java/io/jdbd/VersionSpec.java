@@ -9,7 +9,7 @@ import io.jdbd.session.OptionSpec;
  *         <li>{@link DriverVersion}</li>
  *         <li>{@link io.jdbd.session.ServerVersion}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

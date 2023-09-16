@@ -9,7 +9,7 @@ import org.reactivestreams.Publisher;
  *         <li>{@link Blob}</li>
  *         <li>{@link Clob}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

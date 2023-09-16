@@ -6,7 +6,7 @@ import io.jdbd.lang.Nullable;
 /**
  * <p>
  * Emit(or throw) when XA transaction occur error,see {@link RmDatabaseSession}.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

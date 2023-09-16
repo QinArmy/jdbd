@@ -25,11 +25,11 @@ import java.util.function.Function;
  *         <li>{@link PreparedStatement}</li>
  *         <li>{@link MultiStatement}</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  *     NOTE: {@link Statement} is auto close after you invoke executeXxx() method,or binding occur error,so
  *     {@link Statement} have no close() method.
- * </p>
+ * <br/>
  *
  * @see StaticStatement
  * @see BindStatement
@@ -46,7 +46,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * <li>statement variable exist until statement execution ends, at which point the statement variable set is cleared.</li>
      * <li>While statement variable exist, they can be accessed on the server side.</li>
      * </ul>
-     * </p>
+     *<br/>
      * <p>
      * Each {@link JdbdType} instance support java type rule:
      *     <ul>
@@ -301,7 +301,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *     </li>
-     * </p>
+     *<br/>
      *
      * @param name     statement variable name,must have text.
      * @param dataType parameter type is following type : <ul>
@@ -386,7 +386,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
     /**
      * <p>
      * Set statement timeout seconds,if timeout driver will kill query.
-     * </p>
+     *<br/>
      *
      * @param millSeconds <ul>
      *                    <li>0 : no limit,this is default value</li>
@@ -406,10 +406,10 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *         <li>{@link BindSingleStatement#executeQuery(Function, Consumer)}</li>
      *         <li>{@link BindSingleStatement#executeAsFlux()}</li>
      *     </ul>
-     * </p>
+     *<br/>
      * <p>
      *     Driver will continue fetch util you cancel subscribing.
-     * </p>
+     *<br/>
      *
      * @param fetchSize <ul>
      *                                                                                                                                                                               <li>0 : fetch all, this is default value</li>
@@ -437,7 +437,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
     /**
      * <p>
      * Set dialect statement option.
-     * </p>
+     *<br/>
      *
      * @return <strong>this</strong>
      * @throws JdbdException throw when {@link #supportedOptionList()} is empty.
@@ -459,7 +459,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *         <li>{@link Option#CLIENT_CHARSET}</li>
      *         <li>{@link Option#CLIENT_ZONE} if database build-in time and datetime don't support zone</li>
      *     </ul>
-     * </p>
+     *<br/>
      */
     @Nullable
     @Override

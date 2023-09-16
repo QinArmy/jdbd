@@ -15,7 +15,7 @@ import java.util.Map;
  *       return INSTANCE;
  *   }
  *  </pre>
- * </p>
+ * <br/>
  * <p>
  * For example, suppose the service provider
  * {@code io.jdbd.mysql.MySQLDriver} is packaged in a JAR file for the
@@ -26,10 +26,10 @@ import java.util.Map;
  * that contains the line:
  *
  * <blockquote>{@code io.jdbd.mysql.MySQLDriver }</blockquote>
- * </p>
+ * <br/>
  * <p>
  * Application/pool developer can get the instance of {@link Driver} by {@link #findDriver(String)}
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -38,7 +38,7 @@ public interface Driver {
     /**
      * <p>
      * Required , jdbd always support
-     * </p>
+     *<br/>
      *
      * @see io.jdbd.session.Option#USER
      */
@@ -47,14 +47,14 @@ public interface Driver {
     /**
      * <p>
      * Required , jdbd always support
-     * </p>
+     *<br/>
      */
     String PASSWORD = "password";
 
     /**
      * <p>
      * Required , jdbd always support, if application developer don't put this property,then {@link DatabaseSessionFactory#name()} always return 'unnamed' .
-     * </p>
+     *<br/>
      */
     String FACTORY_NAME = "factoryName";
 
@@ -76,10 +76,10 @@ public interface Driver {
      * <p>
      * Create {@link DatabaseSessionFactory} for application developer.The factory don't create pool {@link io.jdbd.session.DatabaseSession}.
      * Because driver developers are not responsible for pooling.
-     * </p>
+     *<br/>
      * <p>
      * Pool vendor developer should use {@link #forPoolVendor(String, Map)} create {@link DatabaseSessionFactory}.
-     * </p>
+     *<br/>
      *
      * @param url format :jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>
@@ -93,18 +93,18 @@ public interface Driver {
      * <p>
      * This method is designed for poll session vendor developer,so application developer shouldn't invoke this method
      * and use {@link #forDeveloper(String, Map)} method.
-     * </p>
+     *<br/>
      *
      * <p>  This method return {@link DatabaseSessionFactory} has below feature.
      *     <ul>
      *         <li>{@link DatabaseSessionFactory#localSession()} returning instance is {@link   io.jdbd.pool.PoolLocalDatabaseSession} instance</li>
      *         <li>{@link DatabaseSessionFactory#rmSession()} returning instance is {@link  PoolRmDatabaseSession} instance</li>
      *     </ul>
-     * </p>
+     *<br/>
      * <p>
      *     This method is used by pool vendor,application developer shouldn't use this method.
      *     <strong>NOTE</strong> : driver developers are not responsible for pooling.
-     * </p>
+     *<br/>
      *
      * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
      *            <ul>

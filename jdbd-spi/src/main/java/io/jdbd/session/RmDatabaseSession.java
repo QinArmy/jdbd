@@ -11,23 +11,23 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing database session that support XA transaction.
- * </p>
+ *<br/>
  * <p>
  * This interface is is similar to {@code javax.sql.javax.sql.XAConnection} and {@code javax.transaction.xa.XAResource}, except that this interface is reactive.
- * </p>
+ *<br/>
  * <p>
  * The 'Rm' of the name of this interface means Resource Manager of XA transaction.
- * </p>
+ *<br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory#rmSession()}.
- * </p>
+ *<br/>
  * <p>
  * This interface extends {@link DatabaseSession} for support XA interface based on
  * the X/Open CAE Specification (Distributed Transaction Processing: The XA Specification).
  * This document is published by The Open Group and available at
  * <a href="http://www.opengroup.org/public/pubs/catalog/c193.htm">The XA Specification</a>,
  * here ,you can download the pdf about The XA Specification.
- * </p>
+ *<br/>
  * <p>
  * Application developer can create statement by following methods :
  *     <ul>
@@ -37,7 +37,7 @@ import java.util.function.Function;
  *         <li>{@link #bindStatement(String, boolean)}, create the adaptor of client-prepared statement and server-prepared statement.</li>
  *         <li>{@link #multiStatement()}, create multi-statement</li>
  *     </ul>
- * </p>
+ *<br/>
  * <p>
  * Application developer can control XA transaction by following :
  *     <ul>
@@ -70,7 +70,7 @@ import java.util.function.Function;
  *         <li>{@link #rollbackToSavePoint(SavePoint)}</li>
  *         <li>{@link #rollbackToSavePoint(SavePoint, java.util.function.Function)}</li>
  *     </ul>
- * </p>
+ *<br/>
  *
  * @see <a href="http://www.opengroup.org/public/pubs/catalog/c193.html">The XA Specification</a>
  */
@@ -144,7 +144,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.start(xid,RmDatabaseSession.TM_NO_FLAGS,TransactionOption.option(null,false)) ;
      *         </code>
      *     </pre>
-     * </p>
+     * <br/>
      *
      * @see #start(Xid, int, TransactionOption)
      */
@@ -159,7 +159,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.start(xid,flags,TransactionOption.option(null,false)) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #start(Xid, int, TransactionOption)
      */
@@ -177,14 +177,14 @@ public interface RmDatabaseSession extends DatabaseSession {
      * specified by <code>xid</code> has previously been seen by the resource
      * manager, the resource manager throws the XAException exception with
      * {@link XaException#XAER_DUPID} error code.
-     * </p>
+     *<br/>
      * <p>
      * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
      * <ul>
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param flags bit set, support below flags:
      *              <ul>
@@ -206,7 +206,6 @@ public interface RmDatabaseSession extends DatabaseSession {
     Publisher<RmDatabaseSession> start(Xid xid, int flags, TransactionOption option);
 
 
-
     /**
      * <p>
      * This method is equivalent to following :
@@ -216,7 +215,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.end(xid,RmDatabaseSession.TM_SUCCESS,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #end(Xid, int, Function)
      */
@@ -231,7 +230,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.end(xid,flags,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #end(Xid, int, Function)
      */
@@ -243,14 +242,14 @@ public interface RmDatabaseSession extends DatabaseSession {
      * The resource manager disassociates the XA resource from the
      * transaction branch specified and lets the transaction
      * complete.
-     * </p>
+     *<br/>
      * <p>
      * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
      * <ul>
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param flags      bit set, support one of following :
      *                   <ul>
@@ -287,7 +286,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.prepare(xid,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #prepare(Xid, Function)
      */
@@ -300,7 +299,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param xid        non-null
      * @param optionFunc optionMap dialect option ,empty or option map.
@@ -326,7 +325,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.commit(xid,RmDatabaseSession.TM_NO_FLAGS,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #commit(Xid, int, Function)
      */
@@ -341,7 +340,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.commit(xid,flags,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #commit(Xid, int, Function)
      */
@@ -355,7 +354,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param xid        non-null
      * @param flags      one of following :
@@ -386,7 +385,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.rollback(xid,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #rollback(Xid, Function)
      */
@@ -399,7 +398,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param xid        non-null
      * @param optionFunc optionMap dialect option ,empty or option map.
@@ -425,7 +424,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.forget(xid,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #forget(Xid, Function)
      */
@@ -438,7 +437,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     * </p>
+     *<br/>
      *
      * @param xid        non-null
      * @param optionFunc optionMap dialect option ,empty or option map.
@@ -464,7 +463,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.recover(RmDatabaseSession.TM_NO_FLAGS,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #recover(int, Function)
      */
@@ -479,7 +478,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.recover(flags,option -> null) ;
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #recover(int, Function)
      */
@@ -493,7 +492,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>write gtrid ( or bqual) as hex strings</li>
      * </ul>
      * so the conversion process of this method is the reverse of above.
-     * </p>
+     *<br/>
      *
      * @param flags      one of following :
      *                   <ul>

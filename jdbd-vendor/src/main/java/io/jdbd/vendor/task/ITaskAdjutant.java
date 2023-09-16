@@ -17,7 +17,7 @@ public interface ITaskAdjutant {
     /**
      * <p>
      * this method is used by {@link CommunicationTask} invoke for submit task to task queue of {@link CommunicationTaskExecutor}.
-     * </p>
+     * <br/>
      *
      * @throws IllegalStateException    throw when current thread not in {@link io.netty.channel.EventLoop}
      * @throws IllegalArgumentException throw when {@link CommunicationTask#getTaskPhase()} non-null

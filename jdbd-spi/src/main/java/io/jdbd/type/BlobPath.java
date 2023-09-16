@@ -9,10 +9,10 @@ import java.nio.file.Path;
 /**
  * <p>
  * This interface representing the holder of binary file.
- * </p>
+ * <br/>
  * <p>
  * Application developer can get the instance of this interface by {@link #from(boolean, Path)} method.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)
  * @see io.jdbd.result.DataRow#get(int, Class)

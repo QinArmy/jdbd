@@ -9,17 +9,17 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing multi-result of statement.
- * </p>
+ * <br/>
  * <p>
  * This interface is base interface of following :
  *     <ul>
  *         <li>{@link MultiResult}</li>
  *         <li>{@link QueryResults}</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  * <strong>NOTE</strong> : driver don't send message to database server before first subscribing.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -34,7 +34,7 @@ public interface MultiResultSpec {
      *             s.nextQuery(CurrentRow::asResultRow,states -> {}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #nextQuery(Function, Consumer)
      */
@@ -49,7 +49,7 @@ public interface MultiResultSpec {
      *             s.nextQuery(function,states -> {}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @see #nextQuery(Function, Consumer)
      */
@@ -79,7 +79,7 @@ public interface MultiResultSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
@@ -110,7 +110,7 @@ public interface MultiResultSpec {
      *
      *         </code>
      *     </pre>
-     * </p>
+     *<br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.

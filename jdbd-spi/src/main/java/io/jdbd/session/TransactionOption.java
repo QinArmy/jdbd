@@ -10,17 +10,17 @@ import io.jdbd.lang.Nullable;
  *         <li>{@link RmDatabaseSession#start(Xid, int, TransactionOption)}</li>
  *         <li>{@link DatabaseSession#setTransactionCharacteristics(TransactionOption)}</li>
  *     </ul>
- * </p>
+ * <br/>
  * <p>
  *     This interface is the base interface of {@link TransactionStatus}.
- * </p>
+ * <br/>
  * <p>
  *     Application can get this interface instance by following methods
  *     <ul>
  *         <li>{@link #option(Isolation, boolean)}</li>
  *         <li>{@link #builder()}</li>
  *     </ul>
- * </p>
+ * <br/>
  *
  * @since 1.0
  */
@@ -29,7 +29,7 @@ public interface TransactionOption extends OptionSpec {
     /**
      * <p>
      * Transaction isolation level,if null,then use default transaction isolation level.
-     * </p>
+     *<br/>
      *
      * @return nullable {@link Isolation}
      */
@@ -46,7 +46,7 @@ public interface TransactionOption extends OptionSpec {
      * <p>
      * override {@link Object#toString()}
      *
-     * </p>
+     *<br/>
      *
      * @return transaction info, contain
      * <ul>
@@ -61,7 +61,7 @@ public interface TransactionOption extends OptionSpec {
     /**
      * <p>
      * Get generic transaction option.
-     * </p>
+     *<br/>
      *
      * @param isolation nullable {@link Isolation},null representing use default transaction isolation level to start transaction.
      * @param readOnly  true : start read-only transaction.

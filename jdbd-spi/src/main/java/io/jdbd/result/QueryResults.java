@@ -4,7 +4,7 @@ package io.jdbd.result;
 /**
  * <p>
  * <strong>NOTE</strong> : driver don't send message to database server before first subscribing.
- * </p>
+ * <br/>
  *
  * @since 1.0
  */

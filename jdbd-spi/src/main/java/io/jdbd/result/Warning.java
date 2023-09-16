@@ -6,7 +6,7 @@ import io.jdbd.session.OptionSpec;
 /**
  * <p>
  * This interface representing database server response warning.
- * </p>
+ * <br/>
  *
  * @see io.jdbd.session.Option#WARNING_COUNT
  * @since 1.0
@@ -21,7 +21,7 @@ public interface Warning extends OptionSpec {
      *         <li>{@link Option#MESSAGE}</li>
      *         <li>{@link Option#VENDOR_CODE}</li>
      *     </ul>
-     * </p>
+     *<br/>
      */
     @Override
     <T> T valueOf(Option<T> option);
