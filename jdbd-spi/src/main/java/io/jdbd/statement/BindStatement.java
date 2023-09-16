@@ -26,6 +26,8 @@ public interface BindStatement extends BindSingleStatement {
 
 
     /**
+     * whether force use server-prepare
+     *
      * @return true : must use server prepare statement.
      * @see io.jdbd.session.DatabaseSession#bindStatement(String, boolean)
      */

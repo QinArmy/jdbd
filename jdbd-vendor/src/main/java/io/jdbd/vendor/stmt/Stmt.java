@@ -7,20 +7,22 @@ package io.jdbd.vendor.stmt;
  * <br/>
  * <p>
  * This interface is a base interface of :
- *     <ul>
- *         <li>{@link StaticStmt}</li>
- *         <li>{@link StaticBatchStmt}</li>
- *         <li>{@link ParamStmt}</li>
- *         <li>{@link ParamBatchStmt}</li>
- *         <li>{@link ParamMultiStmt}</li>
- *     </ul>
- * <br/>
- * <br/>
+ * <ul>
+ *     <li>{@link StaticStmt}</li>
+ *     <li>{@link StaticBatchStmt}</li>
+ *     <li>{@link ParamStmt}</li>
+ *     <li>{@link ParamBatchStmt}</li>
+ *     <li>{@link ParamMultiStmt}</li>
+ * </ul>
+ *
+ * @since 1.0
  */
 public interface Stmt extends StmtOption {
 
 
     /**
+     * this instance whether is created {@link io.jdbd.session.DatabaseSession} or not.
+     *
      * @return false : {@link #databaseSession()} always throw {@link UnsupportedOperationException}
      */
     boolean isSessionCreated();

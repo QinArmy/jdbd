@@ -36,7 +36,8 @@ public interface OptionSpec {
      * The implementation of this method must provide java doc(html list) for explaining supporting {@link Option} list.
      * <br/>
      *
-     * @param <T> value java class
+     * @param option non-null
+     * @param <T>    value java class
      * @return null or the value of option.
      */
     @Nullable
@@ -45,7 +46,7 @@ public interface OptionSpec {
     /**
      * Get non-null option value
      *
-     * @param option option
+     * @param option non-null
      * @param <T>    value java class
      * @return non-null value
      * @throws NullPointerException throw when {@link #valueOf(Option)} return null

@@ -23,6 +23,8 @@ import io.jdbd.statement.Parameter;
 public interface Value {
 
     /**
+     * Get parameter value
+     *
      * @return <ul>
      * <li>null</li>
      * <li>non-{@link Parameter} instance</li>
@@ -33,6 +35,7 @@ public interface Value {
     Object get();
 
     /**
+     * Get parameter value,throw {@link NullPointerException} if value is null
      * @return <ul>
      * <li>non-{@link Parameter} instance</li>
      * <li>{@link Parameter instance}</li>
@@ -42,6 +45,7 @@ public interface Value {
     Object getNonNull() throws NullPointerException;
 
     /**
+     * Get parameter type
      * @return sql type of bind value.
      */
     DataType getType();

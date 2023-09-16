@@ -15,6 +15,10 @@ import io.jdbd.statement.Parameter;
  */
 public interface LongParameter extends Parameter {
 
-
+    /**
+     * parameter value
+     *
+     * @return non-null
+     */
     Object value();
 }

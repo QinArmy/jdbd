@@ -27,7 +27,16 @@ import org.reactivestreams.Publisher;
  */
 public interface PoolDatabaseSession extends DatabaseSession {
 
-
+    /**
+     * send ping message to server
+     *
+     * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
+     * @throws io.jdbd.JdbdException emit(not throw) when
+     *                               <ul>
+     *                                   <li>session have closed,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                               </ul>
+     */
     Publisher<? extends PoolDatabaseSession> ping();
 
 
@@ -35,7 +44,7 @@ public interface PoolDatabaseSession extends DatabaseSession {
      * <p>
      * Reset session :
      * <ul>
-     *     <li>reset key session variable , for example :  </li>
+     *     <li>reset key session variable , for example :
      *          <ul>
      *              <li>transaction isolation level</li>
      *              <li>auto commit</li>
@@ -43,18 +52,32 @@ public interface PoolDatabaseSession extends DatabaseSession {
      *              <li>charset</li>
      *              <li>data type output format</li>
      *          </ul>
+     *      </li>
      *     <li>if database support user-defined data type,then should check whether exists new data type or not.</li>
      * </ul>
-     *<br/>
+     * <br/>
+     * <p>
+     *  @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      *
-     * @return {@link Publisher} that emit <strong>this</strong> when success.
+     * @throws io.jdbd.JdbdException emit(not throw) when
+     *                               <ul>
+     *                                   <li>session have closed,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                               </ul>
      */
     Publisher<? extends PoolDatabaseSession> reset();
 
     /**
      * <p>
      * cancel all have not executed statement,emit {@link io.jdbd.session.SessionCloseException} to the downstream of statement.
-     *<br/>
+     * <br/>
+     *
+     * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
+     * @throws io.jdbd.JdbdException emit(not throw) when
+     *                               <ul>
+     *                                   <li>session have closed,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                               </ul>
      */
     Publisher<? extends PoolDatabaseSession> logicallyClose();
 

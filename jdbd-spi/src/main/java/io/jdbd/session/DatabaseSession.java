@@ -4,6 +4,7 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DatabaseMetaData;
 import io.jdbd.result.RefCursor;
+import io.jdbd.result.ResultStates;
 import io.jdbd.statement.*;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
@@ -49,6 +50,9 @@ import java.util.function.Function;
 public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, OptionSpec, Closeable {
 
     /**
+     * session factory name
+     *
+     * @return {@link DatabaseSessionFactory#name()}
      * @see DatabaseSessionFactory#name()
      */
     String factoryName();
@@ -63,8 +67,9 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *         <li>other identifier</li>
      *     </ul>
      *     <strong>NOTE</strong>: identifier will probably be updated if reconnect.
-     *<br/>
+     * <br/>
      *
+     * @return session identifier
      * @throws JdbdException throw when session have closed.
      */
     long sessionIdentifier() throws JdbdException;
@@ -72,8 +77,9 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * This method create one {@link DatabaseMetaData} instance.
-     *<br/>
+     * <br/>
      *
+     * @return {@link DatabaseMetaData} instance
      * @throws JdbdException throw when session have closed.
      */
     DatabaseMetaData databaseMetaData() throws JdbdException;
@@ -82,8 +88,9 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
      *
+     * @return the {@link Publisher} emit just one {@link TransactionStatus} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
      *                        <ul>
      *                           <li>network error</li>
@@ -110,10 +117,12 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * Crete one static statement instance.
-     *<br/>
+     * <br/>
      * <p>
      * This method don't check session whether open or not.
-     *<br/>
+     * <br/>
+     *
+     * @return {@link StaticStatement} instance
      */
     StaticStatement statement();
 
@@ -122,7 +131,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * This method create one server-prepared statement.
      * This method is similarly to {@code java.sql.Connection#prepareStatement(String)}
      * except that is async emit a {@link PreparedStatement}.
-     *<br/>
+     * <br/>
      * <p>
      * {@link PreparedStatement} is designed for providing following methods:
      *     <ul>
@@ -131,11 +140,12 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *         <li>{@link PreparedStatement#waring()}</li>
      *     </ul>
      *     , so if you don't need above methods, then you can use {@link #bindStatement(String, boolean)}.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
      *
+     * @param sql must have text
      * @return the {@link Publisher} emit just one {@link PreparedStatement} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}
      * @throws JdbdException emit(not throw)
      *                       <ul>
@@ -157,8 +167,10 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *             session.bindStatement(sql,false) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param sql must have text
+     * @return {@link BindStatement} instance
      * @see #bindStatement(String, boolean)
      */
     BindStatement bindStatement(String sql);
@@ -166,16 +178,17 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * Create the statement that is the adaptor of client-prepared statement and server-prepared statement.
-     *<br/>
+     * <br/>
      * <p>
      * This method don't check session whether open or not.
-     *<br/>
+     * <br/>
      *
      * @param sql                 have text sql.
      * @param forceServerPrepared <ul>
      *                            <li>true :  must use server-prepared.</li>
      *                            <li>false : use client-prepared if can  </li>
      *                            </ul>
+     * @return {@link BindStatement} instance
      * @throws IllegalArgumentException throw when only sql have no text.
      * @see BindStatement#isForcePrepare()
      */
@@ -184,11 +197,12 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * Create one multi statement.
-     *<br/>
+     * <br/>
      * <p>
      * This method don't check session whether open or not.
-     *<br/>
+     * <br/>
      *
+     * @return {@link MultiStatement} instance
      * @throws JdbdException throw when : {@link #isSupportMultiStatement()} return false.
      */
     MultiStatement multiStatement() throws JdbdException;
@@ -202,24 +216,29 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *             session.refCursor(name,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param name see {@link #refCursor(String, Function)}
+     * @return {see {@link #refCursor(String, Function)}
+     * @throws JdbdException see {@link #refCursor(String, Function)}
      * @see #refCursor(String, Function)
      */
-    RefCursor refCursor(String name);
+    RefCursor refCursor(String name) throws JdbdException;
 
     /**
      * <p>
      * Create a instance of {@link RefCursor}. This method don't check session open ,don't check name whether exists or not in database.
-     *<br/>
+     * <br/>
      * <p>
      * If {@link #isSupportRefCursor()} return true,then driver must support following :
      *     <ul>
      *         <li>{@link Option#AUTO_CLOSE_ON_ERROR}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      *
-     * @param optionFunc non-null optionFunc.
+     * @param name       must have text
+     * @param optionFunc non-null optionFunc. optionFunc can always return null
+     * @return {@link RefCursor}  instance
      * @throws IllegalArgumentException throw when name have no text.
      * @throws JdbdException            throw when {@link #isSupportRefCursor()} return false.
      */
@@ -229,15 +248,15 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * Just set the characteristics of session transaction, don't start transaction.
-     *<br/>
+     * <br/>
      * <p>
      * Sets the default transaction characteristics for subsequent transactions of this session.<br/>
      * These defaults can be overridden by {@link LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)}
      * for an individual transaction.
-     *<br/>
+     * <br/>
      * <p>
      * The transaction options (eg: {@link Isolation}) can apply all transaction of session.
-     *<br/>
+     * <br/>
      * <p>
      * The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
@@ -245,7 +264,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *         <li>{@link Option#DEFERRABLE}</li>
      *         <li>{@link Option#NAME}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      *
      * @param option non-null transaction option, driver perhaps support dialect transaction option by {@link TransactionOption#valueOf(Option)}.
      * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
@@ -273,7 +292,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *     <li>Micro SQL server transactional state</li>
      * </ul>
      * If database client protocol don't support this method ,then {@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null.
-     *<br/>
+     * <br/>
      *
      * @return true : when
      * <ul>
@@ -295,9 +314,19 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     boolean inTransaction() throws JdbdException;
 
     /**
+     * /**
+     * Driver create one save point identifier and set a save point.
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
+     *
+     * @return {@link Publisher} emit just one {@link SavePoint},like {@code reactor.core.publisher.Mono}
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>name error</li>
+     *                           <li>session have closed,see {@link SessionCloseException}</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
      */
     Publisher<SavePoint> setSavePoint();
 
@@ -305,47 +334,112 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
+     *
+     * @param name see {@link #setSavePoint(String, Function)}
+     * @return see {@link #setSavePoint(String, Function)}
      */
     Publisher<SavePoint> setSavePoint(String name);
 
+    /**
+     * Set a save point
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <br/>
+     *
+     * @param name       save point name
+     * @param optionFunc dialect option function
+     * @return {@link Publisher} emit just one {@link SavePoint},like {@code reactor.core.publisher.Mono}
+     * @throws JdbdException emit(not throw) when
+     *                       <ul>
+     *                           <li>name error</li>
+     *                           <li>session have closed,see {@link SessionCloseException}</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
     Publisher<SavePoint> setSavePoint(String name, Function<Option<?>, ?> optionFunc);
 
 
+    /**
+     * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link DatabaseSession}
+     *             session.releaseSavePoint(savepoint,option->null) ;
+     *         </code>
+     *     </pre>
+     *
+     * @param savepoint see {@link #releaseSavePoint(SavePoint, Function)}
+     * @return see {@link #releaseSavePoint(SavePoint, Function)}
+     * @see #releaseSavePoint(SavePoint, Function)
+     */
     Publisher<? extends DatabaseSession> releaseSavePoint(SavePoint savepoint);
 
 
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
      *
+     * @param savepoint  non-null
+     * @param optionFunc non-null,can always return null
      * @return the {@link Publisher} that completes successfully by
      * emitting an element(<strong>this</strong>), or with an error. Like {@code  reactor.core.publisher.Mono}
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>driver couldn't recognise savepoint</li>
+     *                           <li>session have closed,see {@link SessionCloseException}</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
      */
     Publisher<? extends DatabaseSession> releaseSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
 
     /**
      * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of {@link DatabaseSession}
+     *             session.rollbackToSavePoint(savepoint,option->null) ;
+     *         </code>
+     *     </pre>
      *
-     * @return the {@link Publisher} that completes successfully by
-     * emitting an element(<strong>this</strong>), or with an error. Like {@code  reactor.core.publisher.Mono}
+     * @param savepoint {@link #rollbackToSavePoint(SavePoint, Function)}
+     * @return {@link #rollbackToSavePoint(SavePoint, Function)}
      */
     Publisher<? extends DatabaseSession> rollbackToSavePoint(SavePoint savepoint);
 
+    /**
+     * rollback save point
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <br/>
+     *
+     * @param savepoint  non-null
+     * @param optionFunc non-null,dialect option ,can always return null
+     * @return the {@link Publisher} that completes successfully by
+     * emitting an element(<strong>this</strong>), or with an error. Like {@code  reactor.core.publisher.Mono}
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>driver couldn't recognise savepoint</li>
+     *                           <li>session have closed,see {@link SessionCloseException}</li>
+     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
     Publisher<? extends DatabaseSession> rollbackToSavePoint(SavePoint savepoint, Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
      * append text literal to builder,driver will quote and escape if need.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong>: driver don't append space before literal.
-     *<br/>
+     * <br/>
      *
+     * @param text    nullable text
+     * @param builder target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when the implementation of this method need session is open and session have closed
      */
@@ -354,12 +448,13 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * append text identifier to builder,driver will quote and escape if need.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong>: driver don't append space before identifier.
-     *<br/>
+     * <br/>
      *
      * @param identifier non-null,for example : column label
+     * @param builder    target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when
      *                       <ul>
@@ -373,10 +468,10 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * append tableName to builder,driver will quote and escape if need.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong>: driver don't append space before tableName.
-     *<br/>
+     * <br/>
      *
      * @param tableName non-null
      * @param mode      tableName handle mode,if tableName must be quoted and escaped,then mode will be ignored ,else :
@@ -385,6 +480,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                       <li>{@link NameMode#UPPER_CASE} append upper case tableName</li>
      *                       <li>{@link NameMode#DEFAULT} append tableName</li>
      *                  </ul>
+     * @param builder target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when
      *                       <ul>
@@ -398,10 +494,10 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>
      * append columnName to builder,driver will quote and escape if need.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong>: driver don't append space before columnName.
-     *<br/>
+     * <br/>
      *
      * @param columnName non-null
      * @param mode       columnName handle mode,if columnName must be quoted and escaped,then mode will be ignored ,else :
@@ -410,6 +506,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                        <li>{@link NameMode#UPPER_CASE} append upper case columnName</li>
      *                        <li>{@link NameMode#DEFAULT} append columnName</li>
      *                   </ul>
+     * @param builder target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when
      *                       <ul>
@@ -425,12 +522,12 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * If return true , then the pool vendor developer must guarantee session and <strong>this</strong> both are created <br/>
      * by same pool {@link DatabaseSessionFactory} instance,and both underlying driver session instance are created by <br/>
      * same driver {@link DatabaseSessionFactory} instance.<br/>
-     *<br/>
+     * <br/>
      * <p>
      * This method can be useful , application developer can know session and <strong>this</strong> belong to
      * same resource manager in XA transaction.
-     *<br/>
-     *
+     * <br/>
+     * @param session non-null session
      * @return true : session and this both are created by same {@link DatabaseSessionFactory} instance.
      */
     boolean isSameFactory(DatabaseSession session);
@@ -440,17 +537,17 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <p>
      * This method should provide the access of some key(<strong>NOTE</strong> : is key,not all) properties of url ,but {@link io.jdbd.Driver#PASSWORD},
      * see {@link io.jdbd.Driver#forDeveloper(String, Map)}.<br/>
-     *<br/>
+     * <br/>
      *
      * <p>
      * The implementation of this method must provide java doc(html list) for explaining supporting {@link Option} list.
-     *<br/>
+     * <br/>
      * <p>
      * The implementation of this method always support :
      * <ul>
      *     <li>{@link Option#PREPARE_THRESHOLD}</li>
      * </ul>
-     *<br/>
+     * <br/>
      * <p>
      * The implementation of this method perhaps support some of following :
      *     <ul>
@@ -463,8 +560,9 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *         <li>{@link Option#BACKSLASH_ESCAPES}</li>
      *         <li>{@link Option#BINARY_HEX_ESCAPES}</li>
      *     </ul>
-     *<br/>
-     *
+     * <br/>
+     * @param option option key
+     * @param <T> option value java type
      * @return null or the value of option.
      * @throws JdbdException throw when option need session open and session have closed.
      */

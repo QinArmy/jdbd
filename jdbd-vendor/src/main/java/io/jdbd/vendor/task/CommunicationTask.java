@@ -13,6 +13,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
+ * driver communication task
+ *
  * @see CommunicationTaskExecutor
  * @see ConnectionTask
  */

@@ -25,9 +25,14 @@ import java.util.function.Function;
  */
 public interface CurrentRow extends DataRow {
 
+    /**
+     * see {@link #asResultRow()}
+     */
     Function<CurrentRow, ResultRow> AS_RESULT_ROW = CurrentRow::asResultRow;
 
     /**
+     * row number of current row
+     *
      * @return the row number of current row, based 1 . The first value is 1 .
      */
     long rowNumber();
@@ -35,7 +40,9 @@ public interface CurrentRow extends DataRow {
     /**
      * <p>
      * Create one {@link ResultRow} with coping all column data.
-     *<br/>
+     * <br/>
+     *
+     * @return new {@link ResultRow}
      */
     ResultRow asResultRow();
 

@@ -23,7 +23,7 @@ import io.jdbd.JdbdException;
  *         <li>{@link ResultStates}</li>
  *         <li>{@link CurrentRow}</li>
  *     </ul>
- *<br/>
+ * <br/>
  *
  * @since 1.0
  */
@@ -31,6 +31,8 @@ public interface ResultItem {
 
 
     /**
+     * The result No
+     *
      * @return the number of this Query/Update result, based one. The first value is 1 .
      */
     int getResultNo();
@@ -71,16 +73,18 @@ public interface ResultItem {
     interface ResultAccessSpec {
 
         /**
-         * Returns the number of columns
+         * Returns the number of row
          *
-         * @return the number of columns
+         * @return the number of row
          */
         int getColumnCount();
 
         /**
+         * Get column label of appropriate column
+         *
          * @param indexBasedZero index based zero,the first value is 0 .
          * @return the suggested column title              .
-         * @throws JdbdException if a database access error occurs
+         * @throws JdbdException throw when indexBasedZero error
          */
         String getColumnLabel(int indexBasedZero) throws JdbdException;
 
@@ -88,11 +92,11 @@ public interface ResultItem {
         /**
          * <p>
          * Get column index , if columnLabel duplication ,then return last index that have same columnLabel.
-         *<br/>
+         * <br/>
          *
          * @param columnLabel column label
-         * @return index based 0,the first column is 0, the second is 1, ..
-         * @throws JdbdException if a database access error occurs
+         * @return index based zero,the first value is 0 .
+         * @throws JdbdException   throw when indexBasedZero error
          */
         int getColumnIndex(String columnLabel) throws JdbdException;
 

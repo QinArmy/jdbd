@@ -2,6 +2,8 @@ package io.jdbd.vendor.task;
 
 
 /**
+ * Time out task
+ *
  * @see JdbdTimeoutTask
  * @since 1.0
  */

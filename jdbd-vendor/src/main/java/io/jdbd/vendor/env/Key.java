@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.function.IntFunction;
 
 /**
+ * url property key
+ *
  * @see Environment
  */
 public abstract class Key<T> {

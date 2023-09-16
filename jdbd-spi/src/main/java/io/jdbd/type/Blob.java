@@ -19,12 +19,17 @@ import org.reactivestreams.Publisher;
 public interface Blob extends PublisherParameter {
 
     /**
+     * publisher
+     *
      * @return bye[] {@link Publisher}
      */
     Publisher<byte[]> value();
 
     /**
      * create {@link Blob} instance.
+     *
+     * @param source non-null
+     * @return non-null
      */
     static Blob from(Publisher<byte[]> source) {
         return JdbdTypes.blobParam(source);

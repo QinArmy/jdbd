@@ -174,6 +174,9 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to byte
+     *
+     * @return byte
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -189,6 +192,8 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to short
+     * @return short
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -204,6 +209,8 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to int
+     * @return int
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -219,6 +226,8 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to long
+     * @return long
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.

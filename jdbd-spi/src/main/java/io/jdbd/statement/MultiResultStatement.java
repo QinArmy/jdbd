@@ -124,6 +124,16 @@ public interface MultiResultStatement extends Statement {
      * <br/>
      *
      * @return the {@link Publisher} emit 1-N {@link ResultStates} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException emmit(not throw) when
+     *                       <ul>
+     *                           <li>you reuse this {@link BindSingleStatement} instance</li>
+     *                           <li>param bind error</li>
+     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                           <li>sql error</li>
+     *                           <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                           <li>server response error ,see {@link ServerException}</li>
+     *                           <li>server response result not match ,for example:  query result</li>
+     *                       </ul>
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */
@@ -392,8 +402,6 @@ public interface MultiResultStatement extends Statement {
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     * <br/>
-     * <p>
      * <pre>
      * For example 1 :
      *         <code><br/>
@@ -518,6 +526,15 @@ public interface MultiResultStatement extends Statement {
      * <br/>
      *
      * @return {@link OrderedFlux} that emit 1-N {@link ResultItem} instance.
+     * @throws JdbdException emmit(not throw) when
+     *                       <ul>
+     *                           <li>you reuse this {@link BindSingleStatement} instance</li>
+     *                           <li>param bind error</li>
+     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                           <li>sql error</li>
+     *                           <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                           <li>server response error ,see {@link ServerException}</li>
+     *                       </ul>
      * @see BindSingleStatement#addBatch()
      * @see MultiStatement#addStatement(String)
      */

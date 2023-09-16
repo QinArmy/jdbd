@@ -10,16 +10,16 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing database session that support local transaction.
- *<br/>
+ * <br/>
  * <p>
  * This interface is is similar to {@code javax.sql.Connection} , except that this interface is reactive.
- *<br/>
+ * <br/>
  * <p>
  * This interface is base interface of {@link io.jdbd.pool.PoolLocalDatabaseSession}.
- *<br/>
+ * <br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory#localSession()} method.
- *<br/>
+ * <br/>
  * <p>
  * Application developer can create statement by following methods :
  *     <ul>
@@ -29,7 +29,7 @@ import java.util.function.Function;
  *         <li>{@link #bindStatement(String, boolean)}, create the adaptor of client-prepared statement and server-prepared statement.</li>
  *         <li>{@link #multiStatement()}, create multi-statement</li>
  *     </ul>
- *<br/>
+ * <br/>
  * <p>
  * Application developer can control local transaction by following :
  *     <ul>
@@ -51,7 +51,7 @@ import java.util.function.Function;
  *         <li>{@link #rollbackToSavePoint(SavePoint)}</li>
  *         <li>{@link #rollbackToSavePoint(SavePoint, Function)}</li>
  *     </ul>
- *<br/>
+ * <br/>
  *
  * @since 1.0
  */
@@ -83,7 +83,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *             session.startTransaction(option,HandleMode.ERROR_IF_EXISTS) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #startTransaction(TransactionOption, HandleMode)
      */
@@ -92,10 +92,10 @@ public interface LocalDatabaseSession extends DatabaseSession {
     /**
      * <p>
      * Start one local transaction with option.
-     *<br/>
+     * <br/>
      * <p>
      * Driver developer should guarantee that transaction option (eg: {@link Isolation}) applies only this new transaction.
-     *<br/>
+     * <br/>
      * <p>
      * The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
@@ -103,7 +103,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *         <li>{@link Option#DEFERRABLE}</li>
      *         <li>{@link Option#NAME}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      *
      * @param option non-null transaction option, driver perhaps support dialect transaction option by {@link TransactionOption#valueOf(Option)}.
      * @param mode   the handle mode when have existed local transaction :
@@ -115,7 +115,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
-     *                           li>appropriate {@link Isolation} isn't supported</li>
+     *                           <li>appropriate {@link Isolation} isn't supported</li>
      *                           <li>have existed transaction and mode is {@link HandleMode#ERROR_IF_EXISTS},see {@link #inTransaction()}</li>
      *                           <li>session have closed, see {@link SessionCloseException}</li>
      *                           <li>network error</li>
@@ -135,8 +135,9 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *             session.commit(Collections.emptyMap()) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #commit(Function)
      */
     Publisher<LocalDatabaseSession> commit();
@@ -144,21 +145,21 @@ public interface LocalDatabaseSession extends DatabaseSession {
     /**
      * <p>
      * COMMIT current local transaction of this session.
-     *<br/>
+     * <br/>
      * <p>
      * The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#CHAIN}</li>
      *         <li>{@link Option#RELEASE}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong> :
      * <ul>
      *     <li>driver don't send message to database server before subscribing.</li>
      *     <li>this method don't check session whether in transaction block or not.</li>
      * </ul>
-     *<br/>
+     * <br/>
      *
      * @param optionFunc func
      * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
@@ -181,8 +182,9 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *             session.rollback(Collections.emptyMap()) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #rollback(Function)
      */
     Publisher<LocalDatabaseSession> rollback();
@@ -190,21 +192,21 @@ public interface LocalDatabaseSession extends DatabaseSession {
     /**
      * <p>
      * ROLLBACK current local transaction of this session.
-     *<br/>
+     * <br/>
      * <p>
      * The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#CHAIN}</li>
      *         <li>{@link Option#RELEASE}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong> :
      * <ul>
      *     <li>driver don't send message to database server before subscribing.</li>
      *     <li>this method don't check session whether in transaction block or not.</li>
      * </ul>
-     *<br/>
+     * <br/>
      *
      * @param optionFunc {@link Option} function
      * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
@@ -224,7 +226,6 @@ public interface LocalDatabaseSession extends DatabaseSession {
      */
     @Override
     Publisher<LocalDatabaseSession> setTransactionCharacteristics(TransactionOption option);
-
 
 
     /**

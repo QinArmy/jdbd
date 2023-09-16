@@ -25,27 +25,37 @@ import java.util.function.Function;
 public interface StmtOption {
 
     /**
+     * time out millSeconds
+     *
      * @return millSeconds
      */
     int getTimeout();
 
+    /**
+     * Get fetch size
+     *
+     * @return fetch size
+     */
     int getFetchSize();
 
     /**
+     * Get stmt var list
+     *
      * @return a unmodified list.
      */
     List<NamedValue> getStmtVarList();
 
     /**
-     * <p>
-     * {@link Stmt} implementation must invoke this method,because this method implementation like below:
+     * Get import function
+     *
+     * @return nullable
      */
     @Nullable
     Function<ChunkOption, Publisher<byte[]>> getImportFunction();
 
     /**
-     * <p>
-     * {@link Stmt} implementation must invoke this method,because this method implementation like below:
+     * Get export function
+     * @return nullable
      */
     @Nullable
     Function<ChunkOption, Subscriber<byte[]>> getExportFunction();

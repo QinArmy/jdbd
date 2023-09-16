@@ -46,7 +46,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * <li>statement variable exist until statement execution ends, at which point the statement variable set is cleared.</li>
      * <li>While statement variable exist, they can be accessed on the server side.</li>
      * </ul>
-     *<br/>
+     * <br/>
      * <p>
      * Each {@link JdbdType} instance support java type rule:
      *     <ul>
@@ -133,7 +133,6 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                  <li>{@link JdbdType#TEXT}</li>
      *                  <li>{@link JdbdType#MEDIUMTEXT}</li>
      *                  <li>{@link JdbdType#LONGTEXT}</li>
-     *                  <br/>
      *                  <li>{@link JdbdType#XML}</li>
      *                  <li>{@link JdbdType#JSON}</li>
      *                  <li>{@link JdbdType#JSONB}</li>
@@ -287,7 +286,6 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
-     *     </ul>
      *     <li>{@link JdbdType#GEOMETRY}  support following java types :
      *                <ol>
      *                    <li>{@code null}</li>
@@ -301,7 +299,9 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *     </li>
-     *<br/>
+     *     </ul>
+     * <p>
+     * <br/>
      *
      * @param name     statement variable name,must have text.
      * @param dataType parameter type is following type : <ul>
@@ -370,23 +370,51 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
 
 
     /**
+     * This statement whether support {@link PublisherParameter} or not
+     *
      * @return true : support {@link PublisherParameter}
      */
     boolean isSupportPublisher();
 
     /**
+     * This statement whether support {@link PathParameter} or not
+     *
      * @return true : support {@link PathParameter}
      */
     boolean isSupportPath();
 
+    /**
+     * This statement whether support {@link OutParameter} or not
+     *
+     * @return true : support {@link OutParameter}
+     */
     boolean isSupportOutParameter();
 
+    /**
+     * This statement whether support {@link #bindStmtVar(String, DataType, Object)} or not
+     *
+     * @return true : support {@link #bindStmtVar(String, DataType, Object)}
+     */
     boolean isSupportStmtVar();
+
+    /**
+     * This statement whether support {@link #setImportPublisher(Function)} or not.
+     *
+     * @return true : support
+     */
+    boolean isSupportImportPublisher();
+
+    /**
+     * This statement whether support {@link #setExportSubscriber(Function)} or not.
+     *
+     * @return true : support
+     */
+    boolean isSupportExportSubscriber();
 
     /**
      * <p>
      * Set statement timeout seconds,if timeout driver will kill query.
-     *<br/>
+     * <br/>
      *
      * @param millSeconds <ul>
      *                    <li>0 : no limit,this is default value</li>
@@ -400,28 +428,25 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
 
 
     /**
-     * <p>
      * Currently,only following methods support this method:
-     *     <ul>
-     *         <li>{@link BindSingleStatement#executeQuery(Function, Consumer)}</li>
-     *         <li>{@link BindSingleStatement#executeAsFlux()}</li>
-     *     </ul>
-     *<br/>
-     * <p>
-     *     Driver will continue fetch util you cancel subscribing.
-     *<br/>
      *
-     * @param fetchSize <ul>
-     *                                                                                                                                                                               <li>0 : fetch all, this is default value</li>
-     *                                                                                                                                                                               <li>positive : fetch size</li>
-     *                                                                                                                                                                               <li>negative : error</li>
-     *                                                                                                                                                                           </ul>
+     * <ul>
+     *    <li>{@link BindSingleStatement#executeQuery(Function, Consumer)}</li>
+     *    <li>{@link BindSingleStatement#executeAsFlux()}</li>
+     * </ul>
+     *
+     * <p>Driver will continue fetch util you cancel subscribing.
+     *
+     * @param fetchSize non-negative,0 : return all row.
      * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when fetchSize is negative.
      */
     Statement setFetchSize(int fetchSize);
 
     /**
+     * Some database allows high-speed bulk data transfer to or from the server. For example : PostgreSQL COPY command
+     *
+     * @param function map Publisher function
      * @return <strong>this</strong>
      * @throws JdbdException throw when driver don't this method.
      */
@@ -429,6 +454,9 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
 
 
     /**
+     * Some database allows high-speed bulk data transfer to or from the server. For example : PostgreSQL COPY command
+     *
+     * @param function map Subscriber function
      * @return <strong>this</strong>
      * @throws JdbdException throw when driver don't this method.
      */
@@ -437,8 +465,11 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
     /**
      * <p>
      * Set dialect statement option.
-     *<br/>
+     * <br/>
      *
+     * @param option statement option key
+     * @param value  statement option value
+     * @param <T>    option value java type
      * @return <strong>this</strong>
      * @throws JdbdException throw when {@link #supportedOptionList()} is empty.
      * @see #supportedOptionList()
@@ -446,6 +477,8 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
     <T> Statement setOption(Option<T> option, @Nullable T value) throws JdbdException;
 
     /**
+     * The option list of {@link #setOption(Option, Object)} supporting.
+     *
      * @return empty or the list that {@link #setOption(Option, Object)} support option list.
      */
     List<Option<?>> supportedOptionList();
@@ -459,7 +492,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *         <li>{@link Option#CLIENT_CHARSET}</li>
      *         <li>{@link Option#CLIENT_ZONE} if database build-in time and datetime don't support zone</li>
      *     </ul>
-     *<br/>
+     * <br/>
      */
     @Nullable
     @Override

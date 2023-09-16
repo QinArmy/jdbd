@@ -15,18 +15,17 @@ public enum JdbdType implements DataType {
 
     /**
      * Identifies the generic SQL value {@code NULL} . This enum instance representing sql type is unknown and value is null.
-     * <p>
-     *     <ul>
+     * <ul>
      *         <li>{@link io.jdbd.result.ResultRowMeta#getJdbdType(int)} return this enm instance if sql type is unknown and value is null. For example : {@code SELECT NULL as result}</li>
      *         <li>{@link io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)} support this enum instance,if application developer don't known type and value is null.</li>
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} support this enum instance,if application developer don't known type and value is null.</li>
-     *     </ul>
+     *  </ul>
      *     Actually in most case , application developer known the type of null ,so dont' need this enum instance. For example:
-     *     <pre><br/>
+     * <pre><br/>
      *         // stmt is io.jdbd.statement.ParametrizedStatement instance
      *         stmt.bind(0,JdbdType.BIGINT,null)
-     *     </pre>
-     *<br/>
+     * </pre>
+     * <br/>
      */
     NULL,
 
@@ -47,7 +46,7 @@ public enum JdbdType implements DataType {
      *     <li>{@link String}</li>
      *     <li>{@link java.util.BitSet}</li>
      * </ul>
-     *<br/>
+     * <br/>
      */
     BIT,
 
@@ -62,7 +61,7 @@ public enum JdbdType implements DataType {
      *     <li>{@link String}</li>
      *     <li>{@link java.util.BitSet}</li>
      * </ul>
-     *<br/>
+     * <br/>
      */
     VARBIT,
 
@@ -278,10 +277,10 @@ public enum JdbdType implements DataType {
      * Identifies the generic SQL type {@code REF_CURSOR}.
      * <p>
      * If {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)} is this enum instance,then {@link io.jdbd.result.DataRow#get(int)} always is {@link String} instance.
-     *<br/>
+     * <br/>
      * <p>
      * Application developer can get the instance of {@link io.jdbd.result.RefCursor} by {@link DatabaseSession#refCursor(String)}
-     *<br/>
+     * <br/>
      *
      * @see io.jdbd.result.RefCursor
      */
@@ -296,7 +295,7 @@ public enum JdbdType implements DataType {
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
      *     </ul>
      *  This enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}
-     *<br/>
+     * <br/>
      */
     ARRAY,
 
@@ -308,7 +307,7 @@ public enum JdbdType implements DataType {
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
      *     </ul>
      *  This enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}
-     *<br/>
+     * <br/>
      */
     COMPOSITE,
 
@@ -316,14 +315,13 @@ public enum JdbdType implements DataType {
     /**
      * Indicates that the dialect data type  , this enum instance is only returned by {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)}.
      * This enum instance representing the dialect data type than couldn't be expressed other instance of {@link JdbdType}.
-     * <p>
      *     <ul>
      *         <li>{@link io.jdbd.statement.ParametrizedStatement#bind(int, DataType, Object)} don't support this enum instance.</li>
      *         <li>{@link io.jdbd.statement.Statement#bindStmtVar(String, DataType, Object)} don't support this enum instance.</li>
      *     </ul>
      *     If application developer want to bind dialect type ,then application developer should define the new {@link DataType} type
      *     that it's {@link #typeName()} is supported by database.
-     *<br/>
+     * <br/>
      */
     DIALECT_TYPE;
 

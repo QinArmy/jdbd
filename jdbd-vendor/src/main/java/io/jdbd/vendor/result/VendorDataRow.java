@@ -249,13 +249,11 @@ public abstract class VendorDataRow implements DataRow {
     /**
      * <p>
      * This method is implemented by the sub class of {@link CurrentRow}.
-     * <ul>
      *     This method is designed for the cache (perhaps occur) of following :
      *     <ul>
      *         <li>{@link QueryResults}</li>
      *         <li>{@link io.jdbd.result.MultiResult}</li>
      *     </ul>
-     * </ul>
      * <ul>
      *     <li>If this current row is mutable,always copy this instance.</li>
      *     <li>Else return this</li>

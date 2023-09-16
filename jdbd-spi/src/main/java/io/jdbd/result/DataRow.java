@@ -46,13 +46,17 @@ import java.util.function.Supplier;
  */
 public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
 
-
+    /**
+     * Get  row metadata
+     *
+     * @return row metadata
+     */
     ResultRowMeta getRowMeta();
 
     /**
      * <p>
      * Bit row means that exists at least one big column. see {@link #isBigColumn(int)}
-     *<br/>
+     * <br/>
      *
      * @return true : big row
      */
@@ -69,7 +73,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *      </ul>
      *      If you need to store them ,then you must move them to other directory by {@link java.nio.file.Files#move(Path, Path, CopyOption...)} method.
      *      Else driver will delete them after result set end.
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @return true : big column
@@ -78,6 +82,9 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     boolean isBigColumn(int indexBasedZero) throws JdbdException;
 
     /**
+     * appropriate column whether is null or not.
+     *
+     * @param indexBasedZero index based zero,the first value is 0 .
      * @return true : appropriate column value is null
      * @throws JdbdException throw when indexBasedZero error
      */
@@ -86,13 +93,15 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Get the value of output of column.
-     *<br/>
+     * <br/>
      *
+     * @param indexBasedZero index based zero,the first value is 0 .
      * @return must be one of following : <ol>
      * <li>null</li>
      * <li>the instance of {@link ResultRowMeta#getFirstJavaType(int) }</li>
      * <li>the instance of {@link ResultRowMeta#getSecondJavaType(int)}</li>
      * </ol>
+     * @throws JdbdException throw when indexBasedZero error
      * @see ResultRowMeta#getFirstJavaType(int)
      * @see ResultRowMeta#getSecondJavaType(int)
      * @see #isBigColumn(int)
@@ -113,7 +122,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @param defaultValue   must be the instance of column first java type or second java type.
@@ -141,7 +150,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @param supplier       must return the instance of column first java type or second java type.
      * @param indexBasedZero index based zero,the first value is 0 .
@@ -160,7 +169,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Get appropriate column value and try to convert to target type.
-     *<br/>
+     * <br/>
      * <p>
      * The convert rule :
      *     <ul>
@@ -423,10 +432,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              if overflow ,throw {@link JdbdException}
      *         </li>
      *     </ul>
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
      * @param columnClass    target type class
+     * @param <T>            appropriate column value java type
+     * @return appropriate column value after convert
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>indexBasedZero error</li>
@@ -449,9 +460,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
-     * @param defaultValue non-null
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @param columnClass    convert target java type
+     * @param defaultValue   non-null
+     * @param <T>            appropriate column value java type
      * @return non-null value
      * @throws JdbdException throw when {@link #get(int, Class)} throw {@link JdbdException}
      * @see #get(int, Class)
@@ -471,9 +485,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
-     * @param supplier return non-null
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @param columnClass    convert target java class of appropriate column
+     * @param supplier       return non-null
+     * @param <T>            convert target java type of appropriate column
      * @return non-null value
      * @throws JdbdException        throw when {@link #get(int, Class)} throw {@link JdbdException}
      * @throws NullPointerException throw when supplier return null.
@@ -494,8 +511,9 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param indexBasedZero index based zero,the first value is 0 .
      * @return non-null value
      * @throws JdbdException        throw when {@link #get(int)} throw {@link JdbdException}
      * @throws NullPointerException throw when {@link #get(int)} return null.
@@ -516,8 +534,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *              }
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @param columnClass    convert target java class of appropriate column
+     * @param <T>            convert target java type of appropriate column
      * @return non-null value
      * @throws JdbdException        throw when {@link #get(int, Class)} throw {@link JdbdException}
      * @throws NullPointerException throw when {@link #get(int, Class)} return null.
@@ -536,8 +557,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             list = row.get(indexBasedZero,elementClass,ArrayList::new);
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param indexBasedZero index based zero,the first value is 0 .
+     * @param elementClass   the element java class of list
+     * @param <T>            element type of list
      * @return non-null
      * @throws JdbdException throw when {@link #getList(int, Class, IntFunction) } throw {@link JdbdException}
      * @see #getList(int, Class, IntFunction)
@@ -547,9 +571,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Convert appropriate column value to {@link List}
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
+     * @param elementClass   the element java class of list
+     * @param constructor    list constructor
+     * @param <T>            element type of list
      * @return the instance that constructor return
      * @throws JdbdException throw when
      *                       <ul>
@@ -569,8 +596,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             set = row.getSet(indexBasedZero,elementClass,HashSet::new);
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param indexBasedZero see {@link #getSet(int, Class, IntFunction)}
+     * @param elementClass   see {@link #getSet(int, Class, IntFunction)}
+     * @param <T>            see {@link #getSet(int, Class, IntFunction)}
      * @return non-null
      * @throws JdbdException throw when {@link #getSet(int, Class, IntFunction) } throw {@link JdbdException}
      * @see #getSet(int, Class, IntFunction)
@@ -580,9 +610,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Convert appropriate column value to {@link Set}
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
+     * @param elementClass   the element java class of set
+     * @param constructor    set constructor
+     * @param <T>            the element java type of set
      * @return the instance that constructor return
      * @throws JdbdException throw when
      *                       <ul>
@@ -602,9 +635,14 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             map = row.getMap(indexBasedZero,keyClass,valueClass,HashMap::new);
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
-     * @return non-null
+     * @param indexBasedZero see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param keyClass       see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param valueClass     see  {@link #getMap(int, Class, Class, IntFunction)}
+     * @param <K>            see  {@link #getMap(int, Class, Class, IntFunction)}
+     * @param <V>            see  {@link #getMap(int, Class, Class, IntFunction)}
+     * @return {@link #getMap(int, Class, Class, IntFunction)}
      * @throws JdbdException throw when {@link #getMap(int, Class, Class, IntFunction) } throw {@link JdbdException}
      * @see #getMap(int, Class, Class, IntFunction)
      */
@@ -613,9 +651,14 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Convert appropriate column value to {@link Map}
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
+     * @param keyClass       key java class of map
+     * @param valueClass     value java class of map
+     * @param constructor    constructor of map
+     * @param <K>            key java type of map
+     * @param <V>            value java type of map
      * @return the instance that constructor return
      * @throws JdbdException throw when
      *                       <ul>
@@ -628,9 +671,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
     /**
      * <p>
      * Convert appropriate column value to {@link Publisher}
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero index based zero,the first value is 0 .
+     * @param valueClass     element java class
+     * @param <T>            element java type
+     * @return publisher
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>indexBasedZero error</li>
@@ -652,8 +698,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.isBigColumn(index) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @return see {@link #isBigColumn(int)}
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
      * @see #isBigColumn(int)
@@ -671,8 +719,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.isNull(index) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @return see {@link #isNull(int)}
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
      * @see #isNull(int)
@@ -690,8 +740,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.get(index) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @return see {@link #get(int)}
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
      * @see #get(int)
@@ -711,8 +763,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getOrDefault(index,defaultValue) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel  non-null
+     * @param defaultValue see {@link #getOrDefault(int, Object)}
+     * @return see {@link #getOrDefault(int, Object)}
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
@@ -734,8 +789,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getOrSupplier(index,supplier) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param supplier    see {@link #getOrSupplier(int, Supplier)}
+     * @return see {@link #getOrSupplier(int, Supplier)}
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
@@ -758,8 +816,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.get(index,columnClass) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param columnClass see {@link #get(int, Class)}
+     * @param <T>         see {@link #get(int, Class)}
+     * @return column value
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
@@ -783,8 +845,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getOrDefault(index,columnClass,defaultValue) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel  non-null
+     * @param columnClass  see {@link #getOrDefault(int, Class, Object)}
+     * @param defaultValue see {@link #getOrDefault(int, Class, Object)}
+     * @param <T>          see {@link #getOrDefault(int, Class, Object)}
+     * @return see {@link #getOrDefault(int, Class, Object)}
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
@@ -806,8 +873,13 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getOrSupplier(index,columnClass,supplier) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param columnClass see {@link #getOrSupplier(int, Class, Supplier)}
+     * @param supplier    see {@link #getOrSupplier(int, Class, Supplier)}
+     * @param <T>         see {@link #getOrSupplier(int, Class, Supplier)}
+     * @return see {@link #getOrSupplier(int, Class, Supplier)}
      * @throws JdbdException throw when {@link #getColumnIndex(String)} throw error
      * @see #getColumnIndex(String)
      * @see #getOrSupplier(int, Class, Supplier)
@@ -825,8 +897,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getNonNull(index) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @return see {@link #getNonNull(int)}
      * @throws JdbdException        throw when {@link #getColumnIndex(String)} throw error
      * @throws NullPointerException throw when {@link #getNonNull(int)} throw error
      * @see #getColumnIndex(String)
@@ -845,8 +919,12 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getNonNull(index,columnClass) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param columnClass see {@link #getNonNull(int, Class)}
+     * @param <T>         see {@link #getNonNull(int, Class)}
+     * @return see {@link #getNonNull(int, Class)}
      * @throws JdbdException        throw when {@link #getColumnIndex(String)} throw error
      * @throws NullPointerException throw when {@link #getNonNull(int, Class)} throw error
      * @see #getColumnIndex(String)
@@ -866,12 +944,16 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getList(index,elementClass,ArrayList::new) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel  non-null
+     * @param elementClass see {@link #getList(int, Class, IntFunction)}
+     * @param <T>          see {@link #getList(int, Class, IntFunction)}
+     * @return see {@link #getList(int, Class, IntFunction)}
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
-     *                           <i>{@link #getList(int, Class, IntFunction)} throw error</i>
+     *                           <li>{@link #getList(int, Class, IntFunction)} throw error</li>
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getList(int, Class, IntFunction)
@@ -889,12 +971,17 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getList(index,elementClass,constructor) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel  non-null
+     * @param elementClass element java class of list
+     * @param constructor  constructor of list
+     * @param <T>          element java type of list
+     * @return list
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
-     *                           <i>{@link #getList(int, Class, IntFunction)} throw error</i>
+     *                           <li>{@link #getList(int, Class, IntFunction)} throw error</li>
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getList(int, Class, IntFunction)
@@ -912,12 +999,16 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getSet(index,elementClass,HashSet::new) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel  non-null
+     * @param elementClass see {@link #getSet(int, Class, IntFunction)}
+     * @param <T>          see {@link #getSet(int, Class, IntFunction)}
+     * @return set
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
-     *                           <i>{@link #getSet(int, Class, IntFunction)} throw error</i>
+     *                           <li>{@link #getSet(int, Class, IntFunction)} throw error</li>
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getSet(int, Class, IntFunction)
@@ -935,12 +1026,17 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getSet(index,elementClass,constructor) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel  non-null
+     * @param elementClass element java class of set
+     * @param constructor  constructor of set
+     * @param <T>          element java type of set
+     * @return set
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
-     *                           <i>{@link #getSet(int, Class, IntFunction)} throw error</i>
+     *                           <li>{@link #getSet(int, Class, IntFunction)} throw error</li>
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getSet(int, Class, IntFunction)
@@ -959,12 +1055,18 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getMap(index,keyClass,keyClass,HashMap::new) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param keyClass    see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param valueClass  see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param <K>         see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param <V>         see {@link #getMap(int, Class, Class, IntFunction)}
+     * @return see {@link #getMap(int, Class, Class, IntFunction)}
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
-     *                           <i>{@link #getMap(int, Class, Class, IntFunction)} throw error</i>
+     *                           <li>{@link #getMap(int, Class, Class, IntFunction)} throw error</li>
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getMap(int, Class, Class, IntFunction)
@@ -982,12 +1084,19 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getMap(index,keyClass,keyClass,constructor) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param keyClass    see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param valueClass  see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param constructor see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param <K>         see {@link #getMap(int, Class, Class, IntFunction)}
+     * @param <V>         see {@link #getMap(int, Class, Class, IntFunction)}
+     * @return see {@link #getMap(int, Class, Class, IntFunction)}
      * @throws JdbdException throw when
      *                       <ul>
      *                           <li>{@link #getColumnIndex(String)} throw error</li>
-     *                           <i>{@link #getMap(int, Class, Class, IntFunction)} throw error</i>
+     *                           <li>{@link #getMap(int, Class, Class, IntFunction)} throw error</li>
      *                       </ul>
      * @see #getColumnIndex(String)
      * @see #getMap(int, Class, Class, IntFunction)
@@ -1005,8 +1114,11 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *             return row.getPublisher(index,valueClass) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param columnLabel non-null
+     * @param valueClass  element java class
+     * @param <T> element java type
      * @return if column value is null,then return empty {@link Publisher}.
      * @throws JdbdException throw when
      *                       <ul>

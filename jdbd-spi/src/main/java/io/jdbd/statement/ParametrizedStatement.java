@@ -133,7 +133,6 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link JdbdType#TEXT}</li>
      *                  <li>{@link JdbdType#MEDIUMTEXT}</li>
      *                  <li>{@link JdbdType#LONGTEXT}</li>
-     *                  <br/>
      *                  <li>{@link JdbdType#XML}</li>
      *                  <li>{@link JdbdType#JSON}</li>
      *                  <li>{@link JdbdType#JSONB}</li>
@@ -305,8 +304,7 @@ public interface ParametrizedStatement extends Statement {
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
-     *     </ul>
-     *     <li>{@link JdbdType#GEOMETRY}  support following java types :
+     *         <li>{@link JdbdType#GEOMETRY}  support following java types :
      *                <ol>
      *                    <li>{@code null}</li>
      *                    <li>{@link Point} WKB or WKT</li>
@@ -319,7 +317,8 @@ public interface ParametrizedStatement extends Statement {
      *                    <li>{@link OutParameter}</li>
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
-     *     </li>
+     *         </li>
+     *     </ul>
      *<br/>
      *
      * @param indexBasedZero parameter placeholder index based zero, the first value is 0 .

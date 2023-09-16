@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
+ * driver communication task executor
+ *
  * @param <T> {@link ITaskAdjutant} type.
  * @see CommunicationTask
  */

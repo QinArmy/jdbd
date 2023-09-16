@@ -22,7 +22,9 @@ public interface ChunkOption extends OptionSpec {
     /**
      * <p>
      * If chunk is binary , the {@link Charset} should be {@link java.nio.charset.StandardCharsets#ISO_8859_1}
-     *<br/>
+     * <br/>
+     *
+     * @return non-null
      */
     Charset charset();
 

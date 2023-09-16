@@ -211,8 +211,11 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *     </pre>
      * <br/>
      *
-     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
-     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
+     * @param rowFunc        see {@link #executeQuery(Function, Consumer)}
+     * @param statesConsumer see {@link #executeQuery(Function, Consumer)}
+     * @param fluxFunc       convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
+     * @param <R>            see {@link #executeQuery(Function, Consumer)}
+     * @param <F>            F representing {@link Publisher} that emit 0-N element or {@link Throwable}.
      * @return {@link Publisher} that emit 0-N element or {@link Throwable}.
      * @see #executeQuery(Function, Consumer)
      */

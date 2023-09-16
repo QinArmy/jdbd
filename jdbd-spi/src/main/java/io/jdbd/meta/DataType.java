@@ -32,22 +32,33 @@ import io.jdbd.statement.ParametrizedStatement;
 public interface DataType {
 
     /**
+     * alias of data type in java language.
+     *
      * @return alias of data type in java language.
      */
     String name();
 
     /**
+     * sql data type name
      * @return data type name in database. If support ,upper case precedence. If array end with [] .
      */
     String typeName();
 
     /**
+     * Whether is array or not
      * <p>
      * <strong>NOTE</strong> : if {@link #isUnknown()} return true ,this method always return false.
-     *<br/>
+     * <br/>
+     *
+     * @return true : array
      */
     boolean isArray();
 
+    /**
+     * Whether is unknown or not
+     *
+     * @return true : unknown
+     */
     boolean isUnknown();
 
 
@@ -59,7 +70,8 @@ public interface DataType {
      * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * It means you should prefer {@link JdbdType}.
      *<br/>
-     *
+     * @param typeName non-null
+     * @return DataType instance
      * @see #buildIn(String, boolean)
      */
     static DataType buildIn(String typeName) {
@@ -93,7 +105,8 @@ public interface DataType {
      * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * It means you should prefer {@link JdbdType}.
      *<br/>
-     *
+     * @param typeName non-null
+     * @return {@link UserDefinedType} instance
      * @see #userDefined(String, boolean)
      */
     static UserDefinedType userDefined(String typeName) {
