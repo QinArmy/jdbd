@@ -14,8 +14,6 @@ import java.util.List;
  * <br/>
  * <p>
  * <strong>NOTE</strong>: never {@link CurrentRow} in {@link OrderedFlux}.
- * <br/>
- * <p>
  * <ul>
  *     <li>The update result always is represented by just one {@link ResultStates} instance.</li>
  *     <li>The query result is represented by following sequence :

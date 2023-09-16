@@ -1,6 +1,8 @@
 package io.jdbd.result;
 
 /**
+ * <p> This enum representing cursor
+ *
  * @see RefCursor
  */
 public enum CursorDirection {

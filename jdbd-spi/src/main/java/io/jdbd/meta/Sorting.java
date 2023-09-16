@@ -1,6 +1,8 @@
 package io.jdbd.meta;
 
 /**
+ * This enum representing index column sorting
+ *
  * @see IndexColumnMeta
  * @since 1.0
  */

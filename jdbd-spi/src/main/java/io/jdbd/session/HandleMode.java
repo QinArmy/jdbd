@@ -1,6 +1,10 @@
 package io.jdbd.session;
 
 /**
+ * <p>
+ * the handle mode to exists transaction when invoke {@link LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)}.
+ * </p>
+ *
  * @see LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)
  * @since 1.0
  */

@@ -47,7 +47,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * Add current parameter group to batch item list.
-     *<br/>
+     * <br/>
      *
      * @return <strong>this</strong>
      */
@@ -56,8 +56,9 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
      *
+     * @return the {@link Publisher} emit just one {@link ResultStates} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
      *                           <li>param bind error</li>
@@ -82,7 +83,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @param monoFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Mono#from(org.reactivestreams.Publisher)}
      * @param <M>      M representing Mono that emit just one element or {@link Throwable}.
@@ -100,8 +101,9 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *             stmt.executeQuery(CurrentRow::asResultRow,states -> {}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @return see {@link #executeQuery(Function, Consumer)}
      * @see #executeQuery(Function, Consumer)
      */
     Publisher<ResultRow> executeQuery();
@@ -116,29 +118,57 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *             stmt.executeQuery(function,states -> {}) ; // ignore ResultStates instance.
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
+     * @param rowFunc see {@link #executeQuery(Function, Consumer)}
+     * @param <R>     see {@link #executeQuery(Function, Consumer)}
+     * @return see {@link #executeQuery(Function, Consumer)}
      * @see #executeQuery(Function, Consumer)
      */
     <R> Publisher<R> executeQuery(Function<CurrentRow, R> rowFunc);
 
 
     /**
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <p>Execute a sql statement and server response just one query result,the result consist of :
+     * <ol>
+     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#getResultNo()} always return 1</li>
+     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     * </ol>
+     * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
+     * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.
      *
-     * @param rowFunc current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
-     *                for example :
-     *                <ul>
-     *                     <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
-     *                     <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
-     *                </ul>
-     * @throws JdbdException emmit(not throw) when
+     * <p>
+     * <strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
+     * <br/>
+     *
+     * @param rowFunc        current row map function.<strong>NOTE</strong>: you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}.<br/>
+     *                       for example :
      *                       <ul>
-     *                           <li>param bind error</li>
-     *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#TINYTEXT} bind {@link io.jdbd.type.Clob}</li>
+     *                            <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
+     *                            <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
      *                       </ul>
+     *                       Using rowFunc to avoid create {@link ResultRow} instance for improving performance.
+     * @param statesConsumer a consumer to receive the {@link ResultStates},if don't use {@link #setFetchSize(int)} ,<br/>
+     *                       then will be invoked just once by driver,else will be invoked multi-times by driver. <br/>
+     *                       <strong>NOTE</strong>: even if use
+     * @throws JdbdException        emmit(not throw) when
+     *                              <ul>
+     *                                  <li>you reuse this {@link BindSingleStatement} instance</li>
+     *                                  <li>param bind error</li>
+     *                                  <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                                  <li>rowFunc throw {@link Throwable}</li>
+     *                                  <li>statesConsumer throw {@link Throwable}</li>
+     *                                  <li>sql error</li>
+     *                                  <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                                  <li>server response error ,see {@link ServerException}</li>
+     *                                  <li>server response result not match,e.g: response multi-result,or update result</li>
+     *                              </ul>
+     * @throws NullPointerException emit(not throw) when
+     *                              <ul>
+     *                                  <li>rowFunc is null</li>
+     *                                  <li>statesConsumer is null</li>
+     *                              </ul>
      */
     <R> Publisher<R> executeQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);
 
@@ -156,7 +186,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
@@ -169,7 +199,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     *<br/>
+     * <br/>
      */
     OrderedFlux executeAsFlux();
 
@@ -187,7 +217,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
      * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.

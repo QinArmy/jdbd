@@ -20,7 +20,7 @@ import java.util.function.Function;
  * <p>
  * Application developer can get the instance of this interface by following method:
  * <ul>
- *     <li>{@link DatabaseSession#refCursor(String, java.util.Map)}</li>
+ *     <li>{@link DatabaseSession#refCursor(String, Function)}</li>
  *     <li>{@link DataRow#get(int, Class)}</li>
  *     <li>{@link ResultStates#valueOf(Option)}, see {@link Option#CURSOR}</li>
  * </ul>

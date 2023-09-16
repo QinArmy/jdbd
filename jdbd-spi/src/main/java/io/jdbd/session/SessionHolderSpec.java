@@ -14,11 +14,16 @@ package io.jdbd.session;
 public interface SessionHolderSpec {
 
     /**
+     * Get hold session
+     *
      * @return the {@link DatabaseSession} that create this statement instance.
      */
     DatabaseSession getSession();
 
     /**
+     * Get hold session
+     * @param sessionClass  session java class
+     * @param <T> session java type
      * @return the {@link DatabaseSession} that create this statement instance.
      * @throws ClassCastException throw when cast error
      */

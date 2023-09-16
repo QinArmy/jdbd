@@ -6,7 +6,6 @@ import io.jdbd.type.BlobPath;
 import java.nio.file.Path;
 
 /**
- * <p>
  * This interface is base interface of following:
  *     <ul>
  *         <li>{@link BlobPath}</li>
@@ -19,11 +18,18 @@ import java.nio.file.Path;
 public interface BigColumnValue {
 
     /**
+     * should delete after close
+     *
+     * @return true : should delete after close
      * @see java.nio.file.StandardOpenOption#DELETE_ON_CLOSE
      */
     boolean isDeleteOnClose();
 
-
+    /**
+     * file path
+     *
+     * @return file path
+     */
     @NonNull
     Path value();
 
