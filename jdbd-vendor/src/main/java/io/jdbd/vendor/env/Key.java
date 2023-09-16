@@ -14,6 +14,7 @@ import java.util.function.IntFunction;
 /**
  * url property key
  *
+ * @param <T> key value java type
  * @see Environment
  */
 public abstract class Key<T> {

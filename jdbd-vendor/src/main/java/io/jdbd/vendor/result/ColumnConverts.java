@@ -176,6 +176,8 @@ public abstract class ColumnConverts {
     /**
      * convert to byte
      *
+     * @param meta   non-null
+     * @param source non-null
      * @return byte
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
@@ -193,6 +195,9 @@ public abstract class ColumnConverts {
 
     /**
      * convert to short
+     *
+     * @param meta   non-null
+     * @param source non-null
      * @return short
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
@@ -210,6 +215,8 @@ public abstract class ColumnConverts {
 
     /**
      * convert to int
+     * @param meta non-null
+     * @param source  non-null
      * @return int
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
@@ -227,6 +234,8 @@ public abstract class ColumnConverts {
 
     /**
      * convert to long
+     * @param meta non-null
+     * @param source  non-null
      * @return long
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
@@ -284,6 +293,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link BigInteger}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -316,6 +329,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link BigDecimal}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -351,6 +368,10 @@ public abstract class ColumnConverts {
 
 
     /**
+     * convert to {@link String}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -432,6 +453,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link LocalDateTime}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */
@@ -452,6 +477,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link LocalDate}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */
@@ -470,6 +499,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link LocalTime}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */
@@ -488,6 +521,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link YearMonth}
+     * @param meta non-null
+     * @param source  non-null
+     * @return non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */

@@ -5,6 +5,8 @@ import io.jdbd.session.SavePoint;
 import io.jdbd.vendor.util.JdbdStrings;
 
 /**
+ * named {@link SavePoint}
+ *
  * @see UnNamedSavePoint
  * @since 1.0
  */

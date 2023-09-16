@@ -9,11 +9,10 @@ import io.jdbd.statement.Parameter;
  * <p>
  * This interface representing a value that is bound to sql.
  * This is a base interface of below interface:
- * <p>
- * <UL>
+ * <ul>
  * <li>{@link ParamValue}</li>
  * <li>{@link NamedValue }</li>
- * </UL>
+ * </ul>
  * <br/>
  * <br/>
  *
