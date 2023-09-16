@@ -210,11 +210,7 @@
 
     <profiles>
         <profile>
-            <id>ossrh</id>
-            <properties>
-                <gpg.executable>gpg2</gpg.executable>
-                <gpg.passphrase>the_pass_phrase</gpg.passphrase>
-            </properties>
+            <id>ossrh-jdbd</id>
             <build>
                 <plugins>
                     <plugin>
@@ -229,8 +225,7 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <keyname>${env.jdbd_keyname}</keyname>
-                                    <passphraseServerId>${env.jdbd_keyname}</passphraseServerId>
+                                    <keyname>${gpg.keyname}</keyname>
                                     <gpgArguments>
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
@@ -247,14 +242,12 @@
                         <configuration>
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
 
                 </plugins>
             </build>
-
-
             <distributionManagement>
                 <snapshotRepository>
                     <id>ossrh</id>
@@ -267,6 +260,5 @@
             </distributionManagement>
 
         </profile>
-
     </profiles>
 </project>
