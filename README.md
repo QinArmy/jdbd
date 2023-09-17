@@ -5,14 +5,22 @@ The Reactive Java Database Driver (JDBD) project brings reactive programming API
 ### How to start ?
 
 #### Maven
+for example: use jdbd-mysql
 
 ```xml
 
-<dependency>
-    <groupId>io.jdbd</groupId>
-    <artifactId>jdbd-spi</artifactId>
-    <version>0.8.0</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>io.jdbd</groupId>
+        <artifactId>jdbd-spi</artifactId>
+        <version>0.8.0</version>
+    </dependency>
+    <dependency>
+        <groupId>io.jdbd.mysql</groupId>
+        <artifactId>jdbd-mysql</artifactId>
+        <version>0.8.0</version>
+    </dependency>
+</dependencies>
 ```
 
 #### Java code
