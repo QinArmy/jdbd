@@ -2,9 +2,17 @@
 
 The Reactive Java Database Driver (JDBD) project brings reactive programming APIs to relational databases.
 
+# Design Philosophy
+
+1. support standard
+2. more dialectal
+3. more practical
+4. more efficient
+
 ### How to start ?
 
 #### Maven
+
 for example: use jdbd-mysql
 
 ```xml
