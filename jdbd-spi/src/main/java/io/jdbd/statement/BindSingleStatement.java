@@ -66,8 +66,16 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     BindSingleStatement addBatch() throws JdbdException;
 
     /**
-     * <p>Execute a sql statement and server response just one update result, the result is a {@link ResultStates} instance<br/>
-     * whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#getResultNo()} always return 1 .
+     * Executes the given SQL statement thant can producer just one update result.
+     * for example :
+     * <ul>
+     *     <li>INSERT</li>
+     *     <li>UPDATE</li>
+     *     <li>DELETE</li>
+     *     <li>CREATE TABLE</li>
+     *     <li>CALL Stored procedures that just produce one update result and no out parameter.</li>
+     * </ul>
+     * <p>The result is a {@link ResultStates} instance whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#getResultNo()} always return 1 .
      * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
      *
      * @return the {@link Publisher} emit just one {@link ResultStates} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
@@ -148,7 +156,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * <ol>
      *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#getResultNo()} always return 1</li>
      *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
-     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>1-N {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
      * </ol>
      * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
      * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.
@@ -171,7 +179,11 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *                       </ul>
      * @param statesConsumer a consumer to receive the {@link ResultStates},if don't use {@link #setFetchSize(int)} ,<br/>
      *                       then will be invoked just once by driver,else will be invoked multi-times by driver. <br/>
-     *                       <strong>NOTE</strong>: even if use {@link #setFetchSize(int)} the {@link ResultStates#getResultNo()} always return 1 .
+     *                       <strong>NOTE</strong>:
+     *                       <ul>
+     *                          <li>even if use {@link #setFetchSize(int)} the {@link ResultStates#getResultNo()} always return 1</li>
+     *                          <li>driver will invoke statesConsumer in an ordered / serial fashion. Typically ,statesConsumer run in {@code  io.netty.channel.EventLoop}</li>
+     *                       </ul>
      * @param <R>            the row java type,it is returned by rowFunc.
      * @return the {@link Publisher} emit 0-N element or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException        emmit(not throw) when

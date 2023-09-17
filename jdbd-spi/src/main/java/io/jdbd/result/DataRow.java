@@ -55,6 +55,21 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
 
     /**
      * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // row is instance of {@link DataRow}
+     *            return row.getRowMeta().getResultNo()
+     *         </code>
+     * </pre>
+     *
+     * @return see {@link ResultRowMeta#getResultNo()}
+     */
+    @Override
+    int getResultNo();
+
+    /**
+     * <p>
      * Bit row means that exists at least one big column. see {@link #isBigColumn(int)}
      * <br/>
      *
@@ -1118,7 +1133,7 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *
      * @param columnLabel non-null
      * @param valueClass  element java class
-     * @param <T> element java type
+     * @param <T>         element java type
      * @return if column value is null,then return empty {@link Publisher}.
      * @throws JdbdException throw when
      *                       <ul>

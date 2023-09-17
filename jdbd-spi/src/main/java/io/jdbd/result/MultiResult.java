@@ -1,16 +1,26 @@
 package io.jdbd.result;
 
 
+import io.jdbd.statement.MultiResultStatement;
 import io.jdbd.statement.StaticStatementSpec;
 import org.reactivestreams.Publisher;
 
+import java.util.List;
 import java.util.function.Function;
 
 
 /**
  * <p>
+ * This interface representing multi-result.
+ * </p>
+ * <p>
  * <strong>NOTE</strong> : driver don't send message to database server before first subscribing.
  * <br/>
+ * <p>This interface instance is crated by following methods:
+ * <ul>
+ *     <li>{@link MultiResultStatement#executeBatchAsMulti()}</li>
+ *     <li>{@link StaticStatementSpec#executeBatchAsMulti(List)}</li>
+ * </ul>
  *
  * @since 1.0
  */
@@ -18,6 +28,8 @@ public interface MultiResult extends MultiResultSpec {
 
 
     /**
+     * <p>Subscribe next update result.
+     *
      * @return A Reactive Streams {@link Publisher} with rx operators that emits 0 to 1 elements
      * ,like {@code reactor.core.publisher.Mono}.
      * @throws NoMoreResultException emit when {@link MultiResult} end and no buffer.
@@ -38,7 +50,7 @@ public interface MultiResult extends MultiResultSpec {
      *
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @param monoFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Mono#from(org.reactivestreams.Publisher)}
      * @param <M>      M representing Mono that emit just one element or {@link Throwable}.

@@ -1,10 +1,11 @@
 package io.jdbd.result;
 
 import io.jdbd.JdbdException;
-import io.jdbd.statement.BindSingleStatement;
+import io.jdbd.statement.MultiResultStatement;
 import io.jdbd.statement.StaticStatementSpec;
 import org.reactivestreams.Publisher;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -22,7 +23,13 @@ import java.util.function.Function;
  * <p>
  * <strong>NOTE</strong> : driver don't send message to database server before first subscribing.
  * <br/>
- *
+ *<p>This interface instance is crated by following methods:
+ * <ul>
+ *     <li>{@link MultiResultStatement#executeBatchQuery()}</li>
+ *     <li>{@link MultiResultStatement#executeBatchAsMulti()}</li>
+ *     <li>{@link StaticStatementSpec#executeBatchQuery(List)}</li>
+ *     <li>{@link StaticStatementSpec#executeBatchAsMulti(List)}</li>
+ * </ul>
  * @since 1.0
  */
 public interface MultiResultSpec {
@@ -62,7 +69,16 @@ public interface MultiResultSpec {
     <R> Publisher<R> nextQuery(Function<CurrentRow, R> rowFunc);
 
     /**
-     * Subscribe next query result.
+     * Subscribe next query result,the result consist of :
+     * <ol>
+     *     <li>one {@link ResultRowMeta}</li>
+     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,the {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     * </ol>
+     * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
+     * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.
+     * <p><strong>NOTE</strong>: if you don't subscribe before emit {@link ResultRowMeta},then driver will cache {@link ResultItem}s of this result to {@link java.util.Queue}.
+     * <p>more info see {@link MultiResultStatement#executeBatchAsMulti()} and {@link MultiResultStatement#executeBatchQuery()}
      *
      * @param rowFunc        current row map function.Using rowFunc to avoid create {@link ResultRow} instance for improving performance.<br/>
      *                       <strong>NOTE</strong>:
@@ -74,10 +90,30 @@ public interface MultiResultSpec {
      *                                      <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
      *                                  </ul>
      *                           </li>
+     *                           <li>driver will invoke rowFunc in an ordered / serial fashion.</li>
      *                       </ul>
-     * @param statesConsumer a consumer to receive the {@link ResultStates}
-     * @param <R>            row java type
+     * @param statesConsumer a consumer to receive the {@link ResultStates},statesConsumer will be invoked just once by driver.<br/>
+     *                       <strong>NOTE</strong>: driver will invoke statesConsumer in an ordered / serial fashion.
+     * @param <R>            the row java type,it is returned by rowFunc.
      * @return the {@link Publisher} emit 0-N element or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException        emmit(not throw) when
+     *                              <ul>
+     *                                  <li>you reuse appropriate {@link io.jdbd.statement.Statement} instance</li>
+     *                                  <li>param bind error</li>
+     *                                  <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                                  <li>rowFunc throw {@link Throwable}</li>
+     *                                  <li>statesConsumer throw {@link Throwable}</li>
+     *                                  <li>sql error</li>
+     *                                  <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                                  <li>server response error ,see {@link ServerException}</li>
+     *                                  <li>current result result not match,e.g: current result is update result</li>
+     *                                  <li>rowFunc return {@link CurrentRow} instance</li>
+     *                              </ul>
+     * @throws NullPointerException emit(not throw) when
+     *                              <ul>
+     *                                  <li>rowFunc is null</li>
+     *                                  <li>statesConsumer is null</li>
+     *                              </ul>
      */
     <R> Publisher<R> nextQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);
 
@@ -96,11 +132,12 @@ public interface MultiResultSpec {
      *         </code>
      *     </pre>
      * <br/>
-     * @param rowFunc see {@link #nextQuery(Function, Consumer)}
-     * @param statesConsumer  see {@link #nextQuery(Function, Consumer)}
-     * @param fluxFunc convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
-     * @param <F>      F representing Flux that emit 0-N element or {@link Throwable}.
-     * @param <R> row java type
+     *
+     * @param rowFunc        see {@link #nextQuery(Function, Consumer)}
+     * @param statesConsumer see {@link #nextQuery(Function, Consumer)}
+     * @param fluxFunc       convertor function of Publisher ,for example : {@code reactor.core.publisher.Flux#from(org.reactivestreams.Publisher)}
+     * @param <F>            F representing Flux that emit 0-N element or {@link Throwable}.
+     * @param <R>            row java type
      * @return non-null Flux that emit just one element or {@link Throwable}.
      * @throws NullPointerException throw when
      *                              <ul>
@@ -112,19 +149,24 @@ public interface MultiResultSpec {
     <R, F extends Publisher<R>> F nextQuery(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer, Function<Publisher<R>, F> fluxFunc);
 
     /**
-     * <p>subscribe next query result
-     * <p>More info see {@link OrderedFlux}.
+     * <p>Subscribe next query result.
+     * <p>more info see:
+     * <ul>
+     *     <li>{@link OrderedFlux}</li>
+     *     <li>{@link MultiResultStatement#executeBatchAsMulti()}</li>
+     *     <li>{@link MultiResultStatement#executeBatchQuery()}</li>
+     * </ul>
      *
-     * @return {@link OrderedFlux} that emit just one query result or {@link Throwable}
+     * @return {@link OrderedFlux} that emit 2-N {@link ResultItem} or {@link Throwable}
      * @throws JdbdException emmit(not throw) when
      *                       <ul>
-     *                           <li>you reuse this {@link io.jdbd.statement.Statement} instance</li>
+     *                           <li>you reuse appropriate {@link io.jdbd.statement.Statement} instance</li>
      *                           <li>param bind error</li>
      *                           <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
      *                           <li>sql error</li>
      *                           <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
      *                           <li>server response error ,see {@link ServerException}</li>
-     *                           <li>result not match</li>
+     *                           <li>current result result not match,e.g: current result is update result</li>
      *                       </ul>
      */
     OrderedFlux nextQueryFlux();

@@ -543,6 +543,10 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link MonthDay}
+     *
+     * @param meta   non-null
+     * @param source non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */
@@ -561,6 +565,9 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link Month}
+     * @param meta non-null
+     * @param source  non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */
@@ -582,6 +589,9 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link DayOfWeek}
+     * @param meta non-null
+     * @param source  non-null
      * @throws DateTimeException throw when source is error date time {@link String}
      * @throws JdbdException     throw when source couldn't convert or overflow.
      */
@@ -601,6 +611,9 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to {@link BitSet}
+     * @param meta non-null
+     * @param source  non-null
      * @throws JdbdException throw when source couldn't convert or overflow.
      */
     public static BitSet convertToBitSet(final ColumnMeta meta, final Object source) throws JdbdException {
@@ -635,6 +648,9 @@ public abstract class ColumnConverts {
 
 
     /**
+     * convert to int
+     * @param meta non-null
+     * @param source  non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -671,6 +687,9 @@ public abstract class ColumnConverts {
 
 
     /**
+     * convert to int unsigned
+     * @param meta non-null
+     * @param source  non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -736,6 +755,9 @@ public abstract class ColumnConverts {
 
 
     /**
+     * convert to long
+     * @param meta non-null
+     * @param source  non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -768,6 +790,9 @@ public abstract class ColumnConverts {
     }
 
     /**
+     * convert to long unsigned
+     * @param meta non-null
+     * @param source  non-null
      * @throws NumberFormatException throw when source is error number {@link String}
      * @throws ArithmeticException   throw when source overflow to target
      * @throws JdbdException         throw when source couldn't convert or overflow.
@@ -890,9 +915,7 @@ public abstract class ColumnConverts {
         return Flux.generate(sink -> emitTextFile(meta, path, bufferLength, sink));
     }
 
-    /**
-     * convert path to {@link Blob}
-     */
+
     public static void emitBlobFile(final ColumnMeta meta, final BlobPath path, final int bufferLength,
                                     final SynchronousSink<byte[]> sink) {
 
@@ -917,9 +940,7 @@ public abstract class ColumnConverts {
 
     }
 
-    /**
-     * convert path to {@link Clob}
-     */
+
     public static void emitTextFile(final ColumnMeta meta, final TextPath path, final int bufferLength,
                                     final SynchronousSink<String> sink) {
 
