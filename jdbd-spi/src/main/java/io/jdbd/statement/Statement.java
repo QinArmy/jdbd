@@ -448,7 +448,11 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *
      * @param function map Publisher function
      * @return <strong>this</strong>
-     * @throws JdbdException throw when driver don't this method.
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link DatabaseSession#isSupportImportPublisher()} return false</li>
+     *                           <li>{@link #isSupportImportPublisher()} return false</li>
+     *                       </ul>
      */
     Statement setImportPublisher(Function<ChunkOption, Publisher<byte[]>> function) throws JdbdException;
 
@@ -458,7 +462,11 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *
      * @param function map Subscriber function
      * @return <strong>this</strong>
-     * @throws JdbdException throw when driver don't this method.
+     * @throws JdbdException throw when
+     *                       <ul>
+     *                           <li>{@link DatabaseSession#isSupportExportSubscriber()} return false</li>
+     *                           <li>{@link #isSupportExportSubscriber()}  return false</li>
+     *                       </ul>
      */
     Statement setExportSubscriber(Function<ChunkOption, Subscriber<byte[]>> function) throws JdbdException;
 

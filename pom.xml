@@ -32,14 +32,14 @@
     </developers>
 
     <scm>
-        <connection>scm:git@github.com:QinArmy/jdbd.git</connection>
+        <connection>scm:git:https://github.com/QinArmy/jdbd</connection>
         <url>https://github.com/QinArmy/jdbd</url>
     </scm>
 
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
