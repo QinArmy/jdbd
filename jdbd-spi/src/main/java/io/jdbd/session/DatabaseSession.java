@@ -4,7 +4,6 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DatabaseMetaData;
 import io.jdbd.result.RefCursor;
-import io.jdbd.result.ResultStates;
 import io.jdbd.statement.*;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
@@ -242,7 +241,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * @throws IllegalArgumentException throw when name have no text.
      * @throws JdbdException            throw when {@link #isSupportRefCursor()} return false.
      */
-    RefCursor refCursor(String name, Function<Option<?>, ?> optionFunc);
+    RefCursor refCursor(String name, Function<Option<?>, ?> optionFunc) throws JdbdException;
 
 
     /**
@@ -307,7 +306,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * </ul>
      * @throws JdbdException throw when
      *                       <ul>
-     *                           <li>database client protocol don't support this method. see {@link #valueOf(Option)}</li>
+     *                           <li>{@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null</li>
      *                           <li>session have closed.</li>
      *                       </ul>
      */
@@ -480,7 +479,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                       <li>{@link NameMode#UPPER_CASE} append upper case tableName</li>
      *                       <li>{@link NameMode#DEFAULT} append tableName</li>
      *                  </ul>
-     * @param builder target builder
+     * @param builder   target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when
      *                       <ul>
@@ -506,7 +505,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                        <li>{@link NameMode#UPPER_CASE} append upper case columnName</li>
      *                        <li>{@link NameMode#DEFAULT} append columnName</li>
      *                   </ul>
-     * @param builder target builder
+     * @param builder    target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when
      *                       <ul>
@@ -527,6 +526,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * This method can be useful , application developer can know session and <strong>this</strong> belong to
      * same resource manager in XA transaction.
      * <br/>
+     *
      * @param session non-null session
      * @return true : session and this both are created by same {@link DatabaseSessionFactory} instance.
      */
@@ -561,8 +561,9 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *         <li>{@link Option#BINARY_HEX_ESCAPES}</li>
      *     </ul>
      * <br/>
+     *
      * @param option option key
-     * @param <T> option value java type
+     * @param <T>    option value java type
      * @return null or the value of option.
      * @throws JdbdException throw when option need session open and session have closed.
      */

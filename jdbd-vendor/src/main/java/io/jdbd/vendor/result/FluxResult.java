@@ -14,6 +14,7 @@ import reactor.core.Exceptions;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Consumer;
+import java.util.function.LongConsumer;
 
 /**
  * @see UpdateResultSubscriber
@@ -108,6 +109,11 @@ final class FluxResult implements OrderedFlux {
         }
 
         @Override
+        public void onRequest(LongConsumer consumer) {
+            this.subscription.consumer = consumer;
+        }
+
+        @Override
         public boolean isCancelled() {
             // this method invoker in EventLoop
             // upstream still invoke complete() or error() method
@@ -141,6 +147,8 @@ final class FluxResult implements OrderedFlux {
 
         private static final AtomicIntegerFieldUpdater<SubscriptionImpl> CANCELED =
                 AtomicIntegerFieldUpdater.newUpdater(SubscriptionImpl.class, "canceled");
+
+        private LongConsumer consumer;
         private volatile int canceled;
 
         private SubscriptionImpl() {
@@ -155,6 +163,10 @@ final class FluxResult implements OrderedFlux {
             // 4. io.jdbd.vendor.result.MultiResultSubscriber
             // always Long.MAX_VALUE
             // driver must clear connection chanel for next statement.
+            final LongConsumer consumer = this.consumer;
+            if (consumer != null) {
+                consumer.accept(n);
+            }
         }
 
         @Override
