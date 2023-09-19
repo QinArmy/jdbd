@@ -33,7 +33,11 @@ public final class DefaultDriverVersion implements DriverVersion {
             } else {
                 minor = Integer.parseInt(version.substring(pointIndex1 + 1, pointIndex2));
                 hyphenIndex = version.indexOf('-', pointIndex2 + 1);
-                subMinor = Integer.parseInt(version.substring(pointIndex2 + 1, hyphenIndex));
+                if (hyphenIndex < 0) {
+                    subMinor = Integer.parseInt(version.substring(pointIndex2 + 1));
+                } else {
+                    subMinor = Integer.parseInt(version.substring(pointIndex2 + 1, hyphenIndex));
+                }
             }
 
             return new DefaultDriverVersion(name, version, major, minor, subMinor);
