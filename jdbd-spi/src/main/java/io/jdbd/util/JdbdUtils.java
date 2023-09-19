@@ -1,5 +1,6 @@
 package io.jdbd.util;
 
+import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.type.PathParameter;
 import io.jdbd.type.TextPath;
@@ -10,10 +11,9 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class JdbdUtils {
@@ -50,6 +50,31 @@ public abstract class JdbdUtils {
             break;
         }
         return match;
+    }
+
+    /**
+     * load properties from path
+     *
+     * @param path properties file path
+     * @return properties map
+     * @throws JdbdException throw when occur error
+     * @see io.jdbd.Driver#forDeveloper(String, Map)
+     */
+    public static Map<String, Object> loadProperties(final Path path) throws JdbdException {
+
+        try (InputStream in = Files.newInputStream(path, StandardOpenOption.READ)) {
+            final Properties properties = new Properties();
+            properties.load(in);
+
+            final Map<String, Object> map = new HashMap<>((int) (properties.size() / 0.75f));
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                map.put(entry.getKey().toString(), entry.getValue());
+            }
+            return map;
+        } catch (Exception e) {
+            String m = String.format("load properties %s occur error", path);
+            throw new JdbdException(m, e);
+        }
     }
 
     /**

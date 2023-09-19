@@ -12,11 +12,21 @@
 
     <name>jdbd-spi</name>
     <description>The Reactive Java Database Driver (JDBD) project brings reactive(non-blocking) programming APIs to
-        relational
-        databases.
+        relational databases.
     </description>
     <url>https://github.com/QinArmy/jdbd</url>
 
+    <organization>
+        <name>jdbd</name>
+        <url>https://jdbd.io</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>zoro</name>
+            <email>zoro&#64;qinarmy.io</email>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>

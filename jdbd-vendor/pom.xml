@@ -10,6 +10,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>jdbd-vendor</artifactId>
+
+    <name>jdbd-vendor</name>
+    <description>jdbd-vendor comment class for driver vendor if driver vendor need
+    </description>
+    <url>https://github.com/QinArmy/jdbd</url>
+
+    <organization>
+        <name>jdbd</name>
+        <url>https://jdbd.io</url>
+    </organization>
+    <developers>
+        <developer>
+            <name>zoro</name>
+            <email>zoro&#64;qinarmy.io</email>
+        </developer>
+    </developers>
+
     <dependencies>
         <dependency>
             <groupId>io.jdbd</groupId>

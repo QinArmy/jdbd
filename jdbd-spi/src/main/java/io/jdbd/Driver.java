@@ -3,6 +3,7 @@ package io.jdbd;
 import io.jdbd.pool.PoolRmDatabaseSession;
 import io.jdbd.session.DatabaseSessionFactory;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 
@@ -38,7 +39,7 @@ public interface Driver {
     /**
      * <p>
      * Required , jdbd always support
-     *<br/>
+     * <br/>
      *
      * @see io.jdbd.session.Option#USER
      */
@@ -47,14 +48,14 @@ public interface Driver {
     /**
      * <p>
      * Required , jdbd always support
-     *<br/>
+     * <br/>
      */
     String PASSWORD = "password";
 
     /**
      * <p>
      * Required , jdbd always support, if application developer don't put this property,then {@link DatabaseSessionFactory#name()} always return 'unnamed' .
-     *<br/>
+     * <br/>
      */
     String FACTORY_NAME = "factoryName";
 
@@ -65,6 +66,8 @@ public interface Driver {
 
 
     /**
+     * <p>driver whether accept url or not.
+     *
      * @param url jdbc url
      * @return true: accept
      * @throws NullPointerException when url is null
@@ -76,16 +79,18 @@ public interface Driver {
      * <p>
      * Create {@link DatabaseSessionFactory} for application developer.The factory don't create pool {@link io.jdbd.session.DatabaseSession}.
      * Because driver developers are not responsible for pooling.
-     *<br/>
+     * <br/>
      * <p>
      * Pool vendor developer should use {@link #forPoolVendor(String, Map)} create {@link DatabaseSessionFactory}.
-     *<br/>
+     * <br/>
      *
-     * @param url format :jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
-     *            <ul>
-     *              <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
-     *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
-     *            </ul>
+     * @param url        format :jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
+     *                   <ul>
+     *                     <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
+     *                     <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
+     *                   </ul>
+     * @param properties properties map ,this map can override the attributes and properties in url. application developer can load properties file with {@link io.jdbd.util.JdbdUtils#loadProperties(Path)}.
+     * @throws JdbdException throw url or properties error
      */
     DatabaseSessionFactory forDeveloper(String url, Map<String, Object> properties) throws JdbdException;
 
@@ -93,24 +98,26 @@ public interface Driver {
      * <p>
      * This method is designed for poll session vendor developer,so application developer shouldn't invoke this method
      * and use {@link #forDeveloper(String, Map)} method.
-     *<br/>
+     * <br/>
      *
      * <p>  This method return {@link DatabaseSessionFactory} has below feature.
      *     <ul>
      *         <li>{@link DatabaseSessionFactory#localSession()} returning instance is {@link   io.jdbd.pool.PoolLocalDatabaseSession} instance</li>
      *         <li>{@link DatabaseSessionFactory#rmSession()} returning instance is {@link  PoolRmDatabaseSession} instance</li>
      *     </ul>
-     *<br/>
+     * <br/>
      * <p>
      *     This method is used by pool vendor,application developer shouldn't use this method.
      *     <strong>NOTE</strong> : driver developers are not responsible for pooling.
-     *<br/>
+     * <br/>
      *
-     * @param url format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
-     *            <ul>
-     *              <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
-     *              <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
-     *            </ul>
+     * @param url        format : jdbd:protocol:[subProtocol:]//[hostList]/[databaseName][;attributes][?properties] . For example:
+     *                   <ul>
+     *                     <li>jdbd:mysql://localhost:3306/army_test?sslMode=require</li>
+     *                     <li>jdbd:postgresql://localhost:5432/army_test?sslMode=require</li>
+     *                   </ul>
+     * @param properties properties map ,this map can override the attributes and properties in url. application developer can load properties file with {@link io.jdbd.util.JdbdUtils#loadProperties(Path)}.
+     * @throws JdbdException throw url or properties error
      */
     DatabaseSessionFactory forPoolVendor(String url, Map<String, Object> properties) throws JdbdException;
 

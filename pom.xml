@@ -15,25 +15,24 @@
 
     <name>jdbd</name>
     <description>The Reactive Java Database Driver (JDBD) project brings reactive(non-blocking) programming APIs to
-        relational
-        databases.
+        relational databases.
     </description>
     <url>https://github.com/QinArmy/jdbd</url>
 
     <organization>
         <name>jdbd</name>
-        <url>https://jdbd.io/</url>
+        <url>https://jdbd.io</url>
     </organization>
 
     <developers>
         <developer>
             <name>zoro</name>
-            <email>zoro@qinarmy.io</email>
+            <email>zoro&#64;qinarmy.io</email>
         </developer>
     </developers>
 
-    <scm>
-        <connection>scm:git:https://github.com/QinArmy/jdbd.git</connection>
+    <scm><!-- see https://maven.apache.org/scm/git.html  -->
+        <connection>scm:git:git://github.com/QinArmy/jdbd</connection>
         <url>https://github.com/QinArmy/jdbd</url>
     </scm>
 
