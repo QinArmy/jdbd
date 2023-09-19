@@ -16,19 +16,11 @@ The Reactive Java Database Driver (JDBD) project brings reactive programming API
 for example: use jdbd-mysql
 
 ```xml
-
-<dependencies>
-    <dependency>
-        <groupId>io.jdbd</groupId>
-        <artifactId>jdbd-spi</artifactId>
-        <version>0.8.0</version>
-    </dependency>
-    <dependency>
-        <groupId>io.jdbd.mysql</groupId>
-        <artifactId>jdbd-mysql</artifactId>
-        <version>0.8.0</version>
-    </dependency>
-</dependencies>
+<dependency>
+    <groupId>io.jdbd.mysql</groupId>
+    <artifactId>jdbd-mysql</artifactId>
+    <version>0.8.0</version>
+</dependency>
 ```
 
 #### Java code

@@ -14,7 +14,8 @@
     </modules>
 
     <name>jdbd</name>
-    <description>The Reactive Java Database Driver (JDBD) project brings reactive programming APIs to relational
+    <description>The Reactive Java Database Driver (JDBD) project brings reactive(non-blocking) programming APIs to
+        relational
         databases.
     </description>
     <url>https://github.com/QinArmy/jdbd</url>
@@ -53,11 +54,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jsr305.version>3.0.2</jsr305.version>
 
-
-        <slf4.version>1.7.30</slf4.version>
-        <log4j2.version>2.20.0</log4j2.version>
-
-        <testng.version>7.8.0</testng.version>
     </properties>
 
     <dependencyManagement>
@@ -89,7 +85,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${slf4.version}</version>
+                <version>1.7.36</version>
             </dependency>
 
 
@@ -97,7 +93,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j2.version}</version>
+                <version>2.20.0</version>
                 <scope>test</scope>
             </dependency>
 
@@ -108,26 +104,10 @@
                 <scope>test</scope>
             </dependency>
 
-
-            <!--            <dependency>-->
-            <!--                <groupId>com.fasterxml.jackson.datatype</groupId>-->
-            <!--                <artifactId>jackson-datatype-jsr310</artifactId>-->
-            <!--                <version>${jackson.datatype.version}</version>-->
-            <!--                <scope>test</scope>-->
-            <!--            </dependency>-->
-
-
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport-native-kqueue</artifactId>
-                <version>4.1.96.Final</version>
-                <scope>test</scope>
-            </dependency>
-
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>${testng.version}</version>
+                <version>7.8.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>junit</groupId>
