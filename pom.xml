@@ -7,7 +7,7 @@
     <groupId>io.jdbd</groupId>
     <artifactId>jdbd</artifactId>
     <packaging>pom</packaging>
-    <version>0.8.0</version><!-- jdbd version find and replace-->
+    <version>0.8.1</version><!-- jdbd version find and replace-->
     <modules>
         <module>jdbd-spi</module>
         <module>jdbd-vendor</module>
