@@ -389,7 +389,7 @@ public interface ParametrizedStatement extends Statement {
      * {@inheritDoc }
      */
     @Override
-    ParametrizedStatement setTimeout(int seconds) throws JdbdException;
+    ParametrizedStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }

@@ -109,7 +109,7 @@ public interface MultiStatement extends MultiResultStatement, ParametrizedStatem
      * {@inheritDoc }
      */
     @Override
-    MultiStatement setTimeout(int seconds) throws JdbdException;
+    MultiStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }

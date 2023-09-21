@@ -280,7 +280,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      * {@inheritDoc }
      */
     @Override
-    BindSingleStatement setTimeout(int seconds) throws JdbdException;
+    BindSingleStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }

@@ -57,7 +57,7 @@ public interface BindStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
-    BindStatement setTimeout(int seconds) throws JdbdException;
+    BindStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }

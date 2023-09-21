@@ -312,6 +312,20 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      */
     boolean inTransaction() throws JdbdException;
 
+
+    /**
+     * <p>This method is equivalent to following :
+     * <pre><br/>
+     *     <code>
+     *         // session is the instance of {@link DatabaseSession}
+     *         return session.setSavePoint(option-> null)
+     *     </code>
+     * </pre>
+     *
+     * @return see {@link #setSavePoint(Function)}
+     */
+    Publisher<SavePoint> setSavePoint();
+
     /**
      * /**
      * Driver create one save point identifier and set a save point.
@@ -319,6 +333,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * <br/>
      *
+     * @param optionFunc dialect option function
      * @return {@link Publisher} emit just one {@link SavePoint},like {@code reactor.core.publisher.Mono}
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -327,8 +342,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      */
-    Publisher<SavePoint> setSavePoint();
-
+    Publisher<SavePoint> setSavePoint(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>

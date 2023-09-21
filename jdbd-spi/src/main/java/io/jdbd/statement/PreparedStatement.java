@@ -108,7 +108,7 @@ public interface PreparedStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
-    PreparedStatement setTimeout(int seconds) throws JdbdException;
+    PreparedStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }

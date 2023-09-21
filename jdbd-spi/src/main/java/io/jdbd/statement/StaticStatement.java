@@ -189,7 +189,7 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      * {@inheritDoc }
      */
     @Override
-    StaticStatement setTimeout(int seconds) throws JdbdException;
+    StaticStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }

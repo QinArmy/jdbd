@@ -552,7 +552,7 @@ public interface MultiResultStatement extends Statement {
      * {@inheritDoc }
      */
     @Override
-    MultiResultStatement setTimeout(int seconds) throws JdbdException;
+    MultiResultStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**
      * {@inheritDoc }
