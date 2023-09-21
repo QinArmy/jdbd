@@ -58,7 +58,7 @@ public interface ResultStates extends ResultItem, OptionSpec {
     long affectedRows();
 
     /**
-     * the last inserted id
+     * the last inserted id, a unsigned long .
      * <strong>NOTE</strong>:
      * <ul>
      *     <li>when {@link #isSupportInsertId()} is false,throw {@link JdbdException} . now database usually support RETURNING clause,it better than lastInsertedId ,for example : PostgreSQL</li>
