@@ -61,14 +61,15 @@ public interface ResultStates extends ResultItem, OptionSpec {
      * the last inserted id
      * <strong>NOTE</strong>:
      * <ul>
-     *     <li>when {@link #isSupportInsertId()} is false,this method always return 0 . now database usually support RETURNING clause,it better than lastInsertedId ,for example : PostgreSQL</li>
+     *     <li>when {@link #isSupportInsertId()} is false,throw {@link JdbdException} . now database usually support RETURNING clause,it better than lastInsertedId ,for example : PostgreSQL</li>
      *     <li>when use multi-row insert syntax ,the last inserted id is the first row id.</li>
      *     <li>If you use multi-row insert syntax and exists conflict clause(e.g : MySQL ON DUPLICATE KEY UPDATE),then database never return correct lastInsertedId</li>
      * </ul>
      *
      * @return the last inserted id
+     * @throws JdbdException throw when {@link #isSupportInsertId()} return false
      */
-    long lastInsertedId();
+    long lastInsertedId() throws JdbdException;
 
     /**
      * the info about statement execution.
