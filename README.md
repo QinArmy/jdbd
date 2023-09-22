@@ -1,4 +1,4 @@
-# Reactive Java Database Driver SPI [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jdbd/jdbd-spi/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.jdbd/jdbd-spi)
+# Reactive Java Database Driver SPI [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jdbd/jdbd-spi/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.jdbd/jdbd-spi) [![Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 The Reactive Java Database Driver (JDBD) project brings reactive(non-blocking) programming APIs to relational databases.
 
