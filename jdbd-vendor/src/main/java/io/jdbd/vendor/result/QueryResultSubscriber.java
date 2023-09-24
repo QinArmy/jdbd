@@ -23,9 +23,21 @@ import java.util.function.Function;
 @SuppressWarnings("all")
 final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
 
-    static <R> Flux<R> create(final @Nullable Function<CurrentRow, R> function,
-                              final @Nullable Consumer<ResultStates> stateConsumer,
-                              final Consumer<ResultSink> callback) {
+    static <R> Flux<R> forQuery(final @Nullable Function<CurrentRow, R> function,
+                                final @Nullable Consumer<ResultStates> stateConsumer,
+                                final Consumer<ResultSink> callback) {
+        return create(function, stateConsumer, callback, false);
+    }
+
+    static <R> Flux<R> forBatchQuery(final @Nullable Function<CurrentRow, R> function,
+                                     final @Nullable Consumer<ResultStates> stateConsumer,
+                                     final Consumer<ResultSink> callback) {
+        return create(function, stateConsumer, callback, true);
+    }
+
+    private static <R> Flux<R> create(final @Nullable Function<CurrentRow, R> function,
+                                      final @Nullable Consumer<ResultStates> stateConsumer,
+                                      final Consumer<ResultSink> callback, final boolean batch) {
         final Flux<R> flux;
         if (function == null) {
             flux = Flux.error(JdbdExceptions.queryMapFuncIsNull());
@@ -34,7 +46,7 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
         } else {
             flux = Flux.create(sink -> {
                 FluxResult.create(callback, false)
-                        .subscribe(new QueryResultSubscriber<>(function, sink, stateConsumer));
+                        .subscribe(new QueryResultSubscriber<>(function, sink, stateConsumer, batch));
             });
         }
         return flux;
@@ -47,6 +59,8 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
 
     private final Consumer<ResultStates> statesConsumer;
 
+    private final boolean batch;
+
     private Subscription subscription;
 
     private Throwable error;
@@ -58,10 +72,11 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
     private boolean receiveItem;
 
     private QueryResultSubscriber(Function<CurrentRow, R> function, FluxSink<R> sink,
-                                  Consumer<ResultStates> statesConsumer) {
+                                  Consumer<ResultStates> statesConsumer, boolean batch) {
         this.function = function;
         this.sink = sink.onRequest(this::onRequrest);
         this.statesConsumer = statesConsumer;
+        this.batch = batch;
     }
 
 
@@ -82,7 +97,7 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
             this.receiveItem = true;
         }
 
-        if (item.getResultNo() != 1) {
+        if (!this.batch && item.getResultNo() != 1) {
             this.handleError(new NonQueryResultException("subscribe query result,but server response multi-result"));
         } else if (((++this.itemCount) & 31) == 0 && this.sink.isCancelled()) {
             this.disposable = true;

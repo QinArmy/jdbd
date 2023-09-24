@@ -84,21 +84,24 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
      */
     <R> Flux<R> paramQuery(ParamStmt stmt, boolean usePrepare, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
 
+
     OrderedFlux paramAsFlux(ParamStmt stmt, boolean usePrepare);
 
     /**
      * <p>
      * This method is one of underlying api of {@link BindStatement#executeBatchUpdate()} method.
-     *<br/>
+     * <br/>
      */
     Flux<ResultStates> paramBatchUpdate(ParamBatchStmt stmt, boolean usePrepare);
 
     QueryResults paramBatchQuery(ParamBatchStmt stmt, boolean usePrepare);
 
+    <R> Flux<R> paramBatchQueryAsFlux(ParamBatchStmt stmt, boolean usePrepare, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
+
     /**
      * <p>
      * This method is one of underlying api of {@link BindStatement#executeBatchAsMulti()} method.
-     *<br/>
+     * <br/>
      */
     MultiResult paramBatchAsMulti(ParamBatchStmt stmt, boolean usePrepare);
 

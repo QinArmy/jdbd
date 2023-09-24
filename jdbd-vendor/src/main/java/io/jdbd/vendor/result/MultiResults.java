@@ -40,7 +40,7 @@ public abstract class MultiResults {
 
     public static <R> Flux<R> query(Function<CurrentRow, R> function, Consumer<ResultStates> stateConsumer,
                                     Consumer<ResultSink> callback) {
-        return QueryResultSubscriber.create(function, stateConsumer, callback);
+        return QueryResultSubscriber.forQuery(function, stateConsumer, callback);
     }
 
     public static Flux<ResultStates> batchUpdate(Consumer<ResultSink> consumer) {
@@ -49,6 +49,11 @@ public abstract class MultiResults {
 
     public static QueryResults batchQuery(ITaskAdjutant adjutant, Consumer<ResultSink> consumer) {
         return MultiResultSubscriber.batch(adjutant, consumer);
+    }
+
+    public static <R> Flux<R> batchQueryAsFlux(Function<CurrentRow, R> function, Consumer<ResultStates> stateConsumer,
+                                               Consumer<ResultSink> callback) {
+        return QueryResultSubscriber.forBatchQuery(function, stateConsumer, callback);
     }
 
     public static QueryResults deferBatchQuery(Mono<Void> empty, Supplier<QueryResults> supplier) {
