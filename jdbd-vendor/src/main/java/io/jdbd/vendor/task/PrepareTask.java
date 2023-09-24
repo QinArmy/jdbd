@@ -22,6 +22,8 @@ public interface PrepareTask {
 
     Flux<ResultStates> executeBatchUpdate(ParamBatchStmt stmt);
 
+    <R> Flux<R> executeBatchQueryAsFlux(ParamStmt stmt, Function<CurrentRow, R> function, Consumer<ResultStates> consumer);
+
     QueryResults executeBatchQuery(ParamBatchStmt stmt);
 
     MultiResult executeBatchAsMulti(ParamBatchStmt stmt);
