@@ -277,6 +277,56 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
 
 
     /**
+     * <p>Execute a sql statement with batch parameter and server response multi query result,the result consist of :
+     * <ol>
+     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     * </ol>
+     * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for each query result<br/>
+     * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
+     * <br/>
+     *
+     * @param rowFunc        current row map function.Using rowFunc to avoid create {@link ResultRow} instance for improving performance.<br/>
+     *                       <strong>NOTE</strong>:
+     *                       <ul>
+     *                           <li>rowFunc couldn't return {@link CurrentRow} instance.</li>
+     *                           <li>driver will invoke rowFunc in an ordered / serial fashion. Typically ,rowFunc run in {@code  io.netty.channel.EventLoop} </li>
+     *                           <li>you couldn't invoke the block method of {@link Publisher} in rowFunc,or emit {@link Throwable}. For example :
+     *                                  <ul>
+     *                                      <li>{@code reactor.core.publisher.Flux#blockLast()}</li>
+     *                                      <li>{@code reactor.core.publisher.Flux#blockFirst()}</li>
+     *                                  </ul>
+     *                           </li>
+     *                       </ul>
+     * @param statesConsumer a consumer to receive the {@link ResultStates} of each query result
+     *                       <strong>NOTE</strong>:driver will invoke statesConsumer in an ordered / serial fashion. Typically ,statesConsumer run in {@code  io.netty.channel.EventLoop}
+     * @param <R>            the row java type,it is returned by rowFunc.
+     * @return the {@link Publisher} emit 0-N element or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
+     * @throws JdbdException        emmit(not throw) when
+     *                              <ul>
+     *                                  <li>you reuse this {@link BindSingleStatement} instance</li>
+     *                                  <li>param bind error</li>
+     *                                  <li>the java type of value of appropriate dataType isn't supported by the implementation of this method ,for example : {@link io.jdbd.meta.JdbdType#BIGINT} bind {@link io.jdbd.type.Clob}</li>
+     *                                  <li>rowFunc throw {@link Throwable}</li>
+     *                                  <li>statesConsumer throw {@link Throwable}</li>
+     *                                  <li>sql error</li>
+     *                                  <li>session have closed ,see {@link io.jdbd.session.SessionCloseException}</li>
+     *                                  <li>server response error ,see {@link ServerException}</li>
+     *                                  <li>server response result not match,e.g: response multi-result,or update result</li>
+     *                                  <li>rowFunc return {@link CurrentRow} instance</li>
+     *                              </ul>
+     * @throws NullPointerException emit(not throw) when
+     *                              <ul>
+     *                                  <li>rowFunc is null</li>
+     *                                  <li>statesConsumer is null</li>
+     *                              </ul>
+     */
+    <R> Publisher<R> executeBatchQueryAsFlux(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);
+
+
+    /**
      * {@inheritDoc }
      */
     @Override
