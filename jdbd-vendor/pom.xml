@@ -5,7 +5,7 @@
     <parent>
         <artifactId>jdbd</artifactId>
         <groupId>io.jdbd</groupId>
-        <version>0.8.2</version><!-- jdbd version find and replace-->
+        <version>0.8.2</version><!-- jdbd version-->
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
