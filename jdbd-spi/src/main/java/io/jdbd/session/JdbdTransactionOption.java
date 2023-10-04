@@ -55,7 +55,7 @@ final class JdbdTransactionOption implements TransactionInfo {
         } else if (isolation == Isolation.READ_UNCOMMITTED) {
             option = readOnly ? READ_UNCOMMITTED_READ : READ_UNCOMMITTED_WRITE;
         } else {
-            option = null;
+            option = new JdbdTransactionOption(isolation, readOnly);
         }
         return option;
     }
@@ -69,7 +69,7 @@ final class JdbdTransactionOption implements TransactionInfo {
 
     private final boolean readOnly;
 
-    JdbdTransactionOption(Isolation isolation, boolean readOnly) {
+    private JdbdTransactionOption(Isolation isolation, boolean readOnly) {
         this.isolation = isolation;
         this.readOnly = readOnly;
     }
