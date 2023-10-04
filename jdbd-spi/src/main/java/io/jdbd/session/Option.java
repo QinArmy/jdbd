@@ -119,7 +119,7 @@ public final class Option<T> {
      * This option representing {@link DatabaseSession} in transaction block.
      *<br/>
      * <p>
-     * This option always is supported by {@link TransactionStatus#valueOf(Option)}.
+     * This option always is supported by {@link TransactionInfo#valueOf(Option)}.
      *<br/>
      * <p>
      * When this option is supported by {@link DatabaseSession#valueOf(Option)} , this option representing the session in transaction block<br/>
@@ -225,8 +225,8 @@ public final class Option<T> {
 
     /**
      * <p>
-     * representing the XID option of {@link TransactionStatus#valueOf(Option)} from {@link RmDatabaseSession}.
-     *<br/>
+     * representing the XID option of {@link TransactionInfo#valueOf(Option)} from {@link RmDatabaseSession}.
+     * <br/>
      *
      * @see Xid
      */
@@ -234,7 +234,7 @@ public final class Option<T> {
 
     /**
      * <p>
-     * representing the XA_STATES option of {@link TransactionStatus#valueOf(Option)} from {@link RmDatabaseSession}.
+     * representing the XA_STATES option of {@link TransactionInfo#valueOf(Option)} from {@link RmDatabaseSession}.
      *<br/>
      *
      * @see XaStates
@@ -243,7 +243,7 @@ public final class Option<T> {
 
     /**
      * <p>
-     * representing the xa flags option of {@link TransactionStatus#valueOf(Option)} from {@link RmDatabaseSession}.
+     * representing the xa flags option of {@link TransactionInfo#valueOf(Option)} from {@link RmDatabaseSession}.
      *<br/>
      */
     public static final Option<Integer> XA_FLAGS = Option.from("XA FLAGS", Integer.class);

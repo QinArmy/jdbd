@@ -4,15 +4,15 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.NonNull;
 import io.jdbd.session.Isolation;
 import io.jdbd.session.Option;
+import io.jdbd.session.TransactionInfo;
 import io.jdbd.session.TransactionOption;
-import io.jdbd.session.TransactionStatus;
 import io.jdbd.vendor.util.JdbdCollections;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-public enum JdbdTransactionStatus implements TransactionStatus {
+public enum JdbdTransactionInfo implements TransactionInfo {
 
     READ_UNCOMMITTED_READ(Isolation.READ_UNCOMMITTED, true),
     READ_UNCOMMITTED_WRITE(Isolation.READ_UNCOMMITTED, false),
@@ -30,7 +30,7 @@ public enum JdbdTransactionStatus implements TransactionStatus {
 
     private final boolean readOnly;
 
-    JdbdTransactionStatus(Isolation isolation, boolean readOnly) {
+    JdbdTransactionInfo(Isolation isolation, boolean readOnly) {
         this.isolation = isolation;
         this.readOnly = readOnly;
     }
@@ -79,17 +79,17 @@ public enum JdbdTransactionStatus implements TransactionStatus {
 
     @Override
     public final String toString() {
-        return String.format("%s[inTransaction:true,isolation:%s,readOnly:%s].", JdbdTransactionStatus.class.getName(),
+        return String.format("%s[inTransaction:true,isolation:%s,readOnly:%s].", JdbdTransactionInfo.class.getName(),
                 this.isolation.name(), this.readOnly);
     }
 
-    public static TransactionStatus txStatus(final Isolation isolation, final boolean readOnly,
-                                             final boolean inTransaction) {
+    public static TransactionInfo txStatus(final Isolation isolation, final boolean readOnly,
+                                           final boolean inTransaction) {
         Objects.requireNonNull(isolation);
 
-        final TransactionStatus status;
+        final TransactionInfo status;
         if (!inTransaction) {
-            status = (TransactionStatus) TransactionOption.option(isolation, readOnly);
+            status = (TransactionInfo) TransactionOption.option(isolation, readOnly);
             assert !status.inTransaction();
             return status;
         }
@@ -108,7 +108,7 @@ public enum JdbdTransactionStatus implements TransactionStatus {
     }
 
 
-    public static TransactionStatus fromMap(final Map<Option<?>, ?> optionMap) {
+    public static TransactionInfo fromMap(final Map<Option<?>, ?> optionMap) {
         final Isolation isolation;
         final boolean readOnly, inTransaction;
 
@@ -116,23 +116,23 @@ public enum JdbdTransactionStatus implements TransactionStatus {
         readOnly = (Boolean) optionMap.get(Option.READ_ONLY);
         inTransaction = (Boolean) optionMap.get(Option.IN_TRANSACTION);
 
-        final TransactionStatus status;
+        final TransactionInfo status;
         if (optionMap.size() == 3) {
             status = txStatus(isolation, readOnly, inTransaction);
         } else {
             Objects.requireNonNull(isolation);
-            status = new MultiOptionTransactionStatus(optionMap);
+            status = new MultiOptionTransactionInfo(optionMap);
         }
 
         return status;
     }
 
 
-    private static final class MultiOptionTransactionStatus implements TransactionStatus {
+    private static final class MultiOptionTransactionInfo implements TransactionInfo {
 
         private final Map<Option<?>, ?> optionMap;
 
-        private MultiOptionTransactionStatus(Map<Option<?>, ?> optionMap) {
+        private MultiOptionTransactionInfo(Map<Option<?>, ?> optionMap) {
             this.optionMap = Collections.unmodifiableMap(JdbdCollections.hashMap(optionMap));
         }
 

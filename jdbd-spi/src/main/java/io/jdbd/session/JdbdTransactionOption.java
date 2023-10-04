@@ -11,13 +11,13 @@ import java.util.Objects;
 
 /**
  * <p>
- * This enum is a standard implementation of {@link TransactionStatus}
- * that {@link TransactionStatus#inTransaction()} always is false.
+ * This enum is a standard implementation of {@link TransactionInfo}
+ * that {@link TransactionInfo#inTransaction()} always is false.
  * <br/>
  *
  * @since 1.0
  */
-final class JdbdTransactionOption implements TransactionStatus {
+final class JdbdTransactionOption implements TransactionInfo {
 
     private static final JdbdTransactionOption READ_UNCOMMITTED_READ = new JdbdTransactionOption(Isolation.READ_UNCOMMITTED, true);
     private static final JdbdTransactionOption READ_UNCOMMITTED_WRITE = new JdbdTransactionOption(Isolation.READ_UNCOMMITTED, false);

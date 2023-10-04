@@ -7,13 +7,13 @@ import java.util.function.Function;
  * This enum representing An XA transaction progresses states.
  * <br/>
  * <p>
- * Application developer can get {@link XaStates} by {@link RmDatabaseSession#transactionStatus()} <br/>
- * when {@link RmDatabaseSession} in XA transaction block. see {@link TransactionStatus#valueOf(Option)}
+ * Application developer can get {@link XaStates} by {@link RmDatabaseSession#transactionInfo()} <br/>
+ * when {@link RmDatabaseSession} in XA transaction block. see {@link TransactionInfo#valueOf(Option)}
  * <p>
  * <br/>
  *
  * @see Option#XA_STATES
- * @see RmDatabaseSession#transactionStatus()
+ * @see RmDatabaseSession#transactionInfo()
  * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/xa-states.html">XA Transaction States</a>
  * @since 1.0
  */

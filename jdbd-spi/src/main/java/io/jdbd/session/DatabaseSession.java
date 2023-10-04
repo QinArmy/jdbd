@@ -89,7 +89,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * <br/>
      *
-     * @return the {@link Publisher} emit just one {@link TransactionStatus} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
+     * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
      *                        <ul>
      *                           <li>network error</li>
@@ -110,7 +110,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                           </li>
      *                       </ul>
      */
-    Publisher<TransactionStatus> transactionStatus();
+    Publisher<TransactionInfo> transactionInfo();
 
 
     /**
@@ -275,7 +275,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                           <li>server response error message, see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      * @see LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)
-     * @see #transactionStatus()
+     * @see #transactionInfo()
      */
     Publisher<? extends DatabaseSession> setTransactionCharacteristics(TransactionOption option);
 

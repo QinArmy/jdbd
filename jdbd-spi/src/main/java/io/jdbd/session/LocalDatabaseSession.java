@@ -37,7 +37,7 @@ import java.util.function.Function;
  *         <li>{@link #startTransaction(TransactionOption)}</li>
  *         <li>{@link #startTransaction(TransactionOption, HandleMode)}</li>
  *         <li>{@link #setTransactionCharacteristics(TransactionOption)}</li>
- *         <li>{@link #transactionStatus()}</li>
+ *         <li>{@link #transactionInfo()}</li>
  *         <li>{@link #inTransaction()}</li>
  *         <li>{@link #commit()}</li>
  *         <li>{@link #commit(Function)}</li>

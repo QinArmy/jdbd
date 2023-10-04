@@ -60,7 +60,7 @@ import java.util.function.Function;
  *         <li>{@link #startSupportFlags()}</li>
  *         <li>{@link #endSupportFlags()}</li>
  *         <li>{@link #recoverSupportFlags()}</li>
- *         <li>{@link #transactionStatus()}</li>
+ *         <li>{@link #transactionInfo()}</li>
  *         <li>{@link #setTransactionCharacteristics(TransactionOption)}</li>
  *         <li>{@link #setSavePoint()}</li>
  *         <li>{@link #setSavePoint(String)}</li>

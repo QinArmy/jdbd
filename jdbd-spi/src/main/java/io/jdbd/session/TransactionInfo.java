@@ -4,18 +4,18 @@ import io.jdbd.lang.NonNull;
 
 /**
  * <p>
- * This interface representing {@link DatabaseSession}'s transaction status,see {@link DatabaseSession#transactionStatus()}.
+ * This interface representing {@link DatabaseSession}'s transaction status,see {@link DatabaseSession#transactionInfo()}.
  * <br/>
  *
  * @since 1.0
  */
-public interface TransactionStatus extends TransactionOption {
+public interface TransactionInfo extends TransactionOption {
 
 
     /**
      * <p>
      * {@link DatabaseSession}'s transaction isolation level.
-     *<br/>
+     * <br/>
      *
      * @return non-null
      */

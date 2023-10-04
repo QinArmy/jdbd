@@ -12,7 +12,7 @@ import io.jdbd.lang.Nullable;
  *     </ul>
  * <br/>
  * <p>
- *     This interface is the base interface of {@link TransactionStatus}.
+ *     This interface is the base interface of {@link TransactionInfo}.
  * <br/>
  * <p>
  *     Application can get this interface instance by following methods
