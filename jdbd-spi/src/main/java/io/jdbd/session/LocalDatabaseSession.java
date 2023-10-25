@@ -5,6 +5,7 @@ import io.jdbd.lang.Nullable;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -140,7 +141,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #commit(Function)
      */
-    Publisher<TransactionInfo> commit();
+    Publisher<Optional<TransactionInfo>> commit();
 
     /**
      * <p>
@@ -172,7 +173,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *                          <li>serer response error message, see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      */
-    Publisher<TransactionInfo> commit(Function<Option<?>, ?> optionFunc);
+    Publisher<Optional<TransactionInfo>> commit(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -188,7 +189,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #rollback(Function)
      */
-    Publisher<TransactionInfo> rollback();
+    Publisher<Optional<TransactionInfo>> rollback();
 
     /**
      * <p>
@@ -220,7 +221,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *                          <li>serer response error message, see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      */
-    Publisher<TransactionInfo> rollback(Function<Option<?>, ?> optionFunc);
+    Publisher<Optional<TransactionInfo>> rollback(Function<Option<?>, ?> optionFunc);
 
 
     /**
