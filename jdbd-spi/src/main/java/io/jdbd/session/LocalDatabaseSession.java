@@ -140,7 +140,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #commit(Function)
      */
-    Publisher<LocalDatabaseSession> commit();
+    Publisher<TransactionInfo> commit();
 
     /**
      * <p>
@@ -162,7 +162,8 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * <br/>
      *
      * @param optionFunc func
-     * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
+     * @return emit 0-1 {@link TransactionInfo} or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
+     * If emit {@link TransactionInfo}, then driver support {@link Option#CHAIN} and you specified {@link Option#CHAIN}.
      * @throws JdbdException emit(not throw) when
      *                       <ul>
      *                          <li>driver don't support appropriate {@link Option}</li>
@@ -171,7 +172,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *                          <li>serer response error message, see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      */
-    Publisher<LocalDatabaseSession> commit(Function<Option<?>, ?> optionFunc);
+    Publisher<TransactionInfo> commit(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
@@ -187,7 +188,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #rollback(Function)
      */
-    Publisher<LocalDatabaseSession> rollback();
+    Publisher<TransactionInfo> rollback();
 
     /**
      * <p>
@@ -209,7 +210,8 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * <br/>
      *
      * @param optionFunc {@link Option} function
-     * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
+     * @return emit 0-1 {@link TransactionInfo} or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
+     * If emit {@link TransactionInfo}, then driver support {@link Option#CHAIN} and you specified {@link Option#CHAIN}.
      * @throws JdbdException emit(not throw) when
      *                       <ul>
      *                          <li>driver don't support appropriate {@link Option}</li>
@@ -218,7 +220,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *                          <li>serer response error message, see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      */
-    Publisher<LocalDatabaseSession> rollback(Function<Option<?>, ?> optionFunc);
+    Publisher<TransactionInfo> rollback(Function<Option<?>, ?> optionFunc);
 
 
     /**
