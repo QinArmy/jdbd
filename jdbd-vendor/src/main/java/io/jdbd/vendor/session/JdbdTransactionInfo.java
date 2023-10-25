@@ -83,8 +83,8 @@ public enum JdbdTransactionInfo implements TransactionInfo {
                 this.isolation.name(), this.readOnly);
     }
 
-    public static TransactionInfo txStatus(final Isolation isolation, final boolean readOnly,
-                                           final boolean inTransaction) {
+    public static TransactionInfo txInfo(final Isolation isolation, final boolean readOnly,
+                                         final boolean inTransaction) {
         Objects.requireNonNull(isolation);
 
         final TransactionInfo status;
@@ -118,7 +118,7 @@ public enum JdbdTransactionInfo implements TransactionInfo {
 
         final TransactionInfo status;
         if (optionMap.size() == 3) {
-            status = txStatus(isolation, readOnly, inTransaction);
+            status = txInfo(isolation, readOnly, inTransaction);
         } else {
             Objects.requireNonNull(isolation);
             status = new MultiOptionTransactionInfo(optionMap);

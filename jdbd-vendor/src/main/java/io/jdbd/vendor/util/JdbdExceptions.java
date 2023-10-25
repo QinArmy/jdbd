@@ -307,6 +307,10 @@ public abstract class JdbdExceptions {
         return new JdbdException(String.format("dont' support set %s", option));
     }
 
+    public static JdbdException concurrentStartTransaction() {
+        return new JdbdException("Concurrent start transaction.");
+    }
+
 
     public static JdbdException factoryClosed(String name) {
         String m = String.format("%s[%s] have closed", DatabaseSessionFactory.class.getName(), name);
