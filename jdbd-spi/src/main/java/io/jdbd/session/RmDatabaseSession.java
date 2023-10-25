@@ -148,7 +148,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *
      * @see #start(Xid, int, TransactionOption)
      */
-    Publisher<RmDatabaseSession> start(Xid xid);
+    Publisher<TransactionInfo> start(Xid xid);
 
     /**
      * <p>
@@ -163,7 +163,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *
      * @see #start(Xid, int, TransactionOption)
      */
-    Publisher<RmDatabaseSession> start(Xid xid, int flags);
+    Publisher<TransactionInfo> start(Xid xid, int flags);
 
     /**
      * <p>
@@ -203,7 +203,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                                  <li>database server response error message , see {@link io.jdbd.result.ServerException}</li>
      *                               </ul>
      */
-    Publisher<RmDatabaseSession> start(Xid xid, int flags, TransactionOption option);
+    Publisher<TransactionInfo> start(Xid xid, int flags, TransactionOption option);
 
 
     /**

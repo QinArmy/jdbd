@@ -19,7 +19,7 @@ for example: use jdbd-mysql
 <dependency>
     <groupId>io.jdbd.mysql</groupId>
     <artifactId>jdbd-mysql</artifactId>
-    <version>0.8.2</version><!-- jdbd version-->
+    <version>0.9.0</version><!-- jdbd version-->
 </dependency>
 ```
 

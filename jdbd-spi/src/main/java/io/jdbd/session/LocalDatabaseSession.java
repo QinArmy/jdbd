@@ -71,7 +71,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *
      * @see #startTransaction(TransactionOption, HandleMode)
      */
-    Publisher<LocalDatabaseSession> startTransaction();
+    Publisher<TransactionInfo> startTransaction();
 
 
     /**
@@ -87,7 +87,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *
      * @see #startTransaction(TransactionOption, HandleMode)
      */
-    Publisher<LocalDatabaseSession> startTransaction(TransactionOption option);
+    Publisher<TransactionInfo> startTransaction(TransactionOption option);
 
     /**
      * <p>
@@ -112,7 +112,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *                  <li>{@link HandleMode#COMMIT_IF_EXISTS} : commit existed transaction before new transaction.</li>
      *                  <li>{@link HandleMode#ROLLBACK_IF_EXISTS} : rollback existed transaction before new transaction.</li>
      *               </ul>
-     * @return emit <strong>this</strong> or {@link Throwable}. Like {@code reactor.core.publisher.Mono} .
+     * @return emit one {@link TransactionInfo} or {@link Throwable}. Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
      *                           <li>appropriate {@link Isolation} isn't supported</li>
@@ -123,7 +123,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *                       </ul>
      * @see #setTransactionCharacteristics(TransactionOption)
      */
-    Publisher<LocalDatabaseSession> startTransaction(TransactionOption option, HandleMode mode);
+    Publisher<TransactionInfo> startTransaction(TransactionOption option, HandleMode mode);
 
 
     /**
