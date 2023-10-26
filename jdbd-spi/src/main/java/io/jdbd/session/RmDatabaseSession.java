@@ -219,7 +219,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *
      * @see #end(Xid, int, Function)
      */
-    Publisher<RmDatabaseSession> end(Xid xid);
+    Publisher<TransactionInfo> end(Xid xid);
 
     /**
      * <p>
@@ -234,7 +234,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *
      * @see #end(Xid, int, Function)
      */
-    Publisher<RmDatabaseSession> end(Xid xid, int flags);
+    Publisher<TransactionInfo> end(Xid xid, int flags);
 
     /**
      * <p>
@@ -274,7 +274,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                          <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                     </ul>
      */
-    Publisher<RmDatabaseSession> end(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
+    Publisher<TransactionInfo> end(Xid xid, int flags, Function<Option<?>, ?> optionFunc);
 
 
     /**
