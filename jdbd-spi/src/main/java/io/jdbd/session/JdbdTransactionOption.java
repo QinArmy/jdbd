@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -32,9 +33,18 @@ final class JdbdTransactionOption implements TransactionInfo {
     private static final JdbdTransactionOption SERIALIZABLE_WRITE = new JdbdTransactionOption(Isolation.SERIALIZABLE, false);
 
 
-    static TransactionOption option(final @Nullable Isolation isolation, final boolean readOnly) {
+    static TransactionOption option(final @Nullable Isolation isolation, final boolean readOnly,
+                                    final @Nullable Function<Option<?>, ?> optionFunc) {
+        if (optionFunc == null) {
+            throw new NullPointerException();
+        }
         final TransactionOption option;
-        option = fromInner(isolation, readOnly);
+        if (optionFunc == Option.EMPTY_OPTION_FUNC) {
+            option = fromInner(isolation, readOnly);
+        } else {
+            option = new OptionFuncTransactionOption(isolation, readOnly, optionFunc);
+        }
+
         if (option == null) {
             throw new JdbdException(String.format("unexpected %s", isolation));
         }
@@ -118,10 +128,11 @@ final class JdbdTransactionOption implements TransactionInfo {
 
     @Override
     public String toString() {
-        return String.format("%s[inTransaction:false,isolation:%s,readOnly:%s].",
+        return String.format("%s[inTransaction:false,isolation:%s,readOnly:%s,hash:%s].",
                 JdbdTransactionOption.class.getName(),
                 this.isolation.name(),
-                this.readOnly
+                this.readOnly,
+                System.identityHashCode(this)
         );
     }
 
@@ -174,9 +185,10 @@ final class JdbdTransactionOption implements TransactionInfo {
 
         @Override
         public String toString() {
-            return String.format("%s[inTransaction:false,isolation:null,readOnly:%s].",
+            return String.format("%s[inTransaction:false,isolation:null,readOnly:%s,hash:%s].",
                     JdbdTransactionOption.class.getName(),
-                    this.readOnly
+                    this.readOnly,
+                    System.identityHashCode(this)
             );
         }
 
@@ -230,6 +242,64 @@ final class JdbdTransactionOption implements TransactionInfo {
 
     }//OptionBuilder
 
+
+    private static final class OptionFuncTransactionOption implements TransactionOption {
+
+        private final Isolation isolation;
+
+        private final boolean readOnly;
+
+        private final Function<Option<?>, ?> optionFunc;
+
+        private OptionFuncTransactionOption(@Nullable Isolation isolation, boolean readOnly,
+                                            Function<Option<?>, ?> optionFunc) {
+            this.isolation = isolation;
+            this.readOnly = readOnly;
+            this.optionFunc = optionFunc;
+        }
+
+        @Override
+        public Isolation isolation() {
+            return this.isolation;
+        }
+
+        @Override
+        public boolean isReadOnly() {
+            return this.readOnly;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T> T valueOf(final @Nullable Option<T> option) {
+            final Object value;
+            if (option == null) {
+                value = null;
+            } else if (option == Option.ISOLATION) {
+                value = this.isolation;
+            } else if (option == Option.READ_ONLY) {
+                value = this.readOnly;
+            } else {
+                value = this.optionFunc.apply(option);
+            }
+            if (option != null && option.javaType().isInstance(value)) {
+                return (T) value;
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s[isolation:%s,readOnly:%s,hash:%s].",
+                    JdbdTransactionOption.class.getName(),
+                    this.isolation,
+                    this.readOnly,
+                    System.identityHashCode(this)
+            );
+        }
+
+
+    } // OptionFuncTransactionOption
+
     private static final class DynamicTransactionOption implements TransactionOption {
 
         private final Map<Option<?>, Object> optionMap;
@@ -263,23 +333,6 @@ final class JdbdTransactionOption implements TransactionInfo {
             return value;
         }
 
-        @Override
-        public int hashCode() {
-            return this.optionMap.hashCode();
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            final boolean match;
-            if (obj == this) {
-                match = true;
-            } else if (obj instanceof DynamicTransactionOption) {
-                match = ((DynamicTransactionOption) obj).optionMap.equals(this.optionMap);
-            } else {
-                match = false;
-            }
-            return match;
-        }
 
         @Override
         public String toString() {
@@ -296,7 +349,9 @@ final class JdbdTransactionOption implements TransactionInfo {
                         .append(e.getValue());
                 index++;
             }
-            return builder.append(" ]")
+            return builder.append(" , hash : ")
+                    .append(System.identityHashCode(this))
+                    .append(" ]")
                     .toString();
         }
 

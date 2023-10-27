@@ -79,19 +79,21 @@ public enum JdbdTransactionInfo implements TransactionInfo {
 
     @Override
     public final String toString() {
-        return String.format("%s[inTransaction:true,isolation:%s,readOnly:%s].", JdbdTransactionInfo.class.getName(),
-                this.isolation.name(), this.readOnly);
+        return String.format("%s[inTransaction:true,isolation:%s,readOnly:%s,hash:%s].", JdbdTransactionInfo.class.getName(),
+                this.isolation.name(), this.readOnly, System.identityHashCode(this));
     }
 
     public static TransactionInfo txInfo(final Isolation isolation, final boolean readOnly,
                                          final boolean inTransaction) {
         Objects.requireNonNull(isolation);
 
-        final TransactionInfo status;
+        TransactionInfo status;
         if (!inTransaction) {
             status = (TransactionInfo) TransactionOption.option(isolation, readOnly);
-            assert !status.inTransaction();
-            return status;
+            if (status instanceof Enum) {
+                assert !status.inTransaction();
+                return status;
+            }
         }
         if (isolation == Isolation.READ_COMMITTED) {
             status = readOnly ? READ_COMMITTED_READ : READ_COMMITTED_WRITE;

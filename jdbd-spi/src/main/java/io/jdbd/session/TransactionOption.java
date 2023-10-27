@@ -2,6 +2,8 @@ package io.jdbd.session;
 
 import io.jdbd.lang.Nullable;
 
+import java.util.function.Function;
+
 /**
  * <p>
  * This interface representing transaction option. see
@@ -67,7 +69,19 @@ public interface TransactionOption extends OptionSpec {
      * @param readOnly  true : start read-only transaction.
      */
     static TransactionOption option(@Nullable Isolation isolation, boolean readOnly) {
-        return JdbdTransactionOption.option(isolation, readOnly);
+        return JdbdTransactionOption.option(isolation, readOnly, Option.EMPTY_OPTION_FUNC);
+    }
+
+    /**
+     * <p>
+     * Get generic transaction option.
+     * <br/>
+     *
+     * @param isolation nullable {@link Isolation},null representing use default transaction isolation level to start transaction.
+     * @param readOnly  true : start read-only transaction.
+     */
+    static TransactionOption option(@Nullable Isolation isolation, boolean readOnly, Function<Option<?>, ?> optionFunc) {
+        return JdbdTransactionOption.option(isolation, readOnly, optionFunc);
     }
 
     /**
