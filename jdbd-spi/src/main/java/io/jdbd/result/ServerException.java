@@ -5,6 +5,8 @@ import io.jdbd.lang.Nullable;
 import io.jdbd.session.Option;
 import io.jdbd.session.OptionSpec;
 
+import java.util.function.Function;
+
 
 /**
  * <p>
@@ -15,28 +17,25 @@ import io.jdbd.session.OptionSpec;
  */
 public abstract class ServerException extends JdbdException implements OptionSpec {
 
+    private final Function<Option<?>, ?> optionFunc;
 
-    protected ServerException(String message, @Nullable String sqlState, int vendorCode) {
+
+    protected ServerException(String message, @Nullable String sqlState, int vendorCode,
+                              Function<Option<?>, ?> optionFunc) {
         super(message, sqlState, vendorCode);
+        this.optionFunc = optionFunc;
     }
 
-    /**
-     * <p>
-     * Get one field value of server error message.
-     *<br/>
-     *
-     * @return null , if field not exists.
-     * @see Option#MESSAGE
-     * @see Option#SQL_STATE
-     * @see Option#VENDOR_CODE
-     */
+    @SuppressWarnings("unchecked")
     @Override
-    @Nullable
-    public abstract <T> T valueOf(Option<T> option);
-
-
-    @Override
-    public abstract String toString();
+    public final <T> T valueOf(Option<T> option) {
+        final Object value;
+        value = this.optionFunc.apply(option);
+        if (option.javaType().isInstance(value)) {
+            return (T) value;
+        }
+        return null;
+    }
 
 
 }
