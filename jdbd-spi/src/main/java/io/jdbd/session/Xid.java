@@ -104,11 +104,11 @@ public interface Xid extends OptionSpec {
      *               final boolean match;
      *               if (obj == this) {
      *                   match = true;
-     *               } else if (obj instanceof JdbdXid) {
-     *                   final JdbdXid o = (JdbdXid) obj; // JdbdXid is default implementation.
-     *                   match = o.gtrid.equals(this.gtrid)
-     *                           &amp;&amp; Objects.equals(o.bqual, this.bqual)
-     *                           &amp;&amp; o.formatId == this.formatId;
+     *               } else if (obj instanceof Xid) {
+     *                   final Xid o = (Xid) obj;
+     *                   match = this.gtrid.equals(o.getGtrid())
+     *                           &amp;&amp; Objects.equals(o.getBqual(), this.bqual)
+     *                           &amp;&amp; o.getFormatId() == this.formatId;
      *               } else {
      *                   match = false;
      *               }

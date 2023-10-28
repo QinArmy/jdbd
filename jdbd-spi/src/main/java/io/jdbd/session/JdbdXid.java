@@ -64,11 +64,11 @@ final class JdbdXid implements Xid {
         final boolean match;
         if (obj == this) {
             match = true;
-        } else if (obj instanceof JdbdXid) {
-            final JdbdXid o = (JdbdXid) obj;
-            match = o.gtrid.equals(this.gtrid)
-                    && Objects.equals(o.bqual, this.bqual)
-                    && o.formatId == this.formatId;
+        } else if (obj instanceof Xid) {
+            final Xid o = (Xid) obj;
+            match = this.gtrid.equals(o.getGtrid())
+                    && Objects.equals(o.getBqual(), this.bqual)
+                    && o.getFormatId() == this.formatId;
         } else {
             match = false;
         }
