@@ -344,34 +344,6 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      */
     Publisher<SavePoint> setSavePoint(Function<Option<?>, ?> optionFunc);
 
-    /**
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     *
-     * @param name see {@link #setSavePoint(String, Function)}
-     * @return see {@link #setSavePoint(String, Function)}
-     */
-    Publisher<SavePoint> setSavePoint(String name);
-
-    /**
-     * Set a save point
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     *
-     * @param name       save point name
-     * @param optionFunc dialect option function
-     * @return {@link Publisher} emit just one {@link SavePoint},like {@code reactor.core.publisher.Mono}
-     * @throws JdbdException emit(not throw) when
-     *                       <ul>
-     *                           <li>name error</li>
-     *                           <li>session have closed,see {@link SessionCloseException}</li>
-     *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
-     *                       </ul>
-     */
-    Publisher<SavePoint> setSavePoint(String name, Function<Option<?>, ?> optionFunc);
-
 
     /**
      * <p>
