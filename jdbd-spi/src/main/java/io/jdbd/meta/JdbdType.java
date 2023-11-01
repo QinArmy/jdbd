@@ -1,5 +1,6 @@
 package io.jdbd.meta;
 
+import io.jdbd.result.Cursor;
 import io.jdbd.session.DatabaseSession;
 
 /**
@@ -279,10 +280,10 @@ public enum JdbdType implements DataType {
      * If {@link io.jdbd.result.ResultRowMeta#getJdbdType(int)} is this enum instance,then {@link io.jdbd.result.DataRow#get(int)} always is {@link String} instance.
      * <br/>
      * <p>
-     * Application developer can get the instance of {@link io.jdbd.result.RefCursor} by {@link DatabaseSession#refCursor(String)}
+     * Application developer can get the instance of {@link Cursor} by {@link DatabaseSession#refCursor(String)}
      * <br/>
      *
-     * @see io.jdbd.result.RefCursor
+     * @see Cursor
      */
     REF_CURSOR,
 

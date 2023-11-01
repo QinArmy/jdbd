@@ -1,6 +1,7 @@
 package io.jdbd.session;
 
 import io.jdbd.lang.Nullable;
+import io.jdbd.result.Cursor;
 
 import java.util.Objects;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
  *         <li>{@link io.jdbd.result.ResultStates}</li>
  *         <li>{@link io.jdbd.VersionSpec}</li>
  *         <li>{@link io.jdbd.result.ServerException}</li>
- *         <li>{@link io.jdbd.result.RefCursor}</li>
+ *         <li>{@link Cursor}</li>
  *         <li>{@link TransactionOption}</li>
  *         <li>{@link io.jdbd.result.Warning}</li>
  *         <li>{@link ChunkOption}</li>

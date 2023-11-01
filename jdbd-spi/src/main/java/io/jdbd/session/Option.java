@@ -3,7 +3,7 @@ package io.jdbd.session;
 import io.jdbd.Driver;
 import io.jdbd.meta.SchemaMeta;
 import io.jdbd.meta.TableMeta;
-import io.jdbd.result.RefCursor;
+import io.jdbd.result.Cursor;
 import io.jdbd.util.JdbdUtils;
 
 import java.io.IOException;
@@ -171,10 +171,10 @@ public final class Option<T> {
 
     /**
      * <p>
-     * This option representing a auto close on error , for example : {@link io.jdbd.result.RefCursor}.
-     *<br/>
+     * This option representing a auto close on error , for example : {@link Cursor}.
+     * <br/>
      *
-     * @see io.jdbd.result.RefCursor
+     * @see Cursor
      */
     public static final Option<Boolean> AUTO_CLOSE_ON_ERROR = Option.from("AUTO CLOSE ON ERROR", Boolean.class);
 
@@ -294,11 +294,11 @@ public final class Option<T> {
      * <p>
      * When this option is supported by {@link io.jdbd.result.ResultStates},this option representing the statement that produce
      * the {@link io.jdbd.result.ResultStates} declare a cursor. For example : execute postgre DECLARE command.
-     *<br/>
+     * <br/>
      *
      * @see <a href="https://www.postgresql.org/docs/current/sql-declare.html">PostgreSQL DECLARE</a>
      */
-    public static final Option<RefCursor> CURSOR = Option.from("CURSOR", RefCursor.class);
+    public static final Option<Cursor> CURSOR = Option.from("CURSOR", Cursor.class);
 
     public static final Option<Integer> PREPARE_THRESHOLD = Option.from(Driver.PREPARE_THRESHOLD, Integer.class);
 

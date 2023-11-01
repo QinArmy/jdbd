@@ -3,9 +3,9 @@ package io.jdbd.result;
 /**
  * <p> This enum representing cursor
  *
- * @see RefCursor
+ * @see Cursor
  */
-public enum CursorDirection {
+public enum Direction {
 
     /**
      * Fetch the next row.
@@ -61,7 +61,7 @@ public enum CursorDirection {
 
     @Override
     public final String toString() {
-        return String.format("%s.%s", CursorDirection.class.getName(), this.name());
+        return String.format("%s.%s", Direction.class.getName(), this.name());
     }
 
 

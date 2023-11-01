@@ -112,7 +112,7 @@ public interface ResultStates extends ResultItem, OptionSpec {
      * </p>
      *
      * @return the row count.<ul>
-     * <li>If use fetch (eg: {@link Statement#setFetchSize(int)} , {@link RefCursor}) , then the row count representing only the row count of current fetch result.</li>
+     * <li>If use fetch (eg: {@link Statement#setFetchSize(int)} , {@link Cursor}) , then the row count representing only the row count of current fetch result.</li>
      * <li>Else then the row count representing the total row count of query result.</li>
      * </ul>
      */

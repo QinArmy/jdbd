@@ -7,7 +7,7 @@ import io.jdbd.meta.SQLType;
 import io.jdbd.meta.SchemaMeta;
 import io.jdbd.meta.TableMeta;
 import io.jdbd.result.CurrentRow;
-import io.jdbd.result.CursorDirection;
+import io.jdbd.result.Direction;
 import io.jdbd.result.ResultStates;
 import io.jdbd.result.ResultStatusConsumerException;
 import io.jdbd.session.*;
@@ -138,7 +138,7 @@ public abstract class JdbdExceptions {
     }
 
 
-    public static JdbdException unexpectedCursorDirection(CursorDirection direction) {
+    public static JdbdException unexpectedCursorDirection(Direction direction) {
         return new JdbdException(String.format("unexpected %s", direction));
     }
 

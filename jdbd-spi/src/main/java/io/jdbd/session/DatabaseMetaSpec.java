@@ -4,6 +4,7 @@ import io.jdbd.Driver;
 import io.jdbd.JdbdException;
 import io.jdbd.meta.DataType;
 import io.jdbd.meta.DatabaseMetaData;
+import io.jdbd.result.Cursor;
 
 import java.util.function.Function;
 
@@ -87,7 +88,7 @@ public interface DatabaseMetaSpec {
     /**
      * The session whether support cursor or not.
      *
-     * @return true : support {@link io.jdbd.result.RefCursor}
+     * @return true : support {@link Cursor}
      * @throws JdbdException throw when need session is open and session have closed
      */
     boolean isSupportRefCursor() throws JdbdException;

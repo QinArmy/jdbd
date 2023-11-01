@@ -1,6 +1,7 @@
 package io.jdbd.vendor.stmt;
 
 import io.jdbd.lang.Nullable;
+import io.jdbd.result.Cursor;
 import io.jdbd.session.ChunkOption;
 import io.jdbd.session.DatabaseSession;
 import org.reactivestreams.Publisher;
@@ -64,10 +65,10 @@ public interface StmtOption {
      * <p>
      * This method can be useful in following scenarios :
      *     <ul>
-     *         <li>create {@link io.jdbd.result.RefCursor} from {@link io.jdbd.result.DataRow#get(int, Class)} , for example : PostgreSQL return cursor name</li>
-     *         <li>create {@link io.jdbd.result.RefCursor} from {@link io.jdbd.result.ResultStates}, for example : PostgreSQL DECLARE cursor command </li>
+     *         <li>create {@link Cursor} from {@link io.jdbd.result.DataRow#get(int, Class)} , for example : PostgreSQL return cursor name</li>
+     *         <li>create {@link Cursor} from {@link io.jdbd.result.ResultStates}, for example : PostgreSQL DECLARE cursor command </li>
      *     </ul>
-     *<br/>
+     * <br/>
      *
      * @return the session that create this stmt.
      * @throws UnsupportedOperationException throw when this instance is {@link Stmt} and {@link Stmt#isSessionCreated()} return false.

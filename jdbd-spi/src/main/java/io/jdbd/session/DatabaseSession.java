@@ -3,7 +3,7 @@ package io.jdbd.session;
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DatabaseMetaData;
-import io.jdbd.result.RefCursor;
+import io.jdbd.result.Cursor;
 import io.jdbd.statement.*;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
@@ -222,11 +222,11 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * @throws JdbdException see {@link #refCursor(String, Function)}
      * @see #refCursor(String, Function)
      */
-    RefCursor refCursor(String name) throws JdbdException;
+    Cursor refCursor(String name) throws JdbdException;
 
     /**
      * <p>
-     * Create a instance of {@link RefCursor}. This method don't check session open ,don't check name whether exists or not in database.
+     * Create a instance of {@link Cursor}. This method don't check session open ,don't check name whether exists or not in database.
      * <br/>
      * <p>
      * If {@link #isSupportRefCursor()} return true,then driver must support following :
@@ -237,11 +237,11 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *
      * @param name       must have text
      * @param optionFunc non-null optionFunc. optionFunc can always return null
-     * @return {@link RefCursor}  instance
+     * @return {@link Cursor}  instance
      * @throws IllegalArgumentException throw when name have no text.
      * @throws JdbdException            throw when {@link #isSupportRefCursor()} return false.
      */
-    RefCursor refCursor(String name, Function<Option<?>, ?> optionFunc) throws JdbdException;
+    Cursor refCursor(String name, Function<Option<?>, ?> optionFunc) throws JdbdException;
 
 
     /**

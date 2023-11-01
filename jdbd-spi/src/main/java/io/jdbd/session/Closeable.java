@@ -1,6 +1,7 @@
 package io.jdbd.session;
 
 import io.jdbd.JdbdException;
+import io.jdbd.result.Cursor;
 import org.reactivestreams.Publisher;
 
 /**
@@ -9,7 +10,7 @@ import org.reactivestreams.Publisher;
  *     <ul>
  *         <li>{@link DatabaseSessionFactory}</li>
  *         <li>{@link DatabaseSession}</li>
- *         <li>{@link io.jdbd.result.RefCursor}</li>
+ *         <li>{@link Cursor}</li>
  *     </ul>
  * <br/>
  *

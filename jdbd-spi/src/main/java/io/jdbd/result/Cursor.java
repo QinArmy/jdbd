@@ -28,23 +28,23 @@ import java.util.function.Function;
  * <p>
  * The cursor will be close in following scenarios :
  *     <ul>
- *         <li>If {@link io.jdbd.session.Option#AUTO_CLOSE_ON_ERROR} is true and the any method of {@link RefCursor} emit {@link Throwable}</li>
+ *         <li>If {@link io.jdbd.session.Option#AUTO_CLOSE_ON_ERROR} is true and the any method of {@link Cursor} emit {@link Throwable}</li>
  *         <li>You invoke {@link #forwardAllAndClosed(Function)}</li>
  *         <li>You invoke {@link #forwardAllAndClosed(Function, Consumer)}</li>
  *         <li>You invoke {@link #forwardAllAndClosed()}</li>
  *         <li>You invoke {@link #close()}</li>
  *     </ul>
- * If the methods of {@link RefCursor} don't emit any {@link Throwable},then you should close cursor.
- * If you don't close cursor ,the {@link io.jdbd.session.DatabaseSession} that create this {@link RefCursor} can still execute new {@link io.jdbd.statement.Statement},
+ * If the methods of {@link Cursor} don't emit any {@link Throwable},then you should close cursor.
+ * If you don't close cursor ,the {@link io.jdbd.session.DatabaseSession} that create this {@link Cursor} can still execute new {@link io.jdbd.statement.Statement},
  * but you shouldn't do this.
  * <br/>
  *
  * @see io.jdbd.session.Option#AUTO_CLOSE_ON_ERROR
  * @see io.jdbd.meta.JdbdType#REF_CURSOR
- * @see CursorDirection
+ * @see Direction
  * @since 1.0
  */
-public interface RefCursor extends OptionSpec, Closeable {
+public interface Cursor extends OptionSpec, Closeable {
 
 
     /**
@@ -53,7 +53,7 @@ public interface RefCursor extends OptionSpec, Closeable {
     String name();
 
     /**
-     * @return the {@link DatabaseSession} that create this {@link RefCursor}.
+     * @return the {@link DatabaseSession} that create this {@link Cursor}.
      */
     DatabaseSession databaseSession();
 
@@ -70,9 +70,9 @@ public interface RefCursor extends OptionSpec, Closeable {
      *     </pre>
      *<br/>
      *
-     * @see #fetch(CursorDirection, Function, Consumer)
+     * @see #fetch(Direction, Function, Consumer)
      */
-    <T> Publisher<T> fetch(CursorDirection direction, Function<CurrentRow, T> function);
+    <T> Publisher<T> fetch(Direction direction, Function<CurrentRow, T> function);
 
     /**
      * <p>
@@ -84,12 +84,12 @@ public interface RefCursor extends OptionSpec, Closeable {
      *
      * @param direction must be one of following :
      *                  <ul>
-     *                      <li>{@link CursorDirection#NEXT}</li>
-     *                      <li>{@link CursorDirection#PRIOR}</li>
-     *                      <li>{@link CursorDirection#FIRST}</li>
-     *                      <li>{@link CursorDirection#LAST}</li>
-     *                      <li>{@link CursorDirection#FORWARD_ALL}</li>
-     *                      <li>{@link CursorDirection#BACKWARD_ALL}</li>
+     *                      <li>{@link Direction#NEXT}</li>
+     *                      <li>{@link Direction#PRIOR}</li>
+     *                      <li>{@link Direction#FIRST}</li>
+     *                      <li>{@link Direction#LAST}</li>
+     *                      <li>{@link Direction#FORWARD_ALL}</li>
+     *                      <li>{@link Direction#BACKWARD_ALL}</li>
      *                  </ul>
      * @throws NullPointerException emit(not throw) when direction is null or function is null or consumer is null.
      * @throws JdbdException        emit(not throw) when
@@ -101,7 +101,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                  <li>server response error,see {@link ServerException}</li>
      *                              </ul>
      */
-    <T> Publisher<T> fetch(CursorDirection direction, Function<CurrentRow, T> rowFunc, Consumer<ResultStates> statesConsumer);
+    <T> Publisher<T> fetch(Direction direction, Function<CurrentRow, T> rowFunc, Consumer<ResultStates> statesConsumer);
 
 
     /**
@@ -114,12 +114,12 @@ public interface RefCursor extends OptionSpec, Closeable {
      *
      * @param direction must be one of following :
      *                  <ul>
-     *                      <li>{@link CursorDirection#NEXT}</li>
-     *                      <li>{@link CursorDirection#PRIOR}</li>
-     *                      <li>{@link CursorDirection#FIRST}</li>
-     *                      <li>{@link CursorDirection#LAST}</li>
-     *                      <li>{@link CursorDirection#FORWARD_ALL}</li>
-     *                      <li>{@link CursorDirection#BACKWARD_ALL}</li>
+     *                      <li>{@link Direction#NEXT}</li>
+     *                      <li>{@link Direction#PRIOR}</li>
+     *                      <li>{@link Direction#FIRST}</li>
+     *                      <li>{@link Direction#LAST}</li>
+     *                      <li>{@link Direction#FORWARD_ALL}</li>
+     *                      <li>{@link Direction#BACKWARD_ALL}</li>
      *                  </ul>
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -129,7 +129,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                           <li>server response error,see {@link ServerException}</li>
      *                       </ul>
      */
-    OrderedFlux fetch(CursorDirection direction);
+    OrderedFlux fetch(Direction direction);
 
 
     /**
@@ -143,9 +143,9 @@ public interface RefCursor extends OptionSpec, Closeable {
      *     </pre>
      *<br/>
      *
-     * @see #fetch(CursorDirection, long, Function, Consumer)
+     * @see #fetch(Direction, long, Function, Consumer)
      */
-    <T> Publisher<T> fetch(CursorDirection direction, long count, Function<CurrentRow, T> function);
+    <T> Publisher<T> fetch(Direction direction, long count, Function<CurrentRow, T> function);
 
     /**
      * <p>
@@ -157,14 +157,14 @@ public interface RefCursor extends OptionSpec, Closeable {
      *
      * @param direction must be one of following :
      *                  <ul>
-     *                      <li>{@link CursorDirection#ABSOLUTE}</li>
-     *                      <li>{@link CursorDirection#RELATIVE}</li>
-     *                      <li>{@link CursorDirection#FORWARD}</li>
-     *                      <li>{@link CursorDirection#BACKWARD}</li>
+     *                      <li>{@link Direction#ABSOLUTE}</li>
+     *                      <li>{@link Direction#RELATIVE}</li>
+     *                      <li>{@link Direction#FORWARD}</li>
+     *                      <li>{@link Direction#BACKWARD}</li>
      *                  </ul>
      * @param count     row count   <ul>
      *                  <li>
-     *                  {@link CursorDirection#ABSOLUTE}  :
+     *                  {@link Direction#ABSOLUTE}  :
      *                                   <ul>
      *                                       <li>positive : fetch the count'th row of the query. position after last row if count is out of range</li>
      *                                       <li>negative : fetch the abs(count)'th row from the end. position before first row if count is out of range</li>
@@ -172,7 +172,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#RELATIVE}  :
+     *                                   {@link Direction#RELATIVE}  :
      *                                   <ul>
      *                                       <li>positive : fetch the count'th succeeding row</li>
      *                                       <li>negative : fetch the abs(count)'th prior row</li>
@@ -180,19 +180,19 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#FORWARD}  :
+     *                                   {@link Direction#FORWARD}  :
      *                                   <ul>
      *                                      <li>positive : fetch the next count rows.</li>
      *                                      <li>0 : re-fetches the current row</li>
-     *                                      <li>negative :  is equivalent to {@link CursorDirection#BACKWARD} abs(count)</li>
+     *                                      <li>negative :  is equivalent to {@link Direction#BACKWARD} abs(count)</li>
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#BACKWARD}  :
+     *                                   {@link Direction#BACKWARD}  :
      *                                   <ul>
      *                                      <li>positive : Fetch the prior count rows (scanning backwards).</li>
      *                                      <li>0 : re-fetches the current row</li>
-     *                                      <li>negative : is equivalent to {@link CursorDirection#FORWARD} abs(count)</li>
+     *                                      <li>negative : is equivalent to {@link Direction#FORWARD} abs(count)</li>
      *                                   </ul>
      *                               </li>
      *                  </ul>
@@ -214,7 +214,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                      <li>server response error message,see {@link ServerException}</li>
      *                                  </ul>
      */
-    <T> Publisher<T> fetch(CursorDirection direction, long count, Function<CurrentRow, T> function, Consumer<ResultStates> consumer);
+    <T> Publisher<T> fetch(Direction direction, long count, Function<CurrentRow, T> function, Consumer<ResultStates> consumer);
 
 
     /**
@@ -224,14 +224,14 @@ public interface RefCursor extends OptionSpec, Closeable {
      *
      * @param direction must be one of following :
      *                  <ul>
-     *                      <li>{@link CursorDirection#ABSOLUTE}</li>
-     *                      <li>{@link CursorDirection#RELATIVE}</li>
-     *                      <li>{@link CursorDirection#FORWARD}</li>
-     *                      <li>{@link CursorDirection#BACKWARD}</li>
+     *                      <li>{@link Direction#ABSOLUTE}</li>
+     *                      <li>{@link Direction#RELATIVE}</li>
+     *                      <li>{@link Direction#FORWARD}</li>
+     *                      <li>{@link Direction#BACKWARD}</li>
      *                  </ul>
      * @param count     row count   <ul>
      *                  <li>
-     *                  {@link CursorDirection#ABSOLUTE}  :
+     *                  {@link Direction#ABSOLUTE}  :
      *                                   <ul>
      *                                       <li>positive : fetch the count'th row of the query. position after last row if count is out of range</li>
      *                                       <li>negative : fetch the abs(count)'th row from the end. position before first row if count is out of range</li>
@@ -239,7 +239,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#RELATIVE}  :
+     *                                   {@link Direction#RELATIVE}  :
      *                                   <ul>
      *                                       <li>positive : fetch the count'th succeeding row</li>
      *                                       <li>negative : fetch the abs(count)'th prior row</li>
@@ -247,19 +247,19 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#FORWARD}  :
+     *                                   {@link Direction#FORWARD}  :
      *                                   <ul>
      *                                      <li>positive : fetch the next count rows.</li>
      *                                      <li>0 : re-fetches the current row</li>
-     *                                      <li>negative : is equivalent to {@link CursorDirection#BACKWARD} abs(count)</li>
+     *                                      <li>negative : is equivalent to {@link Direction#BACKWARD} abs(count)</li>
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#BACKWARD}  :
+     *                                   {@link Direction#BACKWARD}  :
      *                                   <ul>
      *                                      <li>positive : Fetch the prior count rows (scanning backwards).</li>
      *                                      <li>0 : re-fetches the current row</li>
-     *                                      <li>negative : is equivalent to {@link CursorDirection#FORWARD} abs(count)</li>
+     *                                      <li>negative : is equivalent to {@link Direction#FORWARD} abs(count)</li>
      *                                   </ul>
      *                               </li>
      *                  </ul>
@@ -276,7 +276,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                      <li>server response error message,see {@link ServerException}</li>
      *                                  </ul>
      */
-    OrderedFlux fetch(CursorDirection direction, long count);
+    OrderedFlux fetch(Direction direction, long count);
 
     /**
      * <p>
@@ -293,7 +293,7 @@ public interface RefCursor extends OptionSpec, Closeable {
 
     /**
      * <p>
-     * This method is equivalent to {@link #fetch(CursorDirection FORWARD_ALL, Function, Consumer)} and {@link #close()}.
+     * This method is equivalent to {@link #fetch(Direction FORWARD_ALL, Function, Consumer)} and {@link #close()}.
      *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
@@ -319,7 +319,7 @@ public interface RefCursor extends OptionSpec, Closeable {
 
     /**
      * <p>
-     * This method is equivalent to {@link #fetch(CursorDirection FORWARD_ALL)} and {@link #close()}.
+     * This method is equivalent to {@link #fetch(Direction FORWARD_ALL)} and {@link #close()}.
      *<br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
@@ -353,12 +353,12 @@ public interface RefCursor extends OptionSpec, Closeable {
      *
      * @param direction must be one of following :
      *                  <ul>
-     *                      <li>{@link CursorDirection#NEXT}</li>
-     *                      <li>{@link CursorDirection#PRIOR}</li>
-     *                      <li>{@link CursorDirection#FIRST}</li>
-     *                      <li>{@link CursorDirection#LAST}</li>
-     *                      <li>{@link CursorDirection#FORWARD_ALL}</li>
-     *                      <li>{@link CursorDirection#BACKWARD_ALL}</li>
+     *                      <li>{@link Direction#NEXT}</li>
+     *                      <li>{@link Direction#PRIOR}</li>
+     *                      <li>{@link Direction#FIRST}</li>
+     *                      <li>{@link Direction#LAST}</li>
+     *                      <li>{@link Direction#FORWARD_ALL}</li>
+     *                      <li>{@link Direction#BACKWARD_ALL}</li>
      *                  </ul>
      * @return the {@link Publisher} that emit one {@link ResultStates} or {@link Throwable}.
      * @throws NullPointerException     emit(not throw) when direction is null
@@ -372,7 +372,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                      <li>server response error message,see {@link ServerException}</li>
      *                                  </ul>
      */
-    Publisher<ResultStates> move(CursorDirection direction);
+    Publisher<ResultStates> move(Direction direction);
 
     /**
      * <p>
@@ -384,14 +384,14 @@ public interface RefCursor extends OptionSpec, Closeable {
      *
      * @param direction must be one of following :
      *                  <ul>
-     *                      <li>{@link CursorDirection#ABSOLUTE}</li>
-     *                      <li>{@link CursorDirection#RELATIVE}</li>
-     *                      <li>{@link CursorDirection#FORWARD}</li>
-     *                      <li>{@link CursorDirection#BACKWARD}</li>
+     *                      <li>{@link Direction#ABSOLUTE}</li>
+     *                      <li>{@link Direction#RELATIVE}</li>
+     *                      <li>{@link Direction#FORWARD}</li>
+     *                      <li>{@link Direction#BACKWARD}</li>
      *                  </ul>
      * @param count     row count   <ul>
      *                  <li>
-     *                  {@link CursorDirection#ABSOLUTE}  :
+     *                  {@link Direction#ABSOLUTE}  :
      *                                   <ul>
      *                                       <li>positive : move to the count'th row. position after last row if count is out of range</li>
      *                                       <li>negative : move to the abs(count)'th row from the end. position before first row if count is out of range</li>
@@ -399,7 +399,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#RELATIVE}  :
+     *                                   {@link Direction#RELATIVE}  :
      *                                   <ul>
      *                                       <li>positive : move to the count'th succeeding row</li>
      *                                       <li>negative : move to the abs(count)'th prior row</li>
@@ -407,19 +407,19 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#FORWARD}  :
+     *                                   {@link Direction#FORWARD}  :
      *                                   <ul>
      *                                      <li>positive : move to the next count rows.</li>
      *                                      <li>0 : re-position the current row</li>
-     *                                      <li>negative :  is equivalent to {@link CursorDirection#BACKWARD} abs(count)</li>
+     *                                      <li>negative :  is equivalent to {@link Direction#BACKWARD} abs(count)</li>
      *                                   </ul>
      *                               </li>
      *                               <li>
-     *                                   {@link CursorDirection#BACKWARD}  :
+     *                                   {@link Direction#BACKWARD}  :
      *                                   <ul>
      *                                      <li>positive : move to the prior count rows (scanning backwards).</li>
      *                                      <li>0 : re-position the current row</li>
-     *                                      <li>negative :  is equivalent to {@link CursorDirection#FORWARD} abs(count)</li>
+     *                                      <li>negative :  is equivalent to {@link Direction#FORWARD} abs(count)</li>
      *                                   </ul>
      *                               </li>
      *                  </ul>
@@ -438,7 +438,7 @@ public interface RefCursor extends OptionSpec, Closeable {
      *                                      <li>server response error message,see {@link ServerException}</li>
      *                                  </ul>
      */
-    Publisher<ResultStates> move(CursorDirection direction, long count);
+    Publisher<ResultStates> move(Direction direction, long count);
 
 
     /**
