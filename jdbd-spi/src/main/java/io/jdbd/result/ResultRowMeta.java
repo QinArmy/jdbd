@@ -34,7 +34,7 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * @return can be following sub type:
      * <ul>
      *     <li>{@link io.jdbd.meta.SQLType},database build-in type</li>
-     *     <li>{@link io.jdbd.meta.UserDefinedType},developer defined type</li>
+     *     <li>{@link io.jdbd.meta.DataType},developer defined type</li>
      * </ul>
      * @throws JdbdException throw when indexBasedZero error
      * @see #getJdbdType(int)
