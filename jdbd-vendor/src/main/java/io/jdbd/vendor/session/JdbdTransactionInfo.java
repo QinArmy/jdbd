@@ -91,6 +91,8 @@ public enum JdbdTransactionInfo implements TransactionInfo {
         if (!inTransaction) {
             status = (TransactionInfo) TransactionOption.option(isolation, readOnly);
             assert !status.inTransaction();
+            assert isolation.equals(status.isolation());
+            assert status.isReadOnly() == readOnly;
             return status;
         }
         if (isolation == Isolation.READ_COMMITTED) {
