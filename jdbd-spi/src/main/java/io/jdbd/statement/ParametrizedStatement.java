@@ -34,14 +34,14 @@ public interface ParametrizedStatement extends Statement {
     /**
      * <p>
      * Bind parameter value to statement that exists SQL parameter placeholder and SQL parameter placeholder must be {@code ?}
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong> : the driver developer must provide the java doc(html list) in the implementation of this method for explaining :
      * <ul>
      *     <li>the rule of {@link DataType} converting </li>
      *     <li>the rule of {@link DataType} supporting java type</li>
      * </ul>
-     *<br/>
+     * <br/>
      * <p>
      *     Each {@link JdbdType} instance support java type rule:
      *     <ul>
@@ -319,7 +319,7 @@ public interface ParametrizedStatement extends Statement {
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
      *     </ul>
-     *<br/>
+     * <br/>
      *
      * @param indexBasedZero parameter placeholder index based zero, the first value is 0 .
      * @param dataType       parameter type is following type : <ul>
@@ -327,8 +327,8 @@ public interface ParametrizedStatement extends Statement {
      *                       <li>{@link io.jdbd.meta.SQLType} driver have known database build-in data type. It is defined by driver developer.</li>
      *                       <li>the {@link DataType} that application developer define type and it's {@link DataType#typeName()} is supported by database. see {@link DataType#buildIn(String)} and {@link DataType#userDefined(String)}
      *                             <ul>
-     *                                 <li>If {@link DataType#typeName()} is database build-in type,this method convert dataType to appropriate {@link io.jdbd.meta.SQLType} . dataType shouldn't be {@link io.jdbd.meta.UserDefinedType} type, or throw {@link JdbdException}.</li>
-     *                                 <li>Else if database support user_defined type,then use dataType. now dataType should be {@link io.jdbd.meta.UserDefinedType} type,if it's user_defined type</li>
+     *                                 <li>If {@link DataType#typeName()} is database build-in type,this method convert dataType to appropriate {@link io.jdbd.meta.SQLType} .</li>
+     *                                 <li>Else if database support user_defined type,then use dataType.</li>
      *                                 <li>Else throw {@link JdbdException}</li>
      *                             </ul>
      *                       </li>

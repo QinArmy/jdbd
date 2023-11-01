@@ -19,29 +19,22 @@ abstract class DataTypeFactory {
         throw new UnsupportedOperationException();
     }
 
-    static DataType buildIn(String typeName, boolean caseSensitivity) {
+    static DataType typeFrom(String typeName, boolean caseSensitivity) {
         if (JdbdUtils.hasNoText(typeName)) {
             throw JdbdUtils.requiredText(typeName);
         }
         if (!caseSensitivity) {
             typeName = typeName.toUpperCase(Locale.ROOT);
         }
-        return DatabaseBuildInType.INSTANCE_MAP.computeIfAbsent(typeName, DatabaseBuildInType.CONSTRUCTOR);
+        return JdbdDataType.INSTANCE_MAP.computeIfAbsent(typeName, JdbdDataType.CONSTRUCTOR);
     }
 
 
-    static UserDefinedType userDefined(String typeName, boolean caseSensitivity) {
-        if (JdbdUtils.hasNoText(typeName)) {
-            throw JdbdUtils.requiredText(typeName);
-        }
-        if (!caseSensitivity) {
-            typeName = typeName.toUpperCase(Locale.ROOT);
-        }
-        return JdbdUserDefinedType.INSTANCE_MAP.computeIfAbsent(typeName, JdbdUserDefinedType.CONSTRUCTOR);
-    }
+    private static final class JdbdDataType implements DataType {
 
+        private static final ConcurrentMap<String, JdbdDataType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
 
-    private static abstract class JdbdDataType implements DataType {
+        private static final Function<String, JdbdDataType> CONSTRUCTOR = JdbdDataType::new;
 
         private final String dataTypeName;
 
@@ -49,57 +42,35 @@ abstract class DataTypeFactory {
             this.dataTypeName = dataTypeName;
         }
 
+
         @Override
-        public final String name() {
+        public String name() {
             return this.dataTypeName;
         }
 
         @Override
-        public final String typeName() {
+        public String typeName() {
             return this.dataTypeName;
         }
 
         @Override
-        public final boolean isArray() {
+        public boolean isArray() {
             return this.dataTypeName.endsWith("[]");
         }
 
         @Override
-        public final boolean isUnknown() {
+        public boolean isUnknown() {
             return false;
         }
 
-
-    }// JdbdDataType
-
-
-    private static final class DatabaseBuildInType extends JdbdDataType {
-
-        private static final ConcurrentMap<String, DatabaseBuildInType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
-
-        private static final Function<String, DatabaseBuildInType> CONSTRUCTOR = DatabaseBuildInType::new;
-
-        private DatabaseBuildInType(String dataTypeName) {
-            super(dataTypeName);
+        @Override
+        public String toString() {
+            return String.format("%s[typeName:%s,hash:%s]", getClass().getName(), this.dataTypeName,
+                    System.identityHashCode(this));
         }
 
 
     }// DatabaseBuildInType
-
-
-    private static final class JdbdUserDefinedType extends JdbdDataType implements UserDefinedType {
-
-        private static final ConcurrentMap<String, JdbdUserDefinedType> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
-
-        private static final Function<String, JdbdUserDefinedType> CONSTRUCTOR = JdbdUserDefinedType::new;
-
-
-        private JdbdUserDefinedType(String dataTypeName) {
-            super(dataTypeName);
-        }
-
-
-    }//JdbdUserDefinedType
 
 
 }

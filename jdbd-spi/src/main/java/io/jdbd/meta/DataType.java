@@ -12,11 +12,7 @@ import io.jdbd.statement.ParametrizedStatement;
  *     {@link ParametrizedStatement#bind(int, DataType, Object)} use {@link #typeName()} bind parameter, if not {@link JdbdType}.
  * <br/>
  * <p>
- *     The Known superinterfaces:
- *     <ul>
- *         <li>{@link SQLType} representing database build-in type</li>
- *         <li>{@link UserDefinedType} representing user-defined type</li>
- *     </ul>
+ *     The Known superinterfaces: {@link SQLType} representing database build-in type
  * <br/>
  * <p>
  *     The Known implementations:
@@ -75,7 +71,7 @@ public interface DataType {
      * @see #buildIn(String, boolean)
      */
     static DataType buildIn(String typeName) {
-        return DataTypeFactory.buildIn(typeName, false);
+        return DataTypeFactory.typeFrom(typeName, false);
     }
 
     /**
@@ -93,24 +89,25 @@ public interface DataType {
      * @throws IllegalArgumentException throw when typeName have no text.
      */
     static DataType buildIn(String typeName, boolean caseSensitivity) {
-        return DataTypeFactory.buildIn(typeName, caseSensitivity);
+        return DataTypeFactory.typeFrom(typeName, caseSensitivity);
     }
 
 
     /**
      * <p>
      * This method is equivalent to {@code DataType.userDefined(typeName,false)} :
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong>: only when {@link JdbdType} couldn't express appropriate type,you use this method.<br/>
      * It means you should prefer {@link JdbdType}.
-     *<br/>
+     * <br/>
+     *
      * @param typeName non-null
-     * @return {@link UserDefinedType} instance
+     * @return {@link DataType} instance
      * @see #userDefined(String, boolean)
      */
-    static UserDefinedType userDefined(String typeName) {
-        return DataTypeFactory.userDefined(typeName, false);
+    static DataType userDefined(String typeName) {
+        return DataTypeFactory.typeFrom(typeName, false);
     }
 
     /**
@@ -127,8 +124,8 @@ public interface DataType {
      * @return {@link DataType} that representing user-defined type.
      * @throws IllegalArgumentException throw when typeName have no text.
      */
-    static UserDefinedType userDefined(String typeName, boolean caseSensitivity) {
-        return DataTypeFactory.userDefined(typeName, caseSensitivity);
+    static DataType userDefined(String typeName, boolean caseSensitivity) {
+        return DataTypeFactory.typeFrom(typeName, caseSensitivity);
     }
 
 

@@ -309,8 +309,8 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      *                 <li>{@link io.jdbd.meta.SQLType} driver have known database build-in data type. It is defined by driver developer.</li>
      *                 <li>the {@link DataType} that application developer define type and it's {@link DataType#typeName()} is supported by database.
      *                       <ul>
-     *                           <li>If {@link DataType#typeName()} is database build-in type,this method convert dataType to appropriate {@link io.jdbd.meta.SQLType} . now dataType shouldn't be {@link io.jdbd.meta.UserDefinedType} type, or throw {@link JdbdException}.</li>
-     *                           <li>Else if database support user_defined type,then use dataType. now dataType should be {@link io.jdbd.meta.UserDefinedType} type,if it's user_defined type</li>
+     *                           <li>If {@link DataType#typeName()} is database build-in type,this method convert dataType to appropriate {@link io.jdbd.meta.SQLType} .</li>
+     *                           <li>Else if database support user_defined type,then use dataType.</li>
      *                           <li>Else throw {@link JdbdException}</li>
      *                       </ul>
      *                 </li>
