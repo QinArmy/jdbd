@@ -1,6 +1,7 @@
 package io.jdbd.session;
 
 import io.jdbd.Driver;
+import io.jdbd.lang.Nullable;
 import io.jdbd.meta.SchemaMeta;
 import io.jdbd.meta.TableMeta;
 import io.jdbd.result.Cursor;
@@ -28,6 +29,7 @@ import java.util.function.Function;
  * </ul>
  * for more dialectal driver.
  * <br/>
+ *
  * @param <T> value java type
  * @see OptionSpec
  * @since 1.0
@@ -50,6 +52,15 @@ public final class Option<T> {
         return new Option<>(name, javaType);
     }
 
+    public static <T> Function<Option<?>, ?> singleFunc(final Option<T> option, final @Nullable T value) {
+        return o -> {
+            if (option.equals(o)) {
+                return value;
+            }
+            return null;
+        };
+    }
+
     public static final Function<Option<?>, ?> EMPTY_OPTION_FUNC = option -> null;
 
     private static final ConcurrentMap<String, Option<?>> INSTANCE_MAP = JdbdUtils.concurrentHashMap();
@@ -57,14 +68,14 @@ public final class Option<T> {
     /**
      * <p>
      * Representing a name option. For example : transaction name in firebird database.
-     *<br/>
+     * <br/>
      */
     public static final Option<String> NAME = Option.from("NAME", String.class);
 
     /**
      * <p>
      * Representing a wait option. For example : transaction wait option.
-     *<br/>
+     * <br/>
      *
      * @see <a href="https://firebirdsql.org/file/documentation/html/en/refdocs/fblangref40/firebird-40-language-reference.html#fblangref40-transacs-settransac">firebird : SET TRANSACTION</a>
      */
@@ -73,7 +84,7 @@ public final class Option<T> {
     /**
      * <p>
      * Representing transaction LOCK TIMEOUT,for example firebird database.
-     *<br/>
+     * <br/>
      *
      * @see <a href="https://firebirdsql.org/file/documentation/html/en/refdocs/fblangref40/firebird-40-language-reference.html#fblangref40-transacs-settransac">firebird : SET TRANSACTION</a>
      */
@@ -82,10 +93,10 @@ public final class Option<T> {
     /**
      * <p>
      * This option representing transaction isolation level.
-     *<br/>
+     * <br/>
      * <p>
      * This option always is supported by {@link TransactionOption#valueOf(Option)}.
-     *<br/>
+     * <br/>
      *
      * @see #READ_ONLY
      */
@@ -94,20 +105,20 @@ public final class Option<T> {
     /**
      * <p>
      * This option representing read-only transaction.
-     *<br/>
+     * <br/>
      * <p>
      * This option always is supported by {@link TransactionOption#valueOf(Option)}.
-     *<br/>
+     * <br/>
      * <p>
      * When this option is supported by {@link DatabaseSession#valueOf(Option)} , this option representing the session in read-only transaction block<br/>
      * after last statement executing , now the {@link #IN_TRANSACTION} always true.
-     *<br/>
+     * <br/>
      * <p>
      * When this option is supported by {@link io.jdbd.result.ResultStates#valueOf(Option)} , this option representing the session in read-only transaction block
      * after current statement executing, now the {@link #IN_TRANSACTION} always true. <br/>
      * <strong>NOTE</strong> : the 'current' statement perhaps is a part of multi-statement or is CALL command that execute procedures,<br/>
      * that means the read-only transaction maybe have ended by next statement.
-     *<br/>
+     * <br/>
      *
      * @see #IN_TRANSACTION
      */
@@ -117,20 +128,20 @@ public final class Option<T> {
     /**
      * <p>
      * This option representing {@link DatabaseSession} in transaction block.
-     *<br/>
+     * <br/>
      * <p>
      * This option always is supported by {@link TransactionInfo#valueOf(Option)}.
-     *<br/>
+     * <br/>
      * <p>
      * When this option is supported by {@link DatabaseSession#valueOf(Option)} , this option representing the session in transaction block<br/>
      * after last statement executing. Now this option is equivalent to {@link DatabaseSession#inTransaction()}.
-     *<br/>
+     * <br/>
      * <p>
      * When this option is supported by {@link io.jdbd.result.ResultStates#valueOf(Option)} , this option representing the session in transaction block
      * after current statement executing.<br/>
      * <strong>NOTE</strong> : the 'current' statement perhaps is a part of multi-statement or is CALL command that execute procedures<br/>
      * that means the transaction block maybe have ended by next statement.
-     *<br/>
+     * <br/>
      *
      * @see #READ_ONLY
      * @see DatabaseSession#inTransaction()
@@ -141,13 +152,13 @@ public final class Option<T> {
      * <p>
      * When this option is supported by {@link DatabaseSession#valueOf(Option)} , this option representing the session is auto commit<br/>
      * after last statement executing.
-     *<br/>
+     * <br/>
      * <p>
      * When this option is supported by {@link io.jdbd.result.ResultStates#valueOf(Option)} , this option representing the session is auto commit
      * after current statement executing.<br/>
      * <strong>NOTE</strong> : the 'current' statement perhaps is a part of multi-statement or is CALL command that execute procedures<br/>
      * that means the auto commit status maybe have modified by next statement.
-     *<br/>
+     * <br/>
      *
      * @see #READ_ONLY
      * @see #IN_TRANSACTION
@@ -158,13 +169,13 @@ public final class Option<T> {
      * <p>
      * This option representing {@link DatabaseSession} is read only, <strong>usually</strong> (not always) database is read only. <br/>
      * That means application developer can't modify the read only status by sql.
-     *<br/>
+     * <br/>
      * <p>
      * This option <strong>perhaps</strong> is supported by following :
      *     <ul>
      *         <li>{@link io.jdbd.result.ResultStates#valueOf(Option)}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      */
     public static final Option<Boolean> READ_ONLY_SESSION = Option.from("READ ONLY SESSION", Boolean.class);
 
@@ -181,7 +192,7 @@ public final class Option<T> {
     /**
      * <p>
      * [NO] CHAIN option of COMMIT command.
-     *<br/>
+     * <br/>
      *
      * @see LocalDatabaseSession#commit(java.util.function.Function)
      * @see LocalDatabaseSession#rollback(java.util.function.Function)
@@ -194,7 +205,7 @@ public final class Option<T> {
     /**
      * <p>
      * [NO] RELEASE option of COMMIT/ROLLBACK command.
-     *<br/>
+     * <br/>
      *
      * @see LocalDatabaseSession#commit(java.util.function.Function)
      * @see LocalDatabaseSession#rollback(java.util.function.Function)
@@ -205,7 +216,7 @@ public final class Option<T> {
     /**
      * <p>
      * Transaction option of some database(eg: MySQL)
-     *<br/>
+     * <br/>
      *
      * @see LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)
      * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/commit.html">MySQL : WITH CONSISTENT SNAPSHOT</a>
@@ -215,7 +226,7 @@ public final class Option<T> {
     /**
      * <p>
      * Transaction option of some database(eg: PostgreSQL)
-     *<br/>
+     * <br/>
      *
      * @see LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)
      * @see <a href="https://www.postgresql.org/docs/current/sql-start-transaction.html">postgre : DEFERRABLE</a>
@@ -235,7 +246,7 @@ public final class Option<T> {
     /**
      * <p>
      * representing the XA_STATES option of {@link TransactionInfo#valueOf(Option)} from {@link RmDatabaseSession}.
-     *<br/>
+     * <br/>
      *
      * @see XaStates
      */
@@ -244,7 +255,7 @@ public final class Option<T> {
     /**
      * <p>
      * representing the xa flags option of {@link TransactionInfo#valueOf(Option)} from {@link RmDatabaseSession}.
-     *<br/>
+     * <br/>
      */
     public static final Option<Integer> XA_FLAGS = Option.from("XA FLAGS", Integer.class);
 
