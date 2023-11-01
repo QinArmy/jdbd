@@ -57,6 +57,12 @@ public interface BindStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
+    BindStatement setFrequency(Frequency frequency);
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     BindStatement setTimeout(int millSeconds) throws JdbdException;
 
     /**

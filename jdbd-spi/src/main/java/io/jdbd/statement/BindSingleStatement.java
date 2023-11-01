@@ -325,6 +325,13 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      */
     <R> Publisher<R> executeBatchQueryAsFlux(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);
 
+    /**
+     * <p>Set frequency help driver cache server prepare statement.
+     *
+     * @return <strong>this</strong>
+     */
+    BindSingleStatement setFrequency(Frequency frequency);
+
 
     /**
      * {@inheritDoc }

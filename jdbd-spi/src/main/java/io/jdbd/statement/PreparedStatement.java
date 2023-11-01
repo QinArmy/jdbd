@@ -93,16 +93,22 @@ public interface PreparedStatement extends BindSingleStatement {
     /**
      * <p>
      * This method close this  {@link PreparedStatement} if you don't invoke any executeXxx() method.
-     *<br/>
+     * <br/>
      * <p>
      * Abandon binding before invoke executeXxx() method.
-     *<br/>
+     * <br/>
      *
      * @return Publisher like {@code reactor.core.publisher.Mono} ,
      * if success emit {@link DatabaseSession} that create this {@link PreparedStatement}.
      * @throws JdbdException emit(not throw), when after invoking executeXxx().
      */
     DatabaseSession abandonBind();
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    PreparedStatement setFrequency(Frequency frequency);
 
     /**
      * {@inheritDoc }
