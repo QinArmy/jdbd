@@ -108,7 +108,7 @@ public interface PreparedStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
-    PreparedStatement setFrequency(Frequency frequency);
+    PreparedStatement setFrequency(int frequency);
 
     /**
      * {@inheritDoc }

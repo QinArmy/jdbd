@@ -57,7 +57,7 @@ public interface BindStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
-    BindStatement setFrequency(Frequency frequency);
+    BindStatement setFrequency(int frequency);
 
     /**
      * {@inheritDoc }

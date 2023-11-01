@@ -328,9 +328,15 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>Set frequency help driver cache server prepare statement.
      *
+     * @param frequency <ul>
+     *                  <li>negative : throw {@link JdbdException}</li>
+     *                  <li>0 : never cache server prepare statement</li>
+     *                  <li>positive : representing frequency</li>
+     *                  <li>{@link Integer#MAX_VALUE} : always cache server prepare statement</li>
+     *                  </ul>
      * @return <strong>this</strong>
      */
-    BindSingleStatement setFrequency(Frequency frequency);
+    BindSingleStatement setFrequency(int frequency);
 
 
     /**
