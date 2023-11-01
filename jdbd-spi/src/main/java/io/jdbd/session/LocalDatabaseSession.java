@@ -45,8 +45,6 @@ import java.util.function.Function;
  *         <li>{@link #rollback()}</li>
  *         <li>{@link #rollback(Function)}</li>
  *         <li>{@link #setSavePoint()}</li>
- *         <li>{@link #setSavePoint(String)}</li>
- *         <li>{@link #setSavePoint(String, Function)}</li>
  *         <li>{@link #releaseSavePoint(SavePoint)}</li>
  *         <li>{@link #releaseSavePoint(SavePoint, Function)}</li>
  *         <li>{@link #rollbackToSavePoint(SavePoint)}</li>
@@ -141,7 +139,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #commit(Function)
      */
-    Publisher<Optional<TransactionInfo>> commit();
+    Publisher<LocalDatabaseSession> commit();
 
     /**
      * <p>
@@ -189,7 +187,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * @return {@link Publisher} emit <strong>this</strong> or {@link Throwable},like {@code reactor.core.publisher.Mono}
      * @see #rollback(Function)
      */
-    Publisher<Optional<TransactionInfo>> rollback();
+    Publisher<LocalDatabaseSession> rollback();
 
     /**
      * <p>

@@ -63,8 +63,6 @@ import java.util.function.Function;
  *         <li>{@link #transactionInfo()}</li>
  *         <li>{@link #setTransactionCharacteristics(TransactionOption)}</li>
  *         <li>{@link #setSavePoint()}</li>
- *         <li>{@link #setSavePoint(String)}</li>
- *         <li>{@link #setSavePoint(String, java.util.function.Function)}</li>
  *         <li>{@link #releaseSavePoint(SavePoint)}</li>
  *         <li>{@link #releaseSavePoint(SavePoint, java.util.function.Function)}</li>
  *         <li>{@link #rollbackToSavePoint(SavePoint)}</li>
