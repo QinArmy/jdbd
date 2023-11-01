@@ -39,6 +39,15 @@ public interface StmtOption {
      */
     int getFetchSize();
 
+
+    /**
+     * Get use frequency for helping developer cache server-prepared statement.
+     *
+     * @return frequency
+     * @see io.jdbd.statement.BindSingleStatement#setFrequency(int)
+     */
+    int getFrequency();
+
     /**
      * Get stmt var list
      *
@@ -56,6 +65,7 @@ public interface StmtOption {
 
     /**
      * Get export function
+     *
      * @return nullable
      */
     @Nullable

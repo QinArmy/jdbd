@@ -82,7 +82,6 @@ public abstract class Stmts {
     }
 
 
-
     public static ParamBatchStmt paramBatch(String sql, List<List<ParamValue>> groupList) {
         return new MinParamBatchStmt(sql, groupList, null);
     }
@@ -119,6 +118,11 @@ public abstract class Stmts {
 
         @Override
         public final int getFetchSize() {
+            return 0;
+        }
+
+        @Override
+        public final int getFrequency() {
             return 0;
         }
 
@@ -206,10 +210,7 @@ public abstract class Stmts {
         }
 
 
-
     }//JustSessionStaticUpdateStmt
-
-
 
 
     private static final class JustSessionStaticBatchStmt extends StmtWithoutOption implements StaticBatchStmt {
@@ -252,6 +253,8 @@ public abstract class Stmts {
 
         private final int fetchSize;
 
+        private final int frequency;
+
         private final List<NamedValue> stmtVarList;
 
         private final Function<ChunkOption, Publisher<byte[]>> importFunc;
@@ -263,7 +266,9 @@ public abstract class Stmts {
         private SessionStmt(StmtOption option) {
             this.timeout = option.getTimeout();
             this.fetchSize = option.getFetchSize();
+            this.frequency = option.getFrequency();
             this.stmtVarList = option.getStmtVarList();
+
             this.importFunc = option.getImportFunction();
 
             this.exportFunc = option.getExportFunction();
@@ -278,6 +283,11 @@ public abstract class Stmts {
         @Override
         public final int getFetchSize() {
             return this.fetchSize;
+        }
+
+        @Override
+        public final int getFrequency() {
+            return this.frequency;
         }
 
         @Override
@@ -336,8 +346,6 @@ public abstract class Stmts {
     }//SessionStaticUpdateStmt
 
 
-
-
     protected static final class SessionStaticBatchStmt extends SessionStmt implements StaticBatchStmt {
 
         private final List<String> sqlGroup;
@@ -391,8 +399,6 @@ public abstract class Stmts {
     }//ParamUpdateStmt
 
 
-
-
     private static abstract class SessionParamStmt extends SessionStmt implements ParamStmt {
 
         private final String sql;
@@ -429,8 +435,6 @@ public abstract class Stmts {
     }//SessionParamUpdateStmt
 
 
-
-
     private static final class QueryFetchParamStmt implements ParamStmt {
 
         private final String sql;
@@ -460,6 +464,11 @@ public abstract class Stmts {
             return this.fetchSize;
         }
 
+        @Override
+        public int getFrequency() {
+            //TODO
+            throw new UnsupportedOperationException();
+        }
 
         @Override
         public int getTimeout() {
@@ -660,6 +669,11 @@ public abstract class Stmts {
 
         @Override
         public int getFetchSize() {
+            return 0;
+        }
+
+        @Override
+        public int getFrequency() {
             return 0;
         }
 
