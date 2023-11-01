@@ -552,13 +552,13 @@ public interface MultiResultStatement extends Statement {
      * {@inheritDoc }
      */
     @Override
-    MultiResultStatement setTimeout(int millSeconds) throws JdbdException;
+    MultiResultStatement setTimeout(int millSeconds) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    MultiResultStatement setFetchSize(int fetchSize) throws JdbdException;
+    MultiResultStatement setFetchSize(int fetchSize) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }

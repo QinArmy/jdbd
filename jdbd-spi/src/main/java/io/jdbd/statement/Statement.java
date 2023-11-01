@@ -17,15 +17,13 @@ import java.util.function.Function;
 
 
 /**
- * <p>
- * This interface is base interface of following interfaces:
+ * <p>This interface is base interface of following interfaces:
  *     <ul>
  *         <li>{@link StaticStatement}</li>
  *         <li>{@link BindStatement}</li>
  *         <li>{@link PreparedStatement}</li>
  *         <li>{@link MultiStatement}</li>
  *     </ul>
- * <br/>
  * <p>
  *     NOTE: {@link Statement} is auto close after you invoke executeXxx() method,or binding occur error,so
  *     {@link Statement} have no close() method.
@@ -424,7 +422,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when seconds is negative.
      */
-    Statement setTimeout(int millSeconds);
+    Statement setTimeout(int millSeconds) throws IllegalArgumentException;
 
 
     /**
@@ -441,7 +439,7 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
      * @return <strong>this</strong>
      * @throws IllegalArgumentException throw when fetchSize is negative.
      */
-    Statement setFetchSize(int fetchSize);
+    Statement setFetchSize(int fetchSize) throws IllegalArgumentException;
 
     /**
      * Some database allows high-speed bulk data transfer to or from the server. For example : PostgreSQL COPY command

@@ -54,19 +54,19 @@ public interface BindStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
-    BindStatement setFrequency(int frequency);
+    BindStatement setFrequency(int frequency) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    BindStatement setTimeout(int millSeconds) throws JdbdException;
+    BindStatement setTimeout(int millSeconds) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    BindStatement setFetchSize(int fetchSize) throws JdbdException;
+    BindStatement setFetchSize(int fetchSize) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }

@@ -102,19 +102,19 @@ public interface PreparedStatement extends BindSingleStatement {
      * {@inheritDoc }
      */
     @Override
-    PreparedStatement setFrequency(int frequency);
+    PreparedStatement setFrequency(int frequency) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    PreparedStatement setTimeout(int millSeconds) throws JdbdException;
+    PreparedStatement setTimeout(int millSeconds) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    PreparedStatement setFetchSize(int fetchSize) throws JdbdException;
+    PreparedStatement setFetchSize(int fetchSize) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }

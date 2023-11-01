@@ -389,13 +389,13 @@ public interface ParametrizedStatement extends Statement {
      * {@inheritDoc }
      */
     @Override
-    ParametrizedStatement setTimeout(int millSeconds) throws JdbdException;
+    ParametrizedStatement setTimeout(int millSeconds) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    ParametrizedStatement setFetchSize(int fetchSize) throws JdbdException;
+    ParametrizedStatement setFetchSize(int fetchSize) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }

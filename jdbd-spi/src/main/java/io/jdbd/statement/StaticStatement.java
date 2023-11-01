@@ -189,13 +189,13 @@ public interface StaticStatement extends Statement, StaticStatementSpec {
      * {@inheritDoc }
      */
     @Override
-    StaticStatement setTimeout(int millSeconds) throws JdbdException;
+    StaticStatement setTimeout(int millSeconds) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }
      */
     @Override
-    StaticStatement setFetchSize(int fetchSize) throws JdbdException;
+    StaticStatement setFetchSize(int fetchSize) throws IllegalArgumentException;
 
     /**
      * {@inheritDoc }

@@ -226,6 +226,14 @@ public abstract class JdbdExceptions {
 
     /**
      * @return {@link IllegalArgumentException} not {@link JdbdException}
+     * @see io.jdbd.statement.BindSingleStatement#setFrequency(int)
+     */
+    public static IllegalArgumentException frequencyIsNegative(int frequency) {
+        return new IllegalArgumentException(String.format("frequency[%s] is negative.", frequency));
+    }
+
+    /**
+     * @return {@link IllegalArgumentException} not {@link JdbdException}
      * @see io.jdbd.statement.Statement#setFetchSize(int)
      */
     public static IllegalArgumentException fetchSizeIsNegative(int fetchSize) {
