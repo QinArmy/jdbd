@@ -12,12 +12,9 @@ import org.reactivestreams.Subscriber;
 import java.util.function.Function;
 
 /**
- * <p>
- * This interface representing the adaptor of client-prepared statement and server-prepared statement.
- * <br/>
- * <p>
- * The instance of this interface is created by {@link DatabaseSession#bindStatement(String, boolean)} method.
- * <br/>
+ * <p>This interface representing the adaptor of client-prepared statement and server-prepared statement.
+ * <p>The instance of this interface is created by {@link DatabaseSession#bindStatement(String, boolean)} method.
+ * <p>Application developer can help driver developer cache server-prepared statement by {@link #setFrequency(int)} methods.
  *
  * @see io.jdbd.session.DatabaseSession#bindStatement(String, boolean)
  * @since 1.0

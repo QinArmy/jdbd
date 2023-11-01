@@ -16,21 +16,15 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * <p>
- * This interface is is similar to {@code java.sql.PreparedStatement}, except that this interface is reactive.
- * <br/>
- * <p>
- * This interface is designed for providing following methods:
+ * <p>This interface is is similar to {@code java.sql.PreparedStatement}, except that this interface is reactive.
+ * <p>This interface is designed for providing following methods:
  *     <ul>
  *         <li>{@link #paramTypeList()}</li>
  *         <li>{@link #resultRowMeta()}</li>
  *         <li>{@link #waring()}</li>
  *     </ul>
  *     , so if you don't need above methods, then you can use {@link DatabaseSession#bindStatement(String, boolean)}.
- * <br/>
- * <p>
- * The instance of this interface is created by {@link DatabaseSession#prepareStatement(String)} method.
- * <br/>
+ * <p>The instance of this interface is created by {@link DatabaseSession#prepareStatement(String)} method.
  * <p>
  * You should invoke one of following :
  * <ul>
@@ -44,7 +38,7 @@ import java.util.function.Function;
  *     <li>{@link #executeBatchAsFlux()}</li>
  *     <li>{@link #abandonBind()}</li>
  * </ul>
- * <br/>
+ * <p>Application developer can help driver developer cache server-prepared statement by {@link #setFrequency(int)} methods.
  * <p>
  *     <strong>NOTE</strong>: this interface is auto closing when
  *     <ul>
