@@ -69,6 +69,10 @@ public class HowToStartTests {
         Mono.from(sessionFactory.localSession())
 
                 .flatMap(session -> Mono.from(session.startTransaction(TransactionOption.option(Isolation.REPEATABLE_READ, false)))      // start new transaction
+                        .doOnSuccess(s -> {
+                            Assert.assertTrue(s.inTransaction()); // session in  transaction block
+                            Assert.assertTrue(session.inTransaction()); // session in  transaction block
+                        })
                         .flatMap(t -> session.bindStatement(sql)
                                 .bind(0, JdbdType.BOOLEAN, true)
                                 .bind(1, JdbdType.BIGINT, null)
@@ -77,6 +81,11 @@ public class HowToStartTests {
                                 .bind(4, JdbdType.VARCHAR, "中国 QinArmy's jdbd \n \\ \t \" \032 \b \r '''  \\' ")
                                 .executeUpdate(Mono::from))
                         .then(Mono.defer(() -> Mono.from(session.commit())))    // commit transaction
+                        .then(Mono.from(session.close())) // close session if no error, driver don't send message to database server before subscribing
+                        .onErrorResume(error -> Mono.from(session.close())  // close session when occur error
+                                .then(Mono.error(error))
+                        )
+
                 )
                 .block();
     }
@@ -88,6 +97,10 @@ public class HowToStartTests {
         Mono.from(sessionFactory.localSession())
 
                 .flatMap(session -> Mono.from(session.startTransaction(TransactionOption.option(Isolation.REPEATABLE_READ, false)))      // start new transaction
+                        .doOnSuccess(s -> {
+                            Assert.assertTrue(s.inTransaction()); // session in  transaction block
+                            Assert.assertTrue(session.inTransaction()); // session in  transaction block
+                        })
                         .flatMap(t -> session.bindStatement(sql)
                                 .bind(0, JdbdType.BOOLEAN, true)
                                 .bind(1, JdbdType.BIGINT, null)
@@ -99,7 +112,11 @@ public class HowToStartTests {
                         .doOnSuccess(o -> {
                             Assert.assertTrue(o.isPresent());
                             Assert.assertTrue(o.get().inTransaction()); // session in new transaction block
-                        }).then(Mono.defer(() -> Mono.from(session.commit())))                                              // commit
+                        }).then(Mono.defer(() -> Mono.from(session.commit())))
+                        .then(Mono.from(session.close())) // close session if no error, driver don't send message to database server before subscribing
+                        .onErrorResume(error -> Mono.from(session.close())  // close session when occur error
+                                .then(Mono.error(error))
+                        )
                 )
                 .block();
     }
