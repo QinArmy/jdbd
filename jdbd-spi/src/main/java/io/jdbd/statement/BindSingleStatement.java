@@ -326,13 +326,15 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     <R> Publisher<R> executeBatchQueryAsFlux(Function<CurrentRow, R> rowFunc, Consumer<ResultStates> statesConsumer);
 
     /**
-     * <p>Set frequency help driver cache server prepare statement.
+     * <p>Set frequency to help driver caching server-prepared statement.
+     * <p>Default : -1  in the implementation of jdbd-spi,so if you don't invoke this method,driver will ignore this option.
+     * <p><Strong>NOTE</Strong>: If you invoke this method ,then driver will always use server-prepared.
      *
      * @param frequency <ul>
      *                  <li>negative : throw {@link IllegalArgumentException}</li>
-     *                  <li>0 : never cache server prepare statement</li>
+     *                  <li>0 : never cache server-prepared statement</li>
      *                  <li>positive : representing frequency</li>
-     *                  <li>{@link Integer#MAX_VALUE} : always cache server prepare statement</li>
+     *                  <li>{@link Integer#MAX_VALUE} : always cache server-prepared statement</li>
      *                  </ul>
      * @return <strong>this</strong>
      */
