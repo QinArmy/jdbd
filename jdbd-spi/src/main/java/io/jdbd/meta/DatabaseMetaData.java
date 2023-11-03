@@ -42,17 +42,18 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
 
 
     /**
-     * <p>
      * <ul>
      *     <li>this method return value probably equals {@link #productName()} , For example : MySQL</li>
      *     <li>this method return value probably not equals {@link #productName()} , For example : SQL Server</li>
      * </ul>
-     * <br/>
+     * <strong>NOTE</strong> : this method always return itself product family name,see {@link #supportProductFamily()}
      *
-     * @return database product family name. For example : MySQL , PostgreSQL , SQL Server .
+     * @return database product family name. For example : OceanBase, MySQL , PostgreSQL , SQL Server .
      * @see #productName()
+     * @see #supportProductFamily()
      */
     String productFamily();
+
 
     /**
      * @return database product name,For example :  MySQL , PostgreSQL ,MySQL-ENTERPRISE, PostgreSQL-ENTERPRISE

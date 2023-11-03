@@ -4,6 +4,7 @@ import io.jdbd.Driver;
 import io.jdbd.JdbdException;
 import io.jdbd.meta.DataType;
 import io.jdbd.meta.DatabaseMetaData;
+import io.jdbd.meta.ServerMode;
 import io.jdbd.result.Cursor;
 
 import java.util.function.Function;
@@ -39,6 +40,7 @@ public interface DatabaseMetaSpec {
 
     /**
      * driver vendor name
+     *
      * @return driver vendor,The value returned typically is the package name for this vendor.
      * @see Driver#vendor()
      */
@@ -47,6 +49,7 @@ public interface DatabaseMetaSpec {
 
     /**
      * The session whether support save points or not.
+     *
      * @return true : support save points
      * @throws JdbdException throw when need session is open and session have closed
      * @see java.sql.DatabaseMetaData#supportsSavepoints()
@@ -117,5 +120,24 @@ public interface DatabaseMetaSpec {
      */
     boolean isSupportExportSubscriber() throws JdbdException;
 
+    /**
+     * Get server mode
+     *
+     * @throws JdbdException throw when need session is open and session have closed
+     */
+    ServerMode serverMode() throws JdbdException;
+
+
+    /**
+     * <p>Some database product support other database product syntax.
+     * <p>For example : OceanBase support Oracle and MySQL syntax.
+     * so {@link DatabaseMetaData#productName()} return OceanBase and this method return Oracle or MySQL .
+     *
+     * @return <ul>
+     * <li>the database product that support itself syntax return same value with {@link DatabaseMetaData#productFamily()}</li>
+     * <li>else return the database product family that database support , for example : OceanBase return Oracle or MySQL</li>
+     * </ul>
+     */
+    String supportProductFamily();
 
 }
