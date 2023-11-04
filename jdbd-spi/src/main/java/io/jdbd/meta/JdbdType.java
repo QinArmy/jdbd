@@ -117,10 +117,6 @@ public enum JdbdType implements DataType {
      */
     FLOAT,
     /**
-     * Identifies the generic SQL type {@code REAL}.
-     */
-    REAL,
-    /**
      * Identifies the generic SQL type {@code DOUBLE}.
      */
     DOUBLE,
@@ -440,7 +436,6 @@ public enum JdbdType implements DataType {
             case DECIMAL:
             case NUMERIC:
             case FLOAT:
-            case REAL:
             case DOUBLE:
                 match = true;
                 break;
@@ -463,7 +458,6 @@ public enum JdbdType implements DataType {
 //            case DECIMAL:
 //            case NUMERIC:
 //            case FLOAT:
-//            case REAL:
 //            case DOUBLE:
 //
 //            case TINYINT_UNSIGNED:
@@ -511,9 +505,7 @@ public enum JdbdType implements DataType {
 //
 //            case UNKNOWN:
 //            case ARRAY:
-//            case INTERNAL_USE:
 //            case COMPOSITE:
-//            case USER_DEFINED:
 //            case ROWID:
 //            case REF_CURSOR:
 //            case GEOMETRY:
