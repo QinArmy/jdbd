@@ -343,6 +343,69 @@ public enum JdbdType implements DataType {
         return this == UNKNOWN;
     }
 
+
+    public final boolean isTextString() {
+        final boolean match;
+        switch (this) {
+            case CHAR:
+            case VARCHAR:
+            case TINYTEXT:
+            case TEXT:
+            case MEDIUMTEXT:
+            case LONGTEXT:
+                match = true;
+                break;
+            default:
+                match = false;
+        }
+        return match;
+    }
+
+    public final boolean isBinaryString() {
+        final boolean match;
+        switch (this) {
+            case BINARY:
+            case VARBINARY:
+            case TINYBLOB:
+            case BLOB:
+            case MEDIUMBLOB:
+            case LONGBLOB:
+                match = true;
+                break;
+            default:
+                match = false;
+        }
+        return match;
+    }
+
+    public final boolean isNumberType() {
+        return isSigned() || isUnsigned();
+    }
+
+    public final boolean isTimeType() {
+        final boolean match;
+        switch (this) {
+            case TIME:
+            case TIME_WITH_TIMEZONE:
+            case DATE:
+            case TIMESTAMP:
+            case TIMESTAMP_WITH_TIMEZONE:
+            case YEAR:
+            case MONTH_DAY:
+            case YEAR_MONTH:
+            case INTERVAL:
+            case PERIOD:
+            case DURATION:
+                match = true;
+                break;
+            default:
+                match = false;
+                break;
+        }
+        return match;
+    }
+
+
     /**
      * @return true : unsigned number
      */
