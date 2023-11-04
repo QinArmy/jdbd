@@ -332,7 +332,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *
      * @param frequency <ul>
      *                  <li>negative : throw {@link IllegalArgumentException}</li>
-     *                  <li>0 : never cache server-prepared statement</li>
+     *                  <li>0 : never cache server-prepared statement,if have cached ,close server-prepared statement and delete cache</li>
      *                  <li>positive : representing frequency</li>
      *                  <li>{@link Integer#MAX_VALUE} : always cache server-prepared statement</li>
      *                  </ul>
