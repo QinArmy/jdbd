@@ -527,6 +527,11 @@ public interface RmDatabaseSession extends DatabaseSession {
     int endSupportFlags();
 
     /**
+     * @return the sub set of {@link #commit(Xid, int, Function)} support flags(bit set).
+     */
+    int commitSupportFlags();
+
+    /**
      * @return the sub set of {@link #recover(int, Function)} support flags(bit set).
      */
     int recoverSupportFlags();
