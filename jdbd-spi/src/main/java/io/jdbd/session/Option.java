@@ -84,7 +84,7 @@ public final class Option<T> {
      * Representing transaction TIMEOUT milliseconds ,for example transaction timeout.
      * <br/>
      */
-    public static final Option<Integer> TIMEOUT = Option.from("TIMEOUT", Integer.class);
+    public static final Option<Integer> TIMEOUT_MILLIS = Option.from("TIMEOUT MILLIS", Integer.class);
 
     /**
      * <p>
