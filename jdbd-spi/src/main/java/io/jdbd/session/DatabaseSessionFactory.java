@@ -2,6 +2,7 @@ package io.jdbd.session;
 
 import io.jdbd.Driver;
 import io.jdbd.DriverVersion;
+import io.jdbd.lang.Nullable;
 import org.reactivestreams.Publisher;
 
 import java.util.Map;
@@ -31,20 +32,36 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
     /**
      * <p>
      * This method return factory name ,if you don't specified then return 'unnamed' .
-     *<br/>
+     * <br/>
      *
      * @return factory name. see {@link io.jdbd.Driver#FACTORY_NAME}
      */
     String name();
 
+
+    /**
+     * <p>This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // factory is instance of DatabaseSessionFactory
+     *             factory.localSession(null) ;
+     *         </code>
+     * </pre>
+     *
+     * @see #localSession(String)
+     */
+    Publisher<LocalDatabaseSession> localSession();
+
     /**
      * <p>
      * Get the instance of {@link LocalDatabaseSession}.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     *<br/>
+     * <br/>
+     *
+     * @param name optional session name,if null ,then {@link DatabaseSession#name()} return 'unnamed' .
      * @return emit just one {@link LocalDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>
      * <li>If the instance of {@link DatabaseSessionFactory} is created pool vendor , then always emit non-{@link io.jdbd.pool.PoolLocalDatabaseSession} instance.</li>
@@ -63,18 +80,32 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                               </ul>
      */
-    Publisher<LocalDatabaseSession> localSession();
+    Publisher<LocalDatabaseSession> localSession(@Nullable String name);
 
+
+    /**
+     * <p>This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // factory is instance of DatabaseSessionFactory
+     *             factory.rmSession(null) ;
+     *         </code>
+     * </pre>
+     *
+     * @see #rmSession(String)
+     */
+    Publisher<RmDatabaseSession> rmSession();
 
     /**
      * <p>
      * Get the instance of {@link RmDatabaseSession}.
-     *<br/>
+     * <br/>
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * Driver developer must guarantee this feature.
-     *<br/>
+     * <br/>
      *
+     * @param name optional session name,if null ,then {@link DatabaseSession#name()} return 'unnamed' .
      * @return emit just one {@link RmDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>
      * <li>If the instance of {@link DatabaseSessionFactory} is created pool vendor , then always emit non-{@link io.jdbd.pool.PoolRmDatabaseSession} instance.</li>
@@ -94,7 +125,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                               </ul>
      */
-    Publisher<RmDatabaseSession> rmSession();
+    Publisher<RmDatabaseSession> rmSession(@Nullable String name);
 
 
     /**

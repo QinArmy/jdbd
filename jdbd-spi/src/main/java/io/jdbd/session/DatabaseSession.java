@@ -48,6 +48,8 @@ import java.util.function.Function;
  */
 public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, OptionSpec, Closeable {
 
+    String name();
+
     /**
      * session factory name
      *
@@ -562,6 +564,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *
      * @return driver info, contain : <ol>
      * <li>class name</li>
+     * <li>session name</li>
      * <li>session identifier</li>
      * <li>factory name</li>
      * <li>{@link #factoryVendor()}</li>
