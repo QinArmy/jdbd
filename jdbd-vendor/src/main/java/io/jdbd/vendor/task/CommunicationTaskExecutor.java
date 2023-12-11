@@ -3,6 +3,7 @@ package io.jdbd.vendor.task;
 import io.jdbd.JdbdException;
 import io.jdbd.vendor.TaskQueueOverflowException;
 import io.jdbd.vendor.env.JdbdHost;
+import io.jdbd.vendor.util.JdbdCollections;
 import io.jdbd.vendor.util.JdbdExceptions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -21,12 +22,11 @@ import reactor.core.publisher.MonoSink;
 import reactor.netty.Connection;
 import reactor.netty.NettyPipeline;
 import reactor.netty.tcp.SslProvider;
-import reactor.util.concurrent.Queues;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -48,7 +48,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
     protected final ByteBufAllocator allocator;
 
-    private final Queue<CommunicationTask> taskQueue;
+    private final Deque<CommunicationTask> taskQueue;
 
     private final TaskSignal taskSignal;
 
@@ -73,7 +73,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
 
     protected CommunicationTaskExecutor(Connection connection, int taskQueueSize) {
-        this.taskQueue = Queues.<CommunicationTask>get(taskQueueSize).get();
+        this.taskQueue = JdbdCollections.linkedList();
         this.connection = connection;
         final Channel channel;
         channel = connection.channel();
