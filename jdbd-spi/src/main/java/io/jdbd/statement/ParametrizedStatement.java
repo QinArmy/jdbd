@@ -114,7 +114,7 @@ public interface ParametrizedStatement extends Statement {
      *              </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
-     *         <li>{@link JdbdType#FLOAT} and {@link JdbdType#DOUBLE} and {@link JdbdType#REAL}  support following java types :
+     *         <li>{@link JdbdType#FLOAT} and {@link JdbdType#DOUBLE} and {@link JdbdType#FLOAT}  support following java types :
      *              <ol>
      *                  <li>{@code null}</li>
      *                  <li>{@link Float}</li>
