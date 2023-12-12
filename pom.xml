@@ -7,7 +7,7 @@
     <groupId>io.jdbd</groupId>
     <artifactId>jdbd</artifactId>
     <packaging>pom</packaging>
-    <version>0.13.0-snapshot</version><!-- jdbd version-->
+    <version>0.12.1</version><!-- jdbd maven version-->
     <modules>
         <module>jdbd-spi</module>
         <module>jdbd-vendor</module>
