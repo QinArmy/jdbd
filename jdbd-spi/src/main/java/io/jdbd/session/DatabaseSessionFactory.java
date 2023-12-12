@@ -6,6 +6,7 @@ import io.jdbd.lang.Nullable;
 import org.reactivestreams.Publisher;
 
 import java.util.Map;
+import java.util.function.Function;
 
 
 /**
@@ -44,11 +45,11 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * <pre>
      *         <code><br/>
      *             // factory is instance of DatabaseSessionFactory
-     *             factory.localSession(null) ;
+     *             factory.localSession(null,Option.EMPTY_OPTION_FUNC) ;
      *         </code>
      * </pre>
      *
-     * @see #localSession(String)
+     * @see #localSession(String, Function)
      */
     Publisher<LocalDatabaseSession> localSession();
 
@@ -61,7 +62,8 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * Driver developer must guarantee this feature.
      * <br/>
      *
-     * @param name optional session name,if null ,then {@link DatabaseSession#name()} return 'unnamed' .
+     * @param name       optional session name,if null ,then {@link DatabaseSession#name()} return 'unnamed' .
+     * @param optionFunc option function ,if don't support ,then ignore
      * @return emit just one {@link LocalDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>
      * <li>If the instance of {@link DatabaseSessionFactory} is created pool vendor , then always emit non-{@link io.jdbd.pool.PoolLocalDatabaseSession} instance.</li>
@@ -80,7 +82,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                               </ul>
      */
-    Publisher<LocalDatabaseSession> localSession(@Nullable String name);
+    Publisher<LocalDatabaseSession> localSession(@Nullable String name, Function<Option<?>, ?> optionFunc);
 
 
     /**
@@ -88,11 +90,11 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * <pre>
      *         <code><br/>
      *             // factory is instance of DatabaseSessionFactory
-     *             factory.rmSession(null) ;
+     *             factory.rmSession(null,Option.EMPTY_OPTION_FUNC) ;
      *         </code>
      * </pre>
      *
-     * @see #rmSession(String)
+     * @see #rmSession(String, Function)
      */
     Publisher<RmDatabaseSession> rmSession();
 
@@ -105,7 +107,8 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      * Driver developer must guarantee this feature.
      * <br/>
      *
-     * @param name optional session name,if null ,then {@link DatabaseSession#name()} return 'unnamed' .
+     * @param name       optional session name,if null ,then {@link DatabaseSession#name()} return 'unnamed' .
+     * @param optionFunc option function ,if don't support ,then ignore
      * @return emit just one {@link RmDatabaseSession} instance or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * <ul>
      * <li>If the instance of {@link DatabaseSessionFactory} is created pool vendor , then always emit non-{@link io.jdbd.pool.PoolRmDatabaseSession} instance.</li>
@@ -125,7 +128,7 @@ public interface DatabaseSessionFactory extends OptionSpec, Closeable {
      *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                               </ul>
      */
-    Publisher<RmDatabaseSession> rmSession(@Nullable String name);
+    Publisher<RmDatabaseSession> rmSession(@Nullable String name, Function<Option<?>, ?> optionFunc);
 
 
     /**

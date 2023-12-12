@@ -72,7 +72,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
     private boolean urgencyTask;
 
 
-    protected CommunicationTaskExecutor(Connection connection, int taskQueueSize) {
+    protected CommunicationTaskExecutor(Connection connection) {
         this.taskQueue = JdbdCollections.linkedList();
         this.connection = connection;
         final Channel channel;
@@ -265,7 +265,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
             mono = Mono.empty();
         } else {
             mono = Mono.create(sink -> {
-                this.eventLoop.execute(this::logicallyClose);
+                this.eventLoop.execute(this::logicallyCloseInEventLoop);
                 sink.success();
             });
         }
