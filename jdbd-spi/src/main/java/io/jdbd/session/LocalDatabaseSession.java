@@ -89,20 +89,19 @@ public interface LocalDatabaseSession extends DatabaseSession {
     Publisher<TransactionInfo> startTransaction(TransactionOption option);
 
     /**
-     * <p>
-     * Start one local transaction with option.
-     * <br/>
-     * <p>
-     * Driver developer should guarantee that transaction option (eg: {@link Isolation}) applies only this new transaction.
-     * <br/>
-     * <p>
-     * The implementation of this method <strong>perhaps</strong> support some of following :
+     * <p>Start one local transaction with option.
+     * <p>Driver developer should guarantee that transaction option (eg: {@link Isolation}) applies only this new transaction.
+     * <p>The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#WITH_CONSISTENT_SNAPSHOT}</li>
      *         <li>{@link Option#DEFERRABLE}</li>
      *         <li>{@link Option#NAME}</li>
      *     </ul>
-     * <br/>
+     * <p><strong>NOTE</strong>:
+     * <ul>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
+     * </ul>
      *
      * @param option non-null transaction option, driver perhaps support dialect transaction option by {@link TransactionOption#valueOf(Option)}.
      * @param mode   the handle mode when have existed local transaction :
@@ -152,11 +151,12 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *         <li>{@link Option#RELEASE}</li>
      *     </ul>
      * <br/>
-     * <p>
-     * <strong>NOTE</strong> :
+     * <p><strong>NOTE</strong> :
      * <ul>
      *     <li>driver don't send message to database server before subscribing.</li>
      *     <li>this method don't check session whether in transaction block or not.</li>
+     *     <li>when {@link Option#CHAIN} is true and driver support,{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always be updated</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
      * </ul>
      * <br/>
      *
@@ -190,23 +190,19 @@ public interface LocalDatabaseSession extends DatabaseSession {
     Publisher<LocalDatabaseSession> rollback();
 
     /**
-     * <p>
-     * ROLLBACK current local transaction of this session.
-     * <br/>
-     * <p>
-     * The implementation of this method <strong>perhaps</strong> support some of following :
+     * <p>ROLLBACK current local transaction of this session.
+     * <p>The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#CHAIN}</li>
      *         <li>{@link Option#RELEASE}</li>
      *     </ul>
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> :
+     * <p><strong>NOTE</strong> :
      * <ul>
      *     <li>driver don't send message to database server before subscribing.</li>
      *     <li>this method don't check session whether in transaction block or not.</li>
+     *     <li>when {@link Option#CHAIN} is true and driver support,{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always be updated</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
      * </ul>
-     * <br/>
      *
      * @param optionFunc {@link Option} function
      * @return emit 0-1 {@link TransactionInfo} or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
