@@ -31,7 +31,7 @@ public interface TransactionOption extends OptionSpec {
     /**
      * <p>
      * Transaction isolation level,if null,then use default transaction isolation level.
-     *<br/>
+     * <br/>
      *
      * @return nullable {@link Isolation}
      */
@@ -47,8 +47,8 @@ public interface TransactionOption extends OptionSpec {
     /**
      * <p>
      * override {@link Object#toString()}
-     *
-     *<br/>
+     * <p>
+     * <br/>
      *
      * @return transaction info, contain
      * <ul>
@@ -60,10 +60,30 @@ public interface TransactionOption extends OptionSpec {
     @Override
     String toString();
 
+
+    /**
+     * <p>Get default transaction option.
+     */
+    static TransactionOption option() {
+        return JdbdTransactionOption.option(null, false, Option.EMPTY_OPTION_FUNC);
+    }
+
+
+    /**
+     * <p>
+     * Get generic read-write transaction option.
+     * <br/>
+     *
+     * @param isolation nullable {@link Isolation},null representing use default transaction isolation level to start transaction.
+     */
+    static TransactionOption option(@Nullable Isolation isolation) {
+        return JdbdTransactionOption.option(isolation, false, Option.EMPTY_OPTION_FUNC);
+    }
+
     /**
      * <p>
      * Get generic transaction option.
-     *<br/>
+     * <br/>
      *
      * @param isolation nullable {@link Isolation},null representing use default transaction isolation level to start transaction.
      * @param readOnly  true : start read-only transaction.
@@ -82,6 +102,10 @@ public interface TransactionOption extends OptionSpec {
      */
     static TransactionOption option(@Nullable Isolation isolation, boolean readOnly, Function<Option<?>, ?> optionFunc) {
         return JdbdTransactionOption.option(isolation, readOnly, optionFunc);
+    }
+
+    static Function<Option<?>, ?> infoFunc(final TransactionOption option) {
+        return JdbdTransactionOption.extractFunc(option);
     }
 
     /**

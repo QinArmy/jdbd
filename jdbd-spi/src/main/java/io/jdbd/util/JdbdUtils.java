@@ -36,6 +36,14 @@ public abstract class JdbdUtils {
             , (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f'};
 
 
+    public static StringBuilder builder() {
+        return new StringBuilder();
+    }
+
+    public static StringBuilder builder(int capacity) {
+        return new StringBuilder(capacity);
+    }
+
     public static boolean hasNoText(final @Nullable String str) {
         final int strLen;
         if (str == null || (strLen = str.length()) == 0) {

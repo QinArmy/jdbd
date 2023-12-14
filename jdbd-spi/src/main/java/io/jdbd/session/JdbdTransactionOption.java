@@ -1,13 +1,10 @@
 package io.jdbd.session;
 
-import io.jdbd.JdbdException;
-import io.jdbd.lang.NonNull;
 import io.jdbd.lang.Nullable;
+import io.jdbd.util.JdbdUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -18,7 +15,43 @@ import java.util.function.Function;
  *
  * @since 1.0
  */
-final class JdbdTransactionOption implements TransactionInfo {
+final class JdbdTransactionOption implements TransactionOption {
+
+
+    static TransactionOption option(final @Nullable Isolation isolation, final boolean readOnly,
+                                    final @Nullable Function<Option<?>, ?> optionFunc) {
+        if (optionFunc == null) {
+            throw new NullPointerException();
+        }
+        final TransactionOption option;
+        if (optionFunc != Option.EMPTY_OPTION_FUNC) {
+            option = new JdbdTransactionOption(isolation, readOnly, optionFunc);
+        } else if (isolation == null) {
+            option = readOnly ? DEFAULT_READ : DEFAULT_WRITE;
+        } else if (isolation == Isolation.REPEATABLE_READ) {
+            option = readOnly ? REPEATABLE_READ_READ : REPEATABLE_READ_WRITE;
+        } else if (isolation == Isolation.READ_COMMITTED) {
+            option = readOnly ? READ_COMMITTED_READ : READ_COMMITTED_WRITE;
+        } else if (isolation == Isolation.SERIALIZABLE) {
+            option = readOnly ? SERIALIZABLE_READ : SERIALIZABLE_WRITE;
+        } else if (isolation == Isolation.READ_UNCOMMITTED) {
+            option = readOnly ? READ_UNCOMMITTED_READ : READ_UNCOMMITTED_WRITE;
+        } else {
+            option = new JdbdTransactionOption(isolation, readOnly, optionFunc);
+        }
+        return option;
+    }
+
+    static Builder builder() {
+        return new OptionBuilder();
+    }
+
+    static Function<Option<?>, ?> extractFunc(final TransactionOption option) {
+        if (option instanceof JdbdTransactionOption) {
+            return ((JdbdTransactionOption) option).function;
+        }
+        return option::valueOf;
+    }
 
     private static final JdbdTransactionOption READ_UNCOMMITTED_READ = new JdbdTransactionOption(Isolation.READ_UNCOMMITTED, true);
     private static final JdbdTransactionOption READ_UNCOMMITTED_WRITE = new JdbdTransactionOption(Isolation.READ_UNCOMMITTED, false);
@@ -32,59 +65,27 @@ final class JdbdTransactionOption implements TransactionInfo {
     private static final JdbdTransactionOption SERIALIZABLE_READ = new JdbdTransactionOption(Isolation.SERIALIZABLE, true);
     private static final JdbdTransactionOption SERIALIZABLE_WRITE = new JdbdTransactionOption(Isolation.SERIALIZABLE, false);
 
+    private static final JdbdTransactionOption DEFAULT_READ = new JdbdTransactionOption(null, true);
 
-    static TransactionOption option(final @Nullable Isolation isolation, final boolean readOnly,
-                                    final @Nullable Function<Option<?>, ?> optionFunc) {
-        if (optionFunc == null) {
-            throw new NullPointerException();
-        }
-        final TransactionOption option;
-        if (optionFunc == Option.EMPTY_OPTION_FUNC) {
-            option = fromInner(isolation, readOnly);
-        } else {
-            option = new OptionFuncTransactionOption(isolation, readOnly, optionFunc);
-        }
-
-        if (option == null) {
-            throw new JdbdException(String.format("unexpected %s", isolation));
-        }
-        return option;
-    }
-
-    @Nullable
-    private static TransactionOption fromInner(final @Nullable Isolation isolation, final boolean readOnly) {
-        final TransactionOption option;
-        if (isolation == null) {
-            option = readOnly ? DefaultTransactionOption.READ : DefaultTransactionOption.WRITE;
-        } else if (isolation == Isolation.READ_COMMITTED) {
-            option = readOnly ? READ_COMMITTED_READ : READ_COMMITTED_WRITE;
-        } else if (isolation == Isolation.REPEATABLE_READ) {
-            option = readOnly ? REPEATABLE_READ_READ : REPEATABLE_READ_WRITE;
-        } else if (isolation == Isolation.SERIALIZABLE) {
-            option = readOnly ? SERIALIZABLE_READ : SERIALIZABLE_WRITE;
-        } else if (isolation == Isolation.READ_UNCOMMITTED) {
-            option = readOnly ? READ_UNCOMMITTED_READ : READ_UNCOMMITTED_WRITE;
-        } else {
-            option = new JdbdTransactionOption(isolation, readOnly);
-        }
-        return option;
-    }
-
-    static Builder builder() {
-        return new OptionBuilder();
-    }
+    private static final JdbdTransactionOption DEFAULT_WRITE = new JdbdTransactionOption(null, false);
 
 
     private final Isolation isolation;
 
     private final boolean readOnly;
 
-    private JdbdTransactionOption(Isolation isolation, boolean readOnly) {
-        this.isolation = isolation;
-        this.readOnly = readOnly;
+    private final Function<Option<?>, ?> function;
+
+    private JdbdTransactionOption(@Nullable Isolation isolation, boolean readOnly) {
+        this(isolation, readOnly, Option.EMPTY_OPTION_FUNC);
     }
 
-    @NonNull
+    private JdbdTransactionOption(@Nullable Isolation isolation, boolean readOnly, Function<Option<?>, ?> function) {
+        this.isolation = isolation;
+        this.readOnly = readOnly;
+        this.function = function;
+    }
+
     @Override
     public Isolation isolation() {
         return this.isolation;
@@ -94,13 +95,6 @@ final class JdbdTransactionOption implements TransactionInfo {
     public boolean isReadOnly() {
         return this.readOnly;
     }
-
-    @Override
-    public boolean inTransaction() {
-        // always false
-        return false;
-    }
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -113,100 +107,56 @@ final class JdbdTransactionOption implements TransactionInfo {
         } else if (key == Option.READ_ONLY) {
             value = this.readOnly;
         } else {
-            value = null;
+            final Object v;
+            v = this.function.apply(key);
+            if (key.javaType().isInstance(v)) {
+                value = v;
+            } else {
+                value = null;
+            }
+
         }
         return (T) value;
     }
 
     @Override
-    public <T> T nonNullOf(Option<T> option) {
-        final T value;
-        value = valueOf(option);
-        Objects.requireNonNull(value);
-        return value;
-    }
-
-    @Override
     public String toString() {
-        return String.format("%s[inTransaction:false,isolation:%s,readOnly:%s,hash:%s].",
-                JdbdTransactionOption.class.getName(),
-                this.isolation.name(),
-                this.readOnly,
-                System.identityHashCode(this)
-        );
+        final Isolation isolation = this.isolation;
+        return JdbdUtils.builder(88)
+                .append(getClass().getName())
+                .append("[name:")
+                .append(valueOf(Option.NAME))
+                .append(",isolation")
+                .append(isolation == null ? null : isolation.name())
+                .append(",readOnly")
+                .append(this.readOnly)
+                .append(",hash:")
+                .append(System.identityHashCode(this))
+                .append(",label:")
+                .append(valueOf(Option.LABEL))
+                .append(']')
+                .toString();
     }
-
-
-    private enum DefaultTransactionOption implements TransactionOption {
-
-        READ(true),
-        WRITE(false);
-
-        private final boolean readOnly;
-
-        DefaultTransactionOption(boolean readOnly) {
-            this.readOnly = readOnly;
-        }
-
-
-        @Override
-        public Isolation isolation() {
-            // always null
-            return null;
-        }
-
-        @Override
-        public boolean isReadOnly() {
-            return this.readOnly;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <T> T valueOf(final Option<T> key) {
-            final Object value;
-            if (key == Option.IN_TRANSACTION) {
-                value = Boolean.FALSE;
-            } else if (key == Option.READ_ONLY) {
-                value = this.readOnly;
-            } else {
-                value = null;
-            }
-            return (T) value;
-        }
-
-        @Override
-        public <T> T nonNullOf(Option<T> option) {
-            final T value;
-            value = valueOf(option);
-            Objects.requireNonNull(value);
-            return value;
-        }
-
-
-        @Override
-        public String toString() {
-            return String.format("%s[inTransaction:false,isolation:null,readOnly:%s,hash:%s].",
-                    JdbdTransactionOption.class.getName(),
-                    this.readOnly,
-                    System.identityHashCode(this)
-            );
-        }
-
-
-    }//DefaultTransactionOption
 
 
     private static final class OptionBuilder implements Builder {
 
-        private final Map<Option<?>, Object> optionMap = new HashMap<>();
+        private Map<Option<?>, Object> optionMap;
 
 
         @Override
         public <T> Builder option(final Option<T> key, final @Nullable T value) {
+            Map<Option<?>, Object> optionMap = this.optionMap;
+            if (optionMap == null && value == null) {
+                return this;
+            }
+            if (optionMap == null) {
+                this.optionMap = optionMap = new HashMap<>();
+            }
             if (value == null) {
-                this.optionMap.remove(key);
+                optionMap.remove(key);
             } else {
-                this.optionMap.put(key, value);
+                optionMap.put(key, value);
             }
             return this;
         }
@@ -214,149 +164,34 @@ final class JdbdTransactionOption implements TransactionInfo {
         @Override
         public TransactionOption build() {
 
-            final Map<Option<?>, Object> optionMap = this.optionMap;
-            final Boolean readOnly;
-            readOnly = (Boolean) optionMap.get(Option.READ_ONLY);
-            if (readOnly == null) {
-                String m = String.format("%s is required.", Option.READ_ONLY);
-                throw new IllegalArgumentException(m);
-            } else if (optionMap.containsKey(Option.IN_TRANSACTION)) {
-                String m = String.format("%s is illegal.", Option.IN_TRANSACTION);
-                throw new IllegalArgumentException(m);
+            final Map<Option<?>, Object> map = this.optionMap;
+            if (map == null) {
+                return DEFAULT_WRITE;
             }
-            final Isolation isolation;
-            isolation = (Isolation) optionMap.get(Option.ISOLATION);
 
-            TransactionOption option;
-            if (isolation != null && optionMap.size() == 2) {
-                option = JdbdTransactionOption.fromInner(isolation, readOnly);
-                if (option == null) {
-                    option = new DynamicTransactionOption(this);
-                }
+            this.optionMap = null; // clear
+            if (map.containsKey(Option.IN_TRANSACTION)) {
+                throw new IllegalArgumentException("don't support IN_TRANSACTION option");
+            }
+
+            final Isolation isolation;
+            isolation = (Isolation) map.remove(Option.ISOLATION);
+
+            final boolean readOnly;
+            readOnly = (Boolean) map.getOrDefault(Option.READ_ONLY, Boolean.FALSE);
+            map.remove(Option.READ_ONLY);
+
+            final TransactionOption option;
+            if (map.size() == 0) {
+                option = JdbdTransactionOption.option(isolation, readOnly, Option.EMPTY_OPTION_FUNC);
             } else {
-                option = new DynamicTransactionOption(this);
+                option = new JdbdTransactionOption(isolation, readOnly, map::get);
             }
             return option;
         }
 
 
     }//OptionBuilder
-
-
-    private static final class OptionFuncTransactionOption implements TransactionOption {
-
-        private final Isolation isolation;
-
-        private final boolean readOnly;
-
-        private final Function<Option<?>, ?> optionFunc;
-
-        private OptionFuncTransactionOption(@Nullable Isolation isolation, boolean readOnly,
-                                            Function<Option<?>, ?> optionFunc) {
-            this.isolation = isolation;
-            this.readOnly = readOnly;
-            this.optionFunc = optionFunc;
-        }
-
-        @Override
-        public Isolation isolation() {
-            return this.isolation;
-        }
-
-        @Override
-        public boolean isReadOnly() {
-            return this.readOnly;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <T> T valueOf(final @Nullable Option<T> option) {
-            final Object value;
-            if (option == null) {
-                value = null;
-            } else if (option == Option.ISOLATION) {
-                value = this.isolation;
-            } else if (option == Option.READ_ONLY) {
-                value = this.readOnly;
-            } else {
-                value = this.optionFunc.apply(option);
-            }
-            if (option != null && option.javaType().isInstance(value)) {
-                return (T) value;
-            }
-            return null;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("%s[isolation:%s,readOnly:%s,hash:%s].",
-                    JdbdTransactionOption.class.getName(),
-                    this.isolation,
-                    this.readOnly,
-                    System.identityHashCode(this)
-            );
-        }
-
-
-    } // OptionFuncTransactionOption
-
-    private static final class DynamicTransactionOption implements TransactionOption {
-
-        private final Map<Option<?>, Object> optionMap;
-
-        private DynamicTransactionOption(OptionBuilder builder) {
-            this.optionMap = Collections.unmodifiableMap(builder.optionMap);
-        }
-
-
-        @Override
-        public Isolation isolation() {
-            return (Isolation) this.optionMap.get(Option.ISOLATION);
-        }
-
-        @Override
-        public boolean isReadOnly() {
-            return (Boolean) this.optionMap.get(Option.READ_ONLY);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <T> T valueOf(Option<T> key) {
-            return (T) this.optionMap.get(key);
-        }
-
-        @Override
-        public <T> T nonNullOf(Option<T> option) {
-            final T value;
-            value = valueOf(option);
-            Objects.requireNonNull(value);
-            return value;
-        }
-
-
-        @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append(DynamicTransactionOption.class.getName())
-                    .append("[ ");
-            int index = 0;
-            for (Map.Entry<Option<?>, Object> e : this.optionMap.entrySet()) {
-                if (index > 0) {
-                    builder.append(" , ");
-                }
-                builder.append(e.getKey().name())
-                        .append(" : ")
-                        .append(e.getValue());
-                index++;
-            }
-            return builder.append(" , hash : ")
-                    .append(System.identityHashCode(this))
-                    .append(" ]")
-                    .toString();
-        }
-
-
-    }//DynamicTransactionOption
 
 
 }
