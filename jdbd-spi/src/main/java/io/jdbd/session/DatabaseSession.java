@@ -88,6 +88,19 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
     /**
      * <p>
+     * This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of DatabaseSession
+     *             session.transactionInfo(Option.EMPTY_OPTION_FUNC) ;
+     *         </code>
+     * </pre>
+     */
+    Publisher<TransactionInfo> transactionInfo();
+
+
+    /**
+     * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * <br/>
      *
@@ -112,7 +125,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                           </li>
      *                       </ul>
      */
-    Publisher<TransactionInfo> transactionInfo();
+    Publisher<TransactionInfo> transactionInfo(Function<Option<?>, ?> optionFunc);
 
 
     /**
