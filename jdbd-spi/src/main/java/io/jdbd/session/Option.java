@@ -102,7 +102,7 @@ public final class Option<T> {
      *
      * @see <a href="https://firebirdsql.org/file/documentation/html/en/refdocs/fblangref40/firebird-40-language-reference.html#fblangref40-transacs-settransac">firebird : SET TRANSACTION</a>
      */
-    public static final Option<Integer> LOCK_TIMEOUT = Option.from("LOCK TIMEOUT", Integer.class);
+    public static final Option<Integer> LOCK_TIMEOUT_MILLIS = Option.from("LOCK TIMEOUT MILLIS", Integer.class);
 
     /**
      * <p>
