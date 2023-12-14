@@ -6,6 +6,7 @@ import io.jdbd.meta.SchemaMeta;
 import io.jdbd.meta.TableMeta;
 import io.jdbd.result.Cursor;
 import io.jdbd.util.JdbdUtils;
+import io.jdbd.util.SqlLogger;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -370,6 +371,8 @@ public final class Option<T> {
      * @see io.jdbd.meta.DatabaseMetaData#indexesOfTable(TableMeta, Function)
      */
     public static final Option<Boolean> UNIQUE = from("UNIQUE", Boolean.class);
+
+    public static final Option<SqlLogger> SQL_LOGGER = from("SQL LOGGER", SqlLogger.class);
 
     private final String name;
 
