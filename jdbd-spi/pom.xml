@@ -5,7 +5,7 @@
     <parent>
         <artifactId>jdbd</artifactId>
         <groupId>io.jdbd</groupId>
-        <version>0.12.2</version><!-- jdbd maven version-->
+        <version>0.12.3-SNAPSHOT</version><!-- jdbd maven version-->
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jdbd-spi</artifactId>

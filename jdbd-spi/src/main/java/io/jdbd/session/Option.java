@@ -122,6 +122,8 @@ public final class Option<T> {
      */
     public static final Option<Isolation> ISOLATION = Option.from("ISOLATION", Isolation.class);
 
+    public static final Option<Boolean> DEFAULT_ISOLATION = Option.from("DEFAULT ISOLATION", Boolean.class);
+
     /**
      * <p>
      * This option representing read-only transaction.

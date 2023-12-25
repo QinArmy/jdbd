@@ -185,6 +185,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      * <p><strong>NOTE</strong>:
      * <ul>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always non-null.</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
      * </ul>
      *
@@ -251,7 +252,12 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     *<br/>
+     * <p><strong>NOTE</strong>:
+     * <ul>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always non-null.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
+     * </ul>
      *
      * @param flags      bit set, support one of following :
      *                   <ul>

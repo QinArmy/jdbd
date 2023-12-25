@@ -100,6 +100,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
      * <p><strong>NOTE</strong>:
      * <ul>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always non-null.</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
      * </ul>
      *
