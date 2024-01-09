@@ -29,7 +29,7 @@ import java.util.function.Function;
  * This interface representing database session that support local transaction.
  * <br/>
  * <p>
- * This interface is is similar to {@code javax.sql.Connection} , except that this interface is reactive.
+ * This interface is is similar to {@code java.sql.Connection} , except that this interface is reactive.
  * <br/>
  * <p>
  * This interface is base interface of {@link io.jdbd.pool.PoolLocalDatabaseSession}.

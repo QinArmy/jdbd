@@ -26,21 +26,19 @@ import java.util.function.Function;
 
 
 /**
- * <p>
- * This interface representing the factory that create {@link DatabaseSession} by following methods:
+ * <p>This interface representing the factory that create {@link DatabaseSession} by following methods:
  *     <ul>
  *         <li>{@link #localSession()}</li>
  *         <li>{@link #rmSession()}</li>
  *     </ul>
  * <br/>
- * <p>
- * The instance of this interface is created by :
+ * <p>The instance of this interface is created by :
  * <ul>
  *     <li>{@link Driver#forDeveloper(String, Map)}</li>
  *     <li>{@link Driver#forPoolVendor(String, Map)}</li>
  *     <li>pool vendor</li>
  * </ul>
- * <br/>
+ * <p>This interface is base interface of {@link io.jdbd.pool.ReadWriteSplittingFactory}.
  *
  * @since 1.0
  */
