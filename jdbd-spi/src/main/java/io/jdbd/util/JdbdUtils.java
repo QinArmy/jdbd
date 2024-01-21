@@ -222,6 +222,23 @@ public abstract class JdbdUtils {
         return new FinalConcurrentHashMap<>(capacity);
     }
 
+    public static <K, V> HashMap<K, V> hashMap() {
+        return new FinalHashMap<>();
+    }
+
+    public static <K, V> HashMap<K, V> hashMap(int initialCapacity) {
+        return new FinalHashMap<>(initialCapacity);
+    }
+
+    public static <K, V> HashMap<K, V> hashMap(Map<? extends K, ? extends V> m) {
+        return new FinalHashMap<>(m);
+    }
+
+
+    public static <K, V> HashMap<K, V> hashMapForSize(int initialSize) {
+        return new FinalHashMap<>((int) (initialSize / 0.75F));
+    }
+
 
     public static IllegalArgumentException requiredText(String paramName) {
         return new IllegalArgumentException(String.format("%s must have text", paramName));
@@ -243,7 +260,23 @@ public abstract class JdbdUtils {
         }
 
 
-    }//FinalConcurrentHashMap
+    } // FinalConcurrentHashMap
+
+
+    private static final class FinalHashMap<K, V> extends HashMap<K, V> {
+
+        private FinalHashMap(int initialCapacity) {
+            super(initialCapacity);
+        }
+
+        private FinalHashMap() {
+        }
+
+        private FinalHashMap(Map<? extends K, ? extends V> m) {
+            super(m);
+        }
+
+    } // FinalHashMap
 
 
     private void readObject(ObjectInputStream in) throws IOException {

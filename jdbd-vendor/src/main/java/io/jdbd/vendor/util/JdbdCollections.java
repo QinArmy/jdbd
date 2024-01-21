@@ -114,19 +114,23 @@ public abstract class JdbdCollections {
 
 
     public static <K, V> HashMap<K, V> hashMap() {
-        return new FinalHashMap<>();
+        return JdbdUtils.hashMap();
     }
 
     public static <K, V> HashMap<K, V> hashMap(int initialCapacity) {
-        return new FinalHashMap<>(initialCapacity);
+        return JdbdUtils.hashMap(initialCapacity);
     }
 
     public static <K, V> HashMap<K, V> hashMap(Map<? extends K, ? extends V> m) {
-        return new FinalHashMap<>(m);
+        return JdbdUtils.hashMap(m);
+    }
+
+    public static <K, V> HashMap<K, V> hashMapForSize(int initialSize) {
+        return JdbdUtils.hashMapForSize(initialSize);
     }
 
     public static <K, V> HashMap<K, V> hashMapIgnoreKey(Object ignoreKey) {
-        return new FinalHashMap<>();
+        return JdbdUtils.hashMap();
     }
 
     public static <K, V> ConcurrentHashMap<K, V> concurrentHashMap() {
@@ -232,22 +236,6 @@ public abstract class JdbdCollections {
     }
 
 
-    private static final class FinalHashMap<K, V> extends HashMap<K, V> {
-
-        private FinalHashMap() {
-        }
-
-        private FinalHashMap(int initialCapacity) {
-            super(initialCapacity);
-        }
-
-        private FinalHashMap(Map<? extends K, ? extends V> m) {
-            super(m);
-        }
-
-    }//FinalHashMap
-
-
     private static final class FinalArrayList<E> extends ArrayList<E> {
 
         private FinalArrayList() {
@@ -291,8 +279,6 @@ public abstract class JdbdCollections {
 
 
     }//FinalHashSet
-
-
 
 
 }

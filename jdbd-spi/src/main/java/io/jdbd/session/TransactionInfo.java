@@ -18,7 +18,8 @@ package io.jdbd.session;
 
 import io.jdbd.lang.NonNull;
 
-import java.util.function.Function;
+import javax.annotation.Nullable;
+import java.util.Set;
 
 /**
  * <p>
@@ -60,14 +61,70 @@ public interface TransactionInfo extends TransactionOption {
     @Override
     <T> T valueOf(Option<T> option);
 
-    static TransactionInfo info(boolean inTransaction, Isolation isolation, boolean readOnly,
-                                Function<Option<?>, ?> optionFunc) {
-        return JdbdTransactionInfo.create(inTransaction, isolation, readOnly, optionFunc);
+    Set<Option<?>> optionSet();
+
+    static InfoBuilder infoBuilder(boolean inTransaction, Isolation isolation, boolean readOnly) {
+        return JdbdTransactionInfo.builder(inTransaction, isolation, readOnly);
     }
 
 
-    static Function<Option<?>, ?> infoFunc(final TransactionInfo info) {
-        return JdbdTransactionInfo.extractFunc(info);
+    /**
+     * <p>Get a {@link TransactionInfo} instance that {@link TransactionInfo#inTransaction()} is false
+     * and option is empty.
+     */
+    static TransactionInfo notInTransaction(Isolation isolation, boolean readOnly) {
+        return JdbdTransactionInfo.noInTransaction(isolation, readOnly);
     }
+
+
+    /**
+     * @throws IllegalArgumentException throw when
+     *                                  <ul>
+     *                                      <li>info is unknown implementation</li>
+     *                                      <li>info's {@link TransactionInfo#inTransaction()} is false </li>
+     *                                  </ul>
+     */
+    static TransactionInfo forChain(TransactionInfo info) {
+        return JdbdTransactionInfo.forChain(info);
+    }
+
+    static TransactionInfo forXaEnd(int flags, TransactionInfo info) {
+        return JdbdTransactionInfo.forXaEnd(flags, info);
+    }
+
+    static TransactionInfo forXaJoinEnded(int flags, TransactionInfo info) {
+        return JdbdTransactionInfo.forXaJoinEnded(flags, info);
+    }
+
+    interface InfoBuilder {
+
+        <T> InfoBuilder option(Option<T> option, @Nullable T value);
+
+        /**
+         * @throws IllegalArgumentException throw when not in transaction.
+         */
+        InfoBuilder option(TransactionOption option);
+
+        /**
+         * @throws IllegalArgumentException throw when not in transaction.
+         */
+        InfoBuilder option(Xid xid, int flags, XaStates xaStates, TransactionOption option);
+
+
+        /**
+         * <p>Create a new {@link TransactionInfo} instance.
+         * <p><strong>NOTE</strong>: if satisfy following :
+         * <ul>
+         *     <li>in transaction is true</li>
+         *     <li>not found {@link Option#START_MILLIS}</li>
+         * </ul>
+         * then this method always auto add {@link Option#START_MILLIS}.
+         *
+         * @throws IllegalStateException throw when in transaction and not found {@link Option#DEFAULT_ISOLATION}.
+         */
+        TransactionInfo build();
+
+    }
+
 
 }
