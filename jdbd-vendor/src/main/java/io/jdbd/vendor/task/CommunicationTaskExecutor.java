@@ -38,11 +38,12 @@ import reactor.core.publisher.MonoSink;
 import reactor.netty.Connection;
 import reactor.netty.NettyPipeline;
 import reactor.netty.tcp.SslProvider;
+import reactor.util.concurrent.Queues;
 
 import java.net.InetSocketAddress;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -64,7 +65,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
 
     protected final ByteBufAllocator allocator;
 
-    private final Deque<CommunicationTask> taskQueue;
+    private final Queue<CommunicationTask> taskQueue;
 
     private final TaskSignal taskSignal;
 
@@ -88,8 +89,13 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
     private boolean urgencyTask;
 
 
-    protected CommunicationTaskExecutor(Connection connection) {
-        this.taskQueue = JdbdCollections.linkedList();
+    protected CommunicationTaskExecutor(Connection connection, int taskQueueSize) {
+        if (taskQueueSize == 0) {
+            this.taskQueue = JdbdCollections.linkedList();
+        } else {
+            this.taskQueue = Queues.<CommunicationTask>get(taskQueueSize).get();
+        }
+
         this.connection = connection;
         final Channel channel;
         channel = connection.channel();
