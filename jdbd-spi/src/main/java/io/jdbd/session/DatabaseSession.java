@@ -20,6 +20,7 @@ import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
 import io.jdbd.meta.DatabaseMetaData;
 import io.jdbd.result.Cursor;
+import io.jdbd.result.ResultStates;
 import io.jdbd.statement.*;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
@@ -312,8 +313,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
-     * <p>
-     * The state usually is returned database server by database client protocol.
+     * <p>The state usually is returned database server by database client protocol.
      * For example :
      * <ul>
      *     <li>MySQL <a href="https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_ok_packet.html">Protocol::OK_Packet</a> </li>
@@ -321,8 +321,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *     <li>PostgreSQL <a href="https://www.postgresql.org/docs/current/protocol-message-formats.html">ReadyForQuery (B)</a></li>
      *     <li>Micro SQL server transactional state</li>
      * </ul>
-     * If database client protocol don't support this method ,then {@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null.
-     * <br/>
+     * <p>Some database have to parse sql to implement this method.
      *
      * @return true : when
      * <ul>
@@ -335,11 +334,8 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *           after last statement executing.
      *     </li>
      * </ul>
-     * @throws JdbdException throw when
-     *                       <ul>
-     *                           <li>{@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null</li>
-     *                           <li>session have closed.</li>
-     *                       </ul>
+     * @throws JdbdException throw when session have closed.
+     * @see ResultStates#inTransaction()
      */
     boolean inTransaction() throws JdbdException;
 

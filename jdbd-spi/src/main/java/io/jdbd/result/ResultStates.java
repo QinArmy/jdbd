@@ -19,6 +19,7 @@ package io.jdbd.result;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
+import io.jdbd.session.DatabaseSession;
 import io.jdbd.session.Option;
 import io.jdbd.session.OptionSpec;
 import io.jdbd.statement.Statement;
@@ -59,12 +60,20 @@ public interface ResultStates extends ResultItem, OptionSpec {
 
 
     /**
-     * Session whether in transaction block when statement end.
+     * <p>The state usually is returned database server by database client protocol.
+     * For example :
+     * <ul>
+     *     <li>MySQL <a href="https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_ok_packet.html">Protocol::OK_Packet</a> </li>
+     *     <li>MySQL <a href="https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_basic_eof_packet.html">Protocol::EOF_Packet</a></li>
+     *     <li>PostgreSQL <a href="https://www.postgresql.org/docs/current/protocol-message-formats.html">ReadyForQuery (B)</a></li>
+     *     <li>Micro SQL server transactional state</li>
+     * </ul>
+     * <p>Some database have to parse sql to implement this method.
      *
      * @return true : session in transaction block when statement end.
-     * @throws JdbdException throw when {@link #valueOf(Option)} with {@link Option#IN_TRANSACTION} return null.
+     * @see DatabaseSession#inTransaction()
      */
-    boolean inTransaction() throws JdbdException;
+    boolean inTransaction();
 
     /**
      * statement affected rows
