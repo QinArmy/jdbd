@@ -16,8 +16,29 @@
 
 package io.jdbd.util;
 
+import io.jdbd.session.DatabaseSession;
+import io.jdbd.session.Option;
+
+import java.util.function.Function;
+
 public interface SqlLogger {
 
     void logSql(String sessionName, int sessionHash, String sql);
+
+
+    static void printLog(DatabaseSession session, Function<Option<?>, ?> function, String sql) {
+        final Object logger;
+        logger = function.apply(Option.SQL_LOGGER);
+        if (!(logger instanceof SqlLogger)) {
+            return;
+        }
+
+        try {
+            ((SqlLogger) logger).logSql(session.name(), System.identityHashCode(session), sql);
+        } catch (Exception e) {
+            // ignore
+        }
+    }
+
 
 }
