@@ -121,22 +121,17 @@ final class JdbdTransactionOption implements TransactionOption {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T valueOf(final Option<T> key) {
-        final Object value;
-        if (key == Option.IN_TRANSACTION) {
-            value = Boolean.FALSE;
-        } else if (key == Option.ISOLATION) {
-            value = this.isolation;
-        } else if (key == Option.READ_ONLY) {
-            value = this.readOnly;
-        } else {
-            final Object v;
-            v = this.function.apply(key);
-            if (key.javaType().isInstance(v)) {
-                value = v;
-            } else {
-                value = null;
-            }
+        final Function<Option<?>, ?> func;
 
+        final Object value, temp;
+        if ((func = this.function) == Option.EMPTY_OPTION_FUNC) {
+            value = null;
+        } else if ((temp = func.apply(key)) == null) {
+            value = null;
+        } else if (key.javaType().isInstance(temp)) {
+            value = temp;
+        } else {
+            value = null;
         }
         return (T) value;
     }

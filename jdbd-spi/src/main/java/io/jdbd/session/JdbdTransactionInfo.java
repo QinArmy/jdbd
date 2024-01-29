@@ -187,25 +187,20 @@ final class JdbdTransactionInfo implements TransactionInfo {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T valueOf(final @Nullable Option<T> option) {
-        final Object value;
-        if (option == null) {
+    public <T> T valueOf(final Option<T> option) {
+        final Function<Option<?>, ?> func;
+
+        final Object value, temp;
+        if ((func = this.function) == Option.EMPTY_OPTION_FUNC) {
             value = null;
-        } else if (option == Option.IN_TRANSACTION) {
-            value = this.inTransaction;
-        } else if (option == Option.ISOLATION) {
-            value = this.isolation;
-        } else if (option == Option.READ_ONLY) {
-            value = this.readOnly;
-        } else if (this.function == Option.EMPTY_OPTION_FUNC) {
+        } else if ((temp = func.apply(option)) == null) {
             value = null;
+        } else if (option.javaType().isInstance(temp)) {
+            value = temp;
         } else {
-            value = this.function.apply(option);
+            value = null;
         }
-        if (option != null && option.javaType().isInstance(value)) {
-            return (T) value;
-        }
-        return null;
+        return (T) value;
     }
 
     @Override
