@@ -22,7 +22,6 @@ import io.jdbd.lang.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,15 +34,17 @@ public abstract class JdbdArrays {
 
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <E> Set<E> asSet(@Nullable E... elements) {
+    public static <E> Set<E> unmodifiableSet(@Nullable E... elements) {
         final Set<E> set;
         if (elements == null || elements.length == 0) {
             set = Collections.emptySet();
         } else if (elements.length == 1) {
             set = Collections.singleton(elements[0]);
         } else {
-            set = new HashSet<>((int) (elements.length / 0.75F));
-            Collections.addAll(set, elements);
+            final Set<E> temp;
+            temp = JdbdCollections.hashSet((int) (elements.length / 0.75F));
+            Collections.addAll(temp, elements);
+            set = Collections.unmodifiableSet(temp);
         }
         return set;
     }
