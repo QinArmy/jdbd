@@ -21,6 +21,9 @@ import io.jdbd.lang.Nullable;
 import io.jdbd.session.Option;
 import io.jdbd.session.OptionSpec;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 
@@ -35,11 +38,20 @@ public abstract class ServerException extends JdbdException implements OptionSpe
 
     private final Function<Option<?>, ?> optionFunc;
 
+    private final Set<Option<?>> optionSet;
+
 
     protected ServerException(String message, @Nullable String sqlState, int vendorCode,
-                              Function<Option<?>, ?> optionFunc) {
+                              Map<Option<?>, ?> optionMap) {
         super(message, sqlState, vendorCode);
-        this.optionFunc = optionFunc;
+        if (optionMap.size() == 0) {
+            this.optionFunc = Option.EMPTY_OPTION_FUNC;
+            this.optionSet = Collections.emptySet();
+        } else {
+            this.optionFunc = optionMap::get;
+            this.optionSet = Collections.unmodifiableSet(optionMap.keySet());
+        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -51,6 +63,11 @@ public abstract class ServerException extends JdbdException implements OptionSpe
             return (T) value;
         }
         return null;
+    }
+
+    @Override
+    public final Set<Option<?>> optionSet() {
+        return this.optionSet;
     }
 
 
