@@ -34,7 +34,7 @@ public abstract class JdbdArrays {
 
     @SafeVarargs
     @SuppressWarnings("varargs")
-    public static <E> Set<E> unmodifiableSet(@Nullable E... elements) {
+    public static <E> Set<E> asUnmodifiableSet(@Nullable E... elements) {
         final Set<E> set;
         if (elements == null || elements.length == 0) {
             set = Collections.emptySet();
