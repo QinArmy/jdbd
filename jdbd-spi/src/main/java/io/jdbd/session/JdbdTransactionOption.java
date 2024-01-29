@@ -19,8 +19,10 @@ package io.jdbd.session;
 import io.jdbd.lang.Nullable;
 import io.jdbd.util.JdbdUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -34,15 +36,9 @@ import java.util.function.Function;
 final class JdbdTransactionOption implements TransactionOption {
 
 
-    static TransactionOption option(final @Nullable Isolation isolation, final boolean readOnly,
-                                    final @Nullable Function<Option<?>, ?> optionFunc) {
-        if (optionFunc == null) {
-            throw new NullPointerException();
-        }
+    static TransactionOption option(final @Nullable Isolation isolation, final boolean readOnly) {
         final TransactionOption option;
-        if (optionFunc != Option.EMPTY_OPTION_FUNC) {
-            option = new JdbdTransactionOption(isolation, readOnly, optionFunc);
-        } else if (isolation == null) {
+        if (isolation == null) {
             option = readOnly ? DEFAULT_READ : DEFAULT_WRITE;
         } else if (isolation == Isolation.REPEATABLE_READ) {
             option = readOnly ? REPEATABLE_READ_READ : REPEATABLE_READ_WRITE;
@@ -53,7 +49,7 @@ final class JdbdTransactionOption implements TransactionOption {
         } else if (isolation == Isolation.READ_UNCOMMITTED) {
             option = readOnly ? READ_UNCOMMITTED_READ : READ_UNCOMMITTED_WRITE;
         } else {
-            option = new JdbdTransactionOption(isolation, readOnly, optionFunc);
+            option = new JdbdTransactionOption(isolation, readOnly);
         }
         return option;
     }
@@ -92,14 +88,24 @@ final class JdbdTransactionOption implements TransactionOption {
 
     private final Function<Option<?>, ?> function;
 
+    private final Set<Option<?>> optionSet;
+
     private JdbdTransactionOption(@Nullable Isolation isolation, boolean readOnly) {
-        this(isolation, readOnly, Option.EMPTY_OPTION_FUNC);
+        this(isolation, readOnly, null);
     }
 
-    private JdbdTransactionOption(@Nullable Isolation isolation, boolean readOnly, Function<Option<?>, ?> function) {
+    private JdbdTransactionOption(@Nullable Isolation isolation, boolean readOnly, @Nullable Map<Option<?>, ?> map) {
         this.isolation = isolation;
         this.readOnly = readOnly;
-        this.function = function;
+        if (map == null || map.size() == 0) {
+            this.function = Option.EMPTY_OPTION_FUNC;
+            this.optionSet = Collections.emptySet();
+        } else {
+            this.function = map::get;
+            this.optionSet = Collections.unmodifiableSet(map.keySet());
+        }
+
+
     }
 
     @Override
@@ -133,6 +139,12 @@ final class JdbdTransactionOption implements TransactionOption {
 
         }
         return (T) value;
+    }
+
+
+    @Override
+    public Set<Option<?>> optionSet() {
+        return this.optionSet;
     }
 
     @Override
@@ -199,9 +211,9 @@ final class JdbdTransactionOption implements TransactionOption {
 
             final TransactionOption option;
             if (map.size() == 0) {
-                option = JdbdTransactionOption.option(isolation, readOnly, Option.EMPTY_OPTION_FUNC);
+                option = JdbdTransactionOption.option(isolation, readOnly);
             } else {
-                option = new JdbdTransactionOption(isolation, readOnly, map::get);
+                option = new JdbdTransactionOption(isolation, readOnly, map);
             }
             return option;
         }

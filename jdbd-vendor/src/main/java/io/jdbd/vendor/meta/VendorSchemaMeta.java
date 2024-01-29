@@ -22,24 +22,25 @@ import io.jdbd.meta.SchemaMeta;
 import io.jdbd.session.DatabaseSession;
 import io.jdbd.session.Option;
 import io.jdbd.util.JdbdUtils;
+import io.jdbd.vendor.util.JdbdOptionSpec;
 
-import java.util.function.Function;
+import java.util.Map;
 
-public final class VendorSchemaMeta implements SchemaMeta {
+public final class VendorSchemaMeta extends JdbdOptionSpec implements SchemaMeta {
 
     public static VendorSchemaMeta from(DatabaseMetaData databaseMeta, String catalogName,
-                                        String schemaName, Function<Option<?>, ?> optionFunc) {
-        return new VendorSchemaMeta(databaseMeta, catalogName, schemaName, null, optionFunc);
+                                        String schemaName, Map<Option<?>, ?> optionMap) {
+        return new VendorSchemaMeta(databaseMeta, catalogName, schemaName, null, optionMap);
     }
 
     public static VendorSchemaMeta fromCatalog(DatabaseMetaData databaseMeta, String catalogName,
-                                               String schemaName, Function<Option<?>, ?> optionFunc) {
-        return new VendorSchemaMeta(databaseMeta, catalogName, schemaName, Boolean.FALSE, optionFunc);
+                                               String schemaName, Map<Option<?>, ?> optionMap) {
+        return new VendorSchemaMeta(databaseMeta, catalogName, schemaName, Boolean.FALSE, optionMap);
     }
 
     public static VendorSchemaMeta fromSchema(DatabaseMetaData databaseMeta, String catalogName,
-                                              String schemaName, Function<Option<?>, ?> optionFunc) {
-        return new VendorSchemaMeta(databaseMeta, catalogName, schemaName, Boolean.TRUE, optionFunc);
+                                              String schemaName, Map<Option<?>, ?> optionMap) {
+        return new VendorSchemaMeta(databaseMeta, catalogName, schemaName, Boolean.TRUE, optionMap);
     }
 
     private final DatabaseMetaData databaseMeta;
@@ -48,19 +49,17 @@ public final class VendorSchemaMeta implements SchemaMeta {
 
     private final String schemaName;
 
-    private final Function<Option<?>, ?> optionFunc;
-
     private final Boolean catalogPseudo;
 
     private VendorSchemaMeta(DatabaseMetaData databaseMeta, String catalogName,
-                             String schemaName, @Nullable Boolean catalogPseudo, Function<Option<?>, ?> optionFunc) {
+                             String schemaName, @Nullable Boolean catalogPseudo, Map<Option<?>, ?> optionMap) {
+        super(optionMap);
         if (JdbdUtils.hasNoText(catalogName) || JdbdUtils.hasNoText(schemaName)) {
             throw new IllegalArgumentException();
         }
         this.databaseMeta = databaseMeta;
         this.catalogName = catalogName;
         this.schemaName = schemaName;
-        this.optionFunc = optionFunc;
         this.catalogPseudo = catalogPseudo;
     }
 
@@ -88,13 +87,6 @@ public final class VendorSchemaMeta implements SchemaMeta {
     public boolean isPseudoSchema() {
         return Boolean.FALSE.equals(this.catalogPseudo);
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T valueOf(Option<T> option) {
-        return (T) this.optionFunc.apply(option);
-    }
-
 
     @Override
     public String toString() {

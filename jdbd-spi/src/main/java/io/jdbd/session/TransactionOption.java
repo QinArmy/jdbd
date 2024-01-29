@@ -18,8 +18,6 @@ package io.jdbd.session;
 
 import io.jdbd.lang.Nullable;
 
-import java.util.function.Function;
-
 /**
  * <p>
  * This interface representing transaction option. see
@@ -81,7 +79,7 @@ public interface TransactionOption extends OptionSpec {
      * <p>Get default transaction option.
      */
     static TransactionOption option() {
-        return JdbdTransactionOption.option(null, false, Option.EMPTY_OPTION_FUNC);
+        return JdbdTransactionOption.option(null, false);
     }
 
 
@@ -93,7 +91,7 @@ public interface TransactionOption extends OptionSpec {
      * @param isolation nullable {@link Isolation},null representing use default transaction isolation level to start transaction.
      */
     static TransactionOption option(@Nullable Isolation isolation) {
-        return JdbdTransactionOption.option(isolation, false, Option.EMPTY_OPTION_FUNC);
+        return JdbdTransactionOption.option(isolation, false);
     }
 
     /**
@@ -105,24 +103,10 @@ public interface TransactionOption extends OptionSpec {
      * @param readOnly  true : start read-only transaction.
      */
     static TransactionOption option(@Nullable Isolation isolation, boolean readOnly) {
-        return JdbdTransactionOption.option(isolation, readOnly, Option.EMPTY_OPTION_FUNC);
+        return JdbdTransactionOption.option(isolation, readOnly);
     }
 
-    /**
-     * <p>
-     * Get generic transaction option.
-     * <br/>
-     *
-     * @param isolation nullable {@link Isolation},null representing use default transaction isolation level to start transaction.
-     * @param readOnly  true : start read-only transaction.
-     */
-    static TransactionOption option(@Nullable Isolation isolation, boolean readOnly, Function<Option<?>, ?> optionFunc) {
-        return JdbdTransactionOption.option(isolation, readOnly, optionFunc);
-    }
 
-    static Function<Option<?>, ?> infoFunc(final TransactionOption option) {
-        return JdbdTransactionOption.extractFunc(option);
-    }
 
     /**
      * Create a builder of {@link TransactionOption} for support more transaction option ,for example transaction name.

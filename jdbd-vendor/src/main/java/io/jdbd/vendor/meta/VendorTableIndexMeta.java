@@ -23,11 +23,12 @@ import io.jdbd.meta.TableMeta;
 import io.jdbd.session.Option;
 import io.jdbd.vendor.VendorOptions;
 import io.jdbd.vendor.util.JdbdCollections;
+import io.jdbd.vendor.util.JdbdOptionSpec;
 
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map;
 
-public final class VendorTableIndexMeta implements TableIndexMeta {
+public final class VendorTableIndexMeta extends JdbdOptionSpec implements TableIndexMeta {
 
     /**
      * <p>
@@ -43,8 +44,8 @@ public final class VendorTableIndexMeta implements TableIndexMeta {
      * @param name index name
      */
     public static VendorTableIndexMeta from(TableMeta tableMeta, String name, List<IndexColumnMeta> columnList,
-                                            Function<Option<?>, ?> optionFunc) {
-        return new VendorTableIndexMeta(tableMeta, name, columnList, optionFunc);
+                                            Map<Option<?>, ?> optionMap) {
+        return new VendorTableIndexMeta(tableMeta, name, columnList, optionMap);
     }
 
 
@@ -53,14 +54,13 @@ public final class VendorTableIndexMeta implements TableIndexMeta {
     private final String name;
 
     private final List<IndexColumnMeta> columnList;
-    private final Function<Option<?>, ?> optionFunc;
 
     private VendorTableIndexMeta(TableMeta tableMeta, String name, List<IndexColumnMeta> columnList,
-                                 Function<Option<?>, ?> optionFunc) {
+                                 Map<Option<?>, ?> optionMap) {
+        super(optionMap);
         this.tableMeta = tableMeta;
         this.name = name;
         this.columnList = JdbdCollections.unmodifiableList(columnList);
-        this.optionFunc = optionFunc;
     }
 
     @Override
@@ -96,18 +96,6 @@ public final class VendorTableIndexMeta implements TableIndexMeta {
     @Override
     public String comment() {
         return valueOf(VendorOptions.COMMENT);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T valueOf(Option<T> option) {
-        final Object value;
-        if (option == Option.NAME) {
-            value = this.name;
-        } else {
-            value = this.optionFunc.apply(option);
-        }
-        return (T) value;
     }
 
     @Override

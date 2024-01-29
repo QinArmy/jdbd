@@ -20,6 +20,7 @@ import io.jdbd.lang.Nullable;
 import io.jdbd.result.Cursor;
 
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * <p>
@@ -74,6 +75,11 @@ public interface OptionSpec {
         Objects.requireNonNull(value);
         return value;
     }
+
+    /**
+     * @return a unmodified set
+     */
+    Set<Option<?>> optionSet();
 
 
 }

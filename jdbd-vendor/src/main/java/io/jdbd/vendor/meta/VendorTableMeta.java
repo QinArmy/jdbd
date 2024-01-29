@@ -21,21 +21,22 @@ import io.jdbd.meta.SchemaMeta;
 import io.jdbd.meta.TableMeta;
 import io.jdbd.session.Option;
 import io.jdbd.util.JdbdUtils;
+import io.jdbd.vendor.util.JdbdOptionSpec;
 import io.jdbd.vendor.util.JdbdStrings;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
-public final class VendorTableMeta implements TableMeta {
+public final class VendorTableMeta extends JdbdOptionSpec implements TableMeta {
 
     public static VendorTableMeta from(SchemaMeta schemaMetaData, String tableName, @Nullable String comment,
-                                       Function<Option<?>, ?> optionFunc) {
-        if (JdbdUtils.hasNoText(tableName) || optionFunc.apply(Option.TYPE_NAME) == null) {
+                                       Map<Option<?>, ?> optionMap) {
+        if (JdbdUtils.hasNoText(tableName) || optionMap.get(Option.TYPE_NAME) == null) {
             throw new IllegalArgumentException();
         }
-        return new VendorTableMeta(schemaMetaData, tableName, comment, optionFunc);
+        return new VendorTableMeta(schemaMetaData, tableName, comment, optionMap);
     }
 
     private final SchemaMeta schemaMetaData;
@@ -44,14 +45,12 @@ public final class VendorTableMeta implements TableMeta {
 
     private final String comment;
 
-    private final Function<Option<?>, ?> optionFunc;
-
     private VendorTableMeta(SchemaMeta schemaMetaData, String tableName, @Nullable String comment,
-                            Function<Option<?>, ?> optionFunc) {
+                            Map<Option<?>, ?> optionMap) {
+        super(optionMap);
         this.schemaMetaData = schemaMetaData;
         this.tableName = tableName;
         this.comment = comment;
-        this.optionFunc = optionFunc;
     }
 
     @Override
@@ -79,11 +78,6 @@ public final class VendorTableMeta implements TableMeta {
         return JdbdStrings.spitAsSet(privilegeString, ",", true);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T valueOf(Option<T> option) {
-        return (T) this.optionFunc.apply(option);
-    }
 
     @Override
     public String toString() {

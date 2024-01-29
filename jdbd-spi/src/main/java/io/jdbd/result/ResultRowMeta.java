@@ -25,6 +25,7 @@ import io.jdbd.meta.KeyType;
 import io.jdbd.session.Option;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -257,6 +258,11 @@ public interface ResultRowMeta extends ResultItem, ResultItem.ResultAccessSpec {
      * @see #getOf(int, Option)
      */
     <T> T getNonNullOf(int indexBasedZero, Option<T> option) throws JdbdException, NullPointerException;
+
+    /**
+     * @return a unmodified set
+     */
+    Set<Option<?>> optionSet();
 
 
     /*-------------------below column label method-------------------*/

@@ -26,12 +26,11 @@ import io.jdbd.vendor.util.JdbdStrings;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 public final class VendorTableColumnMeta implements TableColumnMeta {
-
-    public static final Function<Class<?>, Set<?>> EMPTY_ENUMS_FUNC = clazz -> Collections.emptySet();
 
 
     /**
@@ -48,7 +47,7 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
      *         <li>{@link VendorOptions#DEFAULT_VALUE},see {@link #defaultValue()}</li>
      *         <li>{@link VendorOptions#COMMENT},see {@link #comment()}</li>
      *     </ul>
-     *<br/>
+     * <br/>
      * <p>
      *      optionFunc optionally support following option:
      *      <ul>
@@ -56,13 +55,13 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
      *          <li>{@link Option#CHARSET}</li>
      *          <li>{@link Option#COLLATION}</li>
      *      </ul>
-     *<br/>
+     * <br/>
      *
      * @param enumSetFunc the function must follow {@link TableColumnMeta#enumElementSet(Class)}.
      */
     public static VendorTableColumnMeta from(TableMeta tableMeta, Function<Class<?>, Set<?>> enumSetFunc,
-                                             Function<Option<?>, ?> optionFunc) {
-        return new VendorTableColumnMeta(tableMeta, enumSetFunc, optionFunc);
+                                             Map<Option<?>, ?> optionMap) {
+        return new VendorTableColumnMeta(tableMeta, enumSetFunc, optionMap);
     }
 
 
@@ -71,12 +70,21 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
     private final Function<Class<?>, Set<?>> enumSetFunc;
     private final Function<Option<?>, ?> optionFunc;
 
+    private final Set<Option<?>> optionSet;
+
 
     private VendorTableColumnMeta(TableMeta tableMeta, Function<Class<?>, Set<?>> enumSetFunc,
-                                  Function<Option<?>, ?> optionFunc) {
+                                  Map<Option<?>, ?> map) {
         this.tableMeta = tableMeta;
         this.enumSetFunc = enumSetFunc;
-        this.optionFunc = optionFunc;
+        if (map.size() == 0) {
+            this.optionFunc = Option.EMPTY_OPTION_FUNC;
+            this.optionSet = Collections.emptySet();
+        } else {
+            this.optionFunc = map::get;
+            this.optionSet = Collections.unmodifiableSet(map.keySet());
+        }
+
     }
 
     @Override
@@ -155,6 +163,11 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
     @Override
     public <T> T valueOf(Option<T> option) {
         return (T) this.optionFunc.apply(option);
+    }
+
+    @Override
+    public Set<Option<?>> optionSet() {
+        return this.optionSet;
     }
 
     @Override

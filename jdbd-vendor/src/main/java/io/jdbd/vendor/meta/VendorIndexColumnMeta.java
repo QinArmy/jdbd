@@ -22,11 +22,12 @@ import io.jdbd.meta.NullsSorting;
 import io.jdbd.meta.Sorting;
 import io.jdbd.session.Option;
 import io.jdbd.vendor.VendorOptions;
+import io.jdbd.vendor.util.JdbdOptionSpec;
 import io.jdbd.vendor.util.JdbdStrings;
 
-import java.util.function.Function;
+import java.util.Map;
 
-public final class VendorIndexColumnMeta implements IndexColumnMeta {
+public final class VendorIndexColumnMeta extends JdbdOptionSpec implements IndexColumnMeta {
 
 
     /**
@@ -43,17 +44,15 @@ public final class VendorIndexColumnMeta implements IndexColumnMeta {
      *
      * @param name column name
      */
-    public static VendorIndexColumnMeta from(String name, Function<Option<?>, ?> optionFunc) {
-        return new VendorIndexColumnMeta(name, optionFunc);
+    public static VendorIndexColumnMeta from(String name, Map<Option<?>, ?> optionMap) {
+        return new VendorIndexColumnMeta(name, optionMap);
     }
 
     private final String name;
 
-    private final Function<Option<?>, ?> optionFunc;
-
-    private VendorIndexColumnMeta(String name, Function<Option<?>, ?> optionFunc) {
+    private VendorIndexColumnMeta(String name, Map<Option<?>, ?> optionMap) {
+        super(optionMap);
         this.name = name;
-        this.optionFunc = optionFunc;
     }
 
     @Override
@@ -84,18 +83,6 @@ public final class VendorIndexColumnMeta implements IndexColumnMeta {
     @Override
     public BooleanMode visibleMode() {
         return nonNullOf(VendorOptions.VISIBLE);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T valueOf(Option<T> option) {
-        final Object value;
-        if (option == Option.NAME) {
-            value = this.name;
-        } else {
-            value = this.optionFunc.apply(option);
-        }
-        return (T) value;
     }
 
     @Override

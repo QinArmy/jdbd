@@ -19,7 +19,9 @@ package io.jdbd.session;
 import io.jdbd.lang.Nullable;
 import io.jdbd.util.JdbdUtils;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 final class JdbdXid implements Xid {
 
@@ -91,6 +93,11 @@ final class JdbdXid implements Xid {
         return match;
     }
 
+
+    @Override
+    public Set<Option<?>> optionSet() {
+        return Collections.emptySet();
+    }
 
     @Override
     public String toString() {

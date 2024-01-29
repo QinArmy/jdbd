@@ -21,7 +21,9 @@ import io.jdbd.DriverVersion;
 import io.jdbd.JdbdException;
 import io.jdbd.session.Option;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
 public final class DefaultDriverVersion implements DriverVersion {
 
@@ -126,11 +128,8 @@ public final class DefaultDriverVersion implements DriverVersion {
     }
 
     @Override
-    public <T> T nonNullOf(Option<T> option) {
-        final T value;
-        value = valueOf(option);
-        Objects.requireNonNull(value);
-        return value;
+    public Set<Option<?>> optionSet() {
+        return Collections.emptySet();
     }
 
     @Override
