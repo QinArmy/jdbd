@@ -104,8 +104,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
-     * <p>
-     * This method is equivalent to following :
+     * <p>This method is equivalent to following :
      * <pre>
      *         <code><br/>
      *             // session is instance of DatabaseSession
@@ -117,8 +116,8 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <p>Get current transaction info,If session in transaction block,then return current transaction info; else equivalent to {@link #sessionTransactionInfo(Function)}.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * <br/>
      *
      * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
@@ -143,6 +142,32 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                       </ul>
      */
     Publisher<TransactionInfo> transactionInfo(Function<Option<?>, ?> optionFunc);
+
+
+    /**
+     * <p>This method is equivalent to following :
+     * <pre>
+     *         <code><br/>
+     *             // session is instance of DatabaseSession
+     *             session.sessionTransactionInfo(Option.EMPTY_OPTION_FUNC) ;
+     *         </code>
+     * </pre>
+     */
+    Publisher<TransactionInfo> sessionTransactionInfo();
+
+
+    /**
+     * <p>Query session-level transaction characteristics info
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     *
+     * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
+     * @throws JdbdException emit(not throw) when
+     *                        <ul>
+     *                           <li>network error</li>
+     *                           <li>sever response error message,see {@link io.jdbd.result.ServerException}</li>
+     *                       </ul>
+     */
+    Publisher<TransactionInfo> sessionTransactionInfo(Function<Option<?>, ?> optionFunc);
 
 
     /**
