@@ -116,9 +116,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
-     * <p>Get current transaction info,If session in transaction block,then return current transaction info; else equivalent to {@link #sessionTransactionInfo(Function)}.
-     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
+     * <p>Get current transaction info,If session in transaction block,then return current transaction info; else equivalent to {@link #sessionTransactionCharacteristics(Function)}.
      *
      * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
@@ -149,11 +147,11 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <pre>
      *         <code><br/>
      *             // session is instance of DatabaseSession
-     *             session.sessionTransactionInfo(Option.EMPTY_OPTION_FUNC) ;
+     *             session.sessionTransactionCharacteristics(Option.EMPTY_OPTION_FUNC) ;
      *         </code>
      * </pre>
      */
-    Publisher<TransactionInfo> sessionTransactionInfo();
+    Publisher<TransactionInfo> sessionTransactionCharacteristics();
 
 
     /**
@@ -166,8 +164,9 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                           <li>network error</li>
      *                           <li>sever response error message,see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
+     * @see #setTransactionCharacteristics(TransactionOption)
      */
-    Publisher<TransactionInfo> sessionTransactionInfo(Function<Option<?>, ?> optionFunc);
+    Publisher<TransactionInfo> sessionTransactionCharacteristics(Function<Option<?>, ?> optionFunc);
 
 
     /**
