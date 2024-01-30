@@ -159,6 +159,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      *
      * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
+     * <p><strong>NOTE</strong> : the {@link TransactionInfo#inTransaction()} always is false,even if session in transaction block.
      * @throws JdbdException emit(not throw) when
      *                        <ul>
      *                           <li>network error</li>
@@ -332,6 +333,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      *                       </ul>
      * @see LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)
      * @see #transactionInfo()
+     * @see #sessionTransactionCharacteristics(Function)
      */
     Publisher<? extends DatabaseSession> setTransactionCharacteristics(TransactionOption option);
 
