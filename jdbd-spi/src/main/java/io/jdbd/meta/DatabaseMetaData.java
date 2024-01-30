@@ -79,13 +79,10 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
 
     DriverVersion driverVersion();
 
+
     /**
-     * <p>
-     * Get current schema info of {@link #getSession()}
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
+     * <p>Get current schema info of {@link #getSession()}
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      *
      * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
@@ -95,7 +92,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      *                           <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                       </ul>
      */
-    Publisher<SchemaMeta> currentSchema();
+    Publisher<SchemaMeta> currentSchema(Function<Option<?>, ?> optionFunc);
 
     /**
      * <p>
