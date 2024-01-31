@@ -16,25 +16,24 @@
 
 package io.jdbd.util;
 
-import io.jdbd.session.DatabaseSession;
 import io.jdbd.session.Option;
 
 import java.util.function.Function;
 
 public interface SqlLogger {
 
-    void logSql(String sessionName, int sessionHash, String sql);
+    void print(String sql);
 
 
-    static void printLog(DatabaseSession session, Function<Option<?>, ?> function, String sql) {
+    static void printLog(Function<Option<?>, ?> function, String sql) {
         final Object logger;
-        logger = function.apply(Option.SQL_LOGGER);
-        if (!(logger instanceof SqlLogger)) {
+        if (function == Option.EMPTY_OPTION_FUNC
+                || !((logger = function.apply(Option.SQL_LOGGER)) instanceof SqlLogger)) {
             return;
         }
 
         try {
-            ((SqlLogger) logger).logSql(session.name(), System.identityHashCode(session), sql);
+            ((SqlLogger) logger).print(sql);
         } catch (Exception e) {
             // ignore
         }
