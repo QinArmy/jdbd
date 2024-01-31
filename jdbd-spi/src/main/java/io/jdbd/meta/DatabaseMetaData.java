@@ -28,9 +28,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * <p>
- * This interface provider the methods for database meta data.
- * <br/>
+ * <p>This interface provider the methods for database meta data.
  *
  * @since 1.0
  */
@@ -84,6 +82,7 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
      * <p>Get current schema info of {@link #getSession()}
      * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      *
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}.
      * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -95,33 +94,29 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     Publisher<SchemaMeta> currentSchema(Function<Option<?>, ?> optionFunc);
 
     /**
-     * <p>
-     * Get schemas info of database.
+     * <p>Get schemas info of database.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     * <p>
-     * optionFunc at least support following options :
-     *     <ul>
-     *         <li>{@link #CATALOG},representing catalog name,catalog name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing catalog name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple catalog name : driver will use '=' operator</li>
-     *             </ul>
-     *         </li>
-     *         <li>{@link Option#NAME},representing schema name,schema name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing schema name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple schema name : driver will use '=' operator</li>
-     *             </ul>
-     *         </li>
-     *     </ul>
-     * <br/>
+     * <p>optionFunc at least support following options :
+     * <ul>
+     *     <li>{@link Option#SQL_LOGGER}</li>
+     *     <li>{@link #CATALOG},representing catalog name,catalog name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing catalog name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple catalog name : driver will use '=' operator</li>
+     *         </ul>
+     *     </li>
+     *     <li>{@link Option#NAME},representing schema name,schema name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing schema name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple schema name : driver will use '=' operator</li>
+     *         </ul>
+     *     </li>
+     * </ul>
      *
-     * @param optionFunc func can always return {@code null}
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit 0-N {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -133,34 +128,29 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     Publisher<SchemaMeta> schemas(Function<Option<?>, ?> optionFunc);
 
     /**
-     * <p>
-     * Get tables info of current schema.
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     * <p>
-     * optionFunc at least support following options :
-     *     <ul>
-     *         <li>{@link Option#NAME},representing table name,table name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing table name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple table name : driver will use '=' operator</li>
-     *             </ul>
-     *         </li>
-     *         <li>{@link Option#TYPE_NAME},representing table type name,table type name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing table type name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple table type name : driver will use '=' operator</li>
-     *             </ul>
-     *             table type name see {@link TableMeta#valueOf(Option)}
-     *         </li>
-     *     </ul>
-     * <br/>
+     * <p>Get tables info of current schema.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <p>optionFunc at least support following options :
+     * <ul>
+     *     <li>{@link Option#SQL_LOGGER}</li>
+     *     <li>{@link Option#NAME},representing table name,table name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing table name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple table name : driver will use '=' operator</li>
+     *         </ul>
+     *     </li>
+     *     <li>{@link Option#TYPE_NAME},representing table type name,table type name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing table type name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple table type name : driver will use '=' operator</li>
+     *         </ul>
+     *         table type name see {@link TableMeta#valueOf(Option)}
+     *     </li>
+     * </ul>
      *
-     * @param optionFunc func can always return {@code null}
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit 0-N {@link TableMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -172,34 +162,29 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     Publisher<TableMeta> tablesOfCurrentSchema(Function<Option<?>, ?> optionFunc);
 
     /**
-     * <p>
-     * Get tables info of schemaMeta.
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     * <p>
-     * optionFunc at least support following options :
-     *     <ul>
-     *         <li>{@link Option#NAME},representing table name,table name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing table name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple table name : driver will use '=' operator</li>
-     *             </ul>
-     *         </li>
-     *         <li>{@link Option#TYPE_NAME},representing table type name,table type name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing table type name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple table type name : driver will use '=' operator</li>
-     *             </ul>
-     *             table type name see {@link TableMeta#valueOf(Option)}
-     *         </li>
-     *     </ul>
-     * <br/>
+     * <p>Get tables info of schemaMeta.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <p>optionFunc at least support following options :
+     * <ul>
+     *     <li>{@link Option#SQL_LOGGER}</li>
+     *     <li>{@link Option#NAME},representing table name,table name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing table name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple table name : driver will use '=' operator</li>
+     *         </ul>
+     *     </li>
+     *     <li>{@link Option#TYPE_NAME},representing table type name,table type name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing table type name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple table type name : driver will use '=' operator</li>
+     *         </ul>
+     *         table type name see {@link TableMeta#valueOf(Option)}
+     *     </li>
+     * </ul>
      *
-     * @param optionFunc func can always return {@code null}
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit 0-N {@link TableMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -211,27 +196,22 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     Publisher<TableMeta> tablesOfSchema(SchemaMeta schemaMeta, Function<Option<?>, ?> optionFunc);
 
     /**
-     * <p>
-     * Get column info of tableMeta.
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     * <p>
-     * optionFunc at least support following options :
-     *     <ul>
-     *         <li>{@link Option#NAME},representing column name,column name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing column name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple column name : driver will use '=' operator</li>
-     *             </ul>
-     *         </li>
-     *     </ul>
-     * <br/>
+     * <p>Get column info of tableMeta.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <p>optionFunc at least support following options :
+     * <ul>
+     *     <li>{@link Option#SQL_LOGGER}</li>
+     *     <li>{@link Option#NAME},representing column name,column name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing column name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple column name : driver will use '=' operator</li>
+     *         </ul>
+     *     </li>
+     * </ul>
      *
      * @param tableMeta  non-null
-     * @param optionFunc func can always return {@code null}
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit 0-N {@link TableColumnMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -243,27 +223,22 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     Publisher<TableColumnMeta> columnsOfTable(TableMeta tableMeta, Function<Option<?>, ?> optionFunc);
 
     /**
-     * <p>
-     * Get index info of tableMeta.
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     * <p>
-     * optionFunc at least support following options :
-     *     <ul>
-     *         <li>{@link Option#NAME},representing index name,index name can be following format:
-     *             <ul>
-     *                 <li>contain comma(,) : representing index name set,driver will use IN operator</li>
-     *                 <li>contain '%' : driver will use LIKE operator.</li>
-     *                 <li>simple index name : driver will use '=' operator</li>
-     *             </ul>
-     *         </li>
-     *     </ul>
-     * <br/>
+     * <p>Get index info of tableMeta.
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <p>optionFunc at least support following options :
+     * <ul>
+     *     <li>{@link Option#SQL_LOGGER}</li>
+     *     <li>{@link Option#NAME},representing index name,index name can be following format:
+     *         <ul>
+     *             <li>contain comma(,) : representing index name set,driver will use IN operator</li>
+     *             <li>contain '%' : driver will use LIKE operator.</li>
+     *             <li>simple index name : driver will use '=' operator</li>
+     *         </ul>
+     *     </li>
+     * </ul>
      *
-     * @param tableMeta  non-null
-     * @param optionFunc func can always return {@code null}
+     * @param tableMeta non-null
+     *                  @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit 0-N {@link TableIndexMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Flux} .
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -276,18 +251,12 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
 
 
     /**
-     * <p>
-     * Get the info of option
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
-     * <p>
-     * This implementation of this method at least support following :
-     *     <ul>
-     *         <li>{@link Option#USER} : representing current user info of session,now the {@link Publisher} emit just one element or {@link Throwable}, Like {@code reactor.core.publisher.Mono} . </li>
-     *     </ul>
-     * <br/>
+     * <p>Get the info of option
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
+     * <p>This implementation of this method at least support following :
+     * <ul>
+     *     <li>{@link Option#USER} : representing current user info of session,now the {@link Publisher} emit just one element or {@link Throwable}, Like {@code reactor.core.publisher.Mono} . </li>
+     * </ul>
      *
      * @param option option key
      * @param <R>    option value java type
@@ -302,12 +271,8 @@ public interface DatabaseMetaData extends DatabaseMetaSpec, SessionHolderSpec, O
     <R> Publisher<R> queryOption(Option<R> option);
 
     /**
-     * <p>
-     * Get database key words
-     * <br/>
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
+     * <p>Get database key words
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      *
      * @param onlyReserved true : just only query reserved key words.
      * @return the {@link Publisher} emit just one {@link SchemaMeta} or {@link Throwable}, Like {@code reactor.core.publisher.Mono}.

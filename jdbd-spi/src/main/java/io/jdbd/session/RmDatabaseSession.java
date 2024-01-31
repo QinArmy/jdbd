@@ -27,23 +27,23 @@ import java.util.function.Function;
 /**
  * <p>
  * This interface representing database session that support XA transaction.
- *<br/>
+ * <br/>
  * <p>
  * This interface is is similar to {@code javax.sql.javax.sql.XAConnection} and {@code javax.transaction.xa.XAResource}, except that this interface is reactive.
- *<br/>
+ * <br/>
  * <p>
  * The 'Rm' of the name of this interface means Resource Manager of XA transaction.
- *<br/>
+ * <br/>
  * <p>
  * The instance of this interface is created by {@link DatabaseSessionFactory#rmSession()}.
- *<br/>
+ * <br/>
  * <p>
  * This interface extends {@link DatabaseSession} for support XA interface based on
  * the X/Open CAE Specification (Distributed Transaction Processing: The XA Specification).
  * This document is published by The Open Group and available at
  * <a href="http://www.opengroup.org/public/pubs/catalog/c193.htm">The XA Specification</a>,
  * here ,you can download the pdf about The XA Specification.
- *<br/>
+ * <br/>
  * <p>
  * Application developer can create statement by following methods :
  *     <ul>
@@ -53,7 +53,7 @@ import java.util.function.Function;
  *         <li>{@link #bindStatement(String, boolean)}, create the adaptor of client-prepared statement and server-prepared statement.</li>
  *         <li>{@link #multiStatement()}, create multi-statement</li>
  *     </ul>
- *<br/>
+ * <br/>
  * <p>
  * Application developer can control XA transaction by following :
  *     <ul>
@@ -84,7 +84,7 @@ import java.util.function.Function;
  *         <li>{@link #rollbackToSavePoint(SavePoint)}</li>
  *         <li>{@link #rollbackToSavePoint(SavePoint, java.util.function.Function)}</li>
  *     </ul>
- *<br/>
+ * <br/>
  *
  * @see <a href="http://www.opengroup.org/public/pubs/catalog/c193.html">The XA Specification</a>
  */
@@ -173,15 +173,14 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.start(xid,flags,TransactionOption.option(null,false)) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #start(Xid, int, TransactionOption)
      */
     Publisher<TransactionInfo> start(Xid xid, int flags);
 
     /**
-     * <p>
-     * Starts work on behalf of a transaction branch specified in
+     * <p>Starts work on behalf of a transaction branch specified in
      * <code>xid</code>.
      * If {@link #TM_JOIN} is specified, the start applies to joining a transaction
      * previously seen by the resource manager. If {@link #TM_RESUME} is specified,
@@ -191,18 +190,22 @@ public interface RmDatabaseSession extends DatabaseSession {
      * specified by <code>xid</code> has previously been seen by the resource
      * manager, the resource manager throws the XAException exception with
      * {@link XaException#XAER_DUPID} error code.
-     *<br/>
-     * <p>
-     * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
+     * <p>To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
      * <ul>
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
+     * <p>The implementation of this method <strong>always</strong> support {@link Option#SQL_LOGGER}
      * <p><strong>NOTE</strong>:
      * <ul>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always non-null.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#XID} always same with xid.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#XA_STATES} always is {@link XaStates#ACTIVE}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#XA_FLAGS} always same with flags.</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#NAME} always same with option</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#LABEL} always same with option</li>
      * </ul>
      *
      * @param flags bit set, support below flags:
@@ -234,7 +237,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.end(xid,RmDatabaseSession.TM_SUCCESS,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #end(Xid, int, Function)
      */
@@ -249,7 +252,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.end(xid,flags,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #end(Xid, int, Function)
      */
@@ -261,7 +264,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      * The resource manager disassociates the XA resource from the
      * transaction branch specified and lets the transaction
      * complete.
-     *<br/>
+     * <br/>
      * <p>
      * To be safe,{@link RmDatabaseSession} write gtrid and bqual as hex strings. steps :
      * <ul>
@@ -270,10 +273,16 @@ public interface RmDatabaseSession extends DatabaseSession {
      * </ul>
      * <p><strong>NOTE</strong>:
      * <ul>
-     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
-     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always non-null.</li>
-     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always same with {@link #start(Xid, int, TransactionOption)}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always same with {@link #start(Xid, int, TransactionOption)}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#XID} always same with {@link #start(Xid, int, TransactionOption)}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#XA_STATES} always is {@link XaStates#IDLE}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#XA_FLAGS} always same with flags.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with {@link #start(Xid, int, TransactionOption)}</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#NAME} always same with {@link #start(Xid, int, TransactionOption)}</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#LABEL} always same with {@link #start(Xid, int, TransactionOption)}</li>
      * </ul>
+     * see {@link TransactionInfo#forXaEnd(int, TransactionInfo)} and {@link TransactionInfo#forXaJoinEnded(int, TransactionInfo)}
      *
      * @param flags      bit set, support one of following :
      *                   <ul>
@@ -286,7 +295,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                       method with {@link #TM_RESUME} specified.<br/>
      *                       </li>
      *                   </ul>
-     * @param optionFunc dialect option ,empty or option.
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @throws XaException emit(not throw) when
      *                     <ul>
      *                          <li>xid is null</li>
@@ -310,7 +319,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.prepare(xid,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #prepare(Xid, Function)
      */
@@ -323,10 +332,10 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     *<br/>
+     * <br/>
      *
-     * @param xid        non-null
-     * @param optionFunc optionMap dialect option ,empty or option map.
+     * @param xid non-null
+     *            @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @throws XaException emit(not throw) when
      *                     <ul>
      *                          <li>xid is null</li>
@@ -349,7 +358,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.commit(xid,RmDatabaseSession.TM_NO_FLAGS,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #commit(Xid, int, Function)
      */
@@ -364,7 +373,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.commit(xid,flags,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #commit(Xid, int, Function)
      */
@@ -378,7 +387,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     *<br/>
+     * <br/>
      *
      * @param xid        non-null
      * @param flags      one of following :
@@ -386,7 +395,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *                     <li>{@link #TM_NO_FLAGS}</li>
      *                     <li>{@link #TM_ONE_PHASE}</li>
      *                   </ul>
-     * @param optionFunc optionMap dialect option ,empty or option map.
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @throws XaException emit(not throw) when
      *                     <ul>
      *                          <li>xid is null</li>
@@ -409,7 +418,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.rollback(xid,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #rollback(Xid, Function)
      */
@@ -422,10 +431,10 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     *<br/>
+     * <br/>
      *
-     * @param xid        non-null
-     * @param optionFunc optionMap dialect option ,empty or option map.
+     * @param xid non-null
+     *            @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @throws XaException emit(not throw) when
      *                     <ul>
      *                          <li>xid is null</li>
@@ -448,7 +457,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.forget(xid,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #forget(Xid, Function)
      */
@@ -461,10 +470,10 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>Get byte[] with {@link java.nio.charset.StandardCharsets#UTF_8}</li>
      *     <li>write gtrid or bqual as hex strings</li>
      * </ul>
-     *<br/>
+     * <br/>
      *
      * @param xid        non-null
-     * @param optionFunc optionMap dialect option ,empty or option map.
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @throws XaException emit(not throw) when
      *                     <ul>
      *                          <li>driver don't support this method, see {@link #isSupportForget()}</li>
@@ -487,7 +496,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.recover(RmDatabaseSession.TM_NO_FLAGS,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #recover(int, Function)
      */
@@ -502,7 +511,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      *             session.recover(flags,option -> null) ;
      *         </code>
      *     </pre>
-     *<br/>
+     * <br/>
      *
      * @see #recover(int, Function)
      */
@@ -516,15 +525,15 @@ public interface RmDatabaseSession extends DatabaseSession {
      *     <li>write gtrid ( or bqual) as hex strings</li>
      * </ul>
      * so the conversion process of this method is the reverse of above.
-     *<br/>
+     * <br/>
      *
-     * @param flags      one of following :
-     *                   <ul>
-     *                     <li>{@link #TM_NO_FLAGS}</li>
-     *                     <li>{@link #TM_START_RSCAN}</li>
-     *                     <li>{@link #TM_END_RSCAN}</li>
-     *                   </ul>
-     * @param optionFunc optionMap dialect option ,empty or option map.
+     * @param flags one of following :
+     *                               <ul>
+     *                                 <li>{@link #TM_NO_FLAGS}</li>
+     *                                 <li>{@link #TM_START_RSCAN}</li>
+     *                                 <li>{@link #TM_END_RSCAN}</li>
+     *                               </ul>
+     *              @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return return the xids whose xid format follow this driver, If xid format don't follow this driver, then it is represented by {@link Optional#empty()}.
      * @throws XaException emit(not throw) when
      *                     <ul>

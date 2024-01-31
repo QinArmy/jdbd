@@ -107,6 +107,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
     /**
      * <p>Start one local transaction with option.
      * <p>Driver developer should guarantee that transaction option (eg: {@link Isolation}) applies only this new transaction.
+     * <p>The implementation of this method <strong>always</strong> support {@link Option#SQL_LOGGER}
      * <p>The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#WITH_CONSISTENT_SNAPSHOT}</li>
@@ -118,6 +119,8 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always non-null.</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always non-null.</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#NAME} always same with option</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#LABEL} always same with option</li>
      * </ul>
      *
      * @param option non-null transaction option, driver perhaps support dialect transaction option by {@link TransactionOption#valueOf(Option)}.
@@ -158,11 +161,9 @@ public interface LocalDatabaseSession extends DatabaseSession {
     Publisher<LocalDatabaseSession> commit();
 
     /**
-     * <p>
-     * COMMIT current local transaction of this session.
-     * <br/>
-     * <p>
-     * The implementation of this method <strong>perhaps</strong> support some of following :
+     * <p>COMMIT current local transaction of this session.
+     * <p>The implementation of this method <strong>always</strong> support {@link Option#SQL_LOGGER} .
+     * <p>The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#CHAIN}</li>
      *         <li>{@link Option#RELEASE}</li>
@@ -175,9 +176,17 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *     <li>when {@link Option#CHAIN} is true and driver support,{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always be updated</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
      * </ul>
-     * <br/>
      *
-     * @param optionFunc func
+     * <p>If return non-null {@link TransactionInfo} <strong>NOTE</strong>:
+     * <ul>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always is new value.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always same with {@link #startTransaction(TransactionOption, HandleMode)}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with {@link #startTransaction(TransactionOption, HandleMode)}</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#NAME} always same with {@link #startTransaction(TransactionOption, HandleMode)}</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#LABEL} always same with {@link #startTransaction(TransactionOption, HandleMode)}</li>
+     * </ul>
+     *
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return emit 0-1 {@link TransactionInfo} or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * If emit {@link TransactionInfo}, then driver support {@link Option#CHAIN} and you specified {@link Option#CHAIN}.
      * @throws JdbdException emit(not throw) when
@@ -208,6 +217,7 @@ public interface LocalDatabaseSession extends DatabaseSession {
 
     /**
      * <p>ROLLBACK current local transaction of this session.
+     * <p>The implementation of this method <strong>always</strong> support {@link Option#SQL_LOGGER} .
      * <p>The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#CHAIN}</li>
@@ -220,8 +230,16 @@ public interface LocalDatabaseSession extends DatabaseSession {
      *     <li>when {@link Option#CHAIN} is true and driver support,{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always be updated</li>
      *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with option</li>
      * </ul>
+     * <p>If return non-null {@link TransactionInfo} <strong>NOTE</strong>:
+     * <ul>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#START_MILLIS} always is new value.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#DEFAULT_ISOLATION} always same with {@link #startTransaction(TransactionOption, HandleMode)}.</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#TIMEOUT_MILLIS} always same with {@link #startTransaction(TransactionOption, HandleMode)}</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#NAME} always same with {@link #startTransaction(TransactionOption, HandleMode)}</li>
+     *     <li>{@link TransactionInfo#valueOf(Option)} with {@link Option#LABEL} always same with {@link #startTransaction(TransactionOption, HandleMode)}</li>
+     * </ul>
      *
-     * @param optionFunc {@link Option} function
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return emit 0-1 {@link TransactionInfo} or {@link Throwable}. Like {@code reactor.core.publisher.Mono}.
      * If emit {@link TransactionInfo}, then driver support {@link Option#CHAIN} and you specified {@link Option#CHAIN}.
      * @throws JdbdException emit(not throw) when

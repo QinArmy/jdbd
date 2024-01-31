@@ -118,6 +118,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     /**
      * <p>Get current transaction info,If session in transaction block,then return current transaction info; else equivalent to {@link #sessionTransactionCharacteristics(Function)}.
      *
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * @throws JdbdException emit(not throw) when
      *                        <ul>
@@ -158,6 +159,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <p>Query session-level transaction characteristics info
      * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      *
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} emit just one {@link TransactionInfo} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
      * <p><strong>NOTE</strong> : the {@link TransactionInfo#inTransaction()} always is false,even if session in transaction block.
      * @throws JdbdException emit(not throw) when
@@ -293,7 +295,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <br/>
      *
      * @param name       must have text
-     * @param optionFunc non-null optionFunc. optionFunc can always return null
+     * @param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return {@link Cursor}  instance
      * @throws IllegalArgumentException throw when name have no text.
      * @throws JdbdException            throw when {@link #isSupportRefCursor()} return false.
@@ -302,19 +304,13 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
-     * <p>
-     * Just set the characteristics of session transaction, don't start transaction.
-     * <br/>
-     * <p>
-     * Sets the default transaction characteristics for subsequent transactions of this session.<br/>
+     * <p>Just set the characteristics of session transaction, don't start transaction.
+     * <p>Sets the default transaction characteristics for subsequent transactions of this session.<br/>
      * These defaults can be overridden by {@link LocalDatabaseSession#startTransaction(TransactionOption, HandleMode)}
      * for an individual transaction.
-     * <br/>
-     * <p>
-     * The transaction options (eg: {@link Isolation}) can apply all transaction of session.
-     * <br/>
-     * <p>
-     * The implementation of this method <strong>perhaps</strong> support some of following :
+     * <p>The transaction options (eg: {@link Isolation}) can apply all transaction of session.
+     * <p>The implementation of this method <strong>always</strong> support {@link Option#SQL_LOGGER}.
+     * <p>The implementation of this method <strong>perhaps</strong> support some of following :
      *     <ul>
      *         <li>{@link Option#WITH_CONSISTENT_SNAPSHOT}</li>
      *         <li>{@link Option#DEFERRABLE}</li>
@@ -339,6 +335,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
 
 
     /**
+     * <p>Test session whether in transaction block or not.
      * <p>The state usually is returned database server by database client protocol.
      * For example :
      * <ul>
@@ -380,13 +377,14 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
     Publisher<SavePoint> setSavePoint();
 
     /**
-     * /**
      * Driver create one save point identifier and set a save point.
-     * <p>
-     * <strong>NOTE</strong> : driver don't send message to database server before subscribing.
-     * <br/>
+     * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing.
      *
-     * @param optionFunc dialect option function
+     * @param optionFunc dialect option,always support :
+     *                   <ul>
+     *                       <li>{@link Option#NAME} , save point name</li>
+     *                       <li>{@link Option#SQL_LOGGER}</li>
+     *                   </ul>
      * @return {@link Publisher} emit just one {@link SavePoint},like {@code reactor.core.publisher.Mono}
      * @throws JdbdException emit(not throw) when
      *                       <ul>
@@ -421,7 +419,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <br/>
      *
      * @param savepoint  non-null
-     * @param optionFunc non-null,can always return null
+     *@param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} that completes successfully by
      * emitting an element(<strong>this</strong>), or with an error. Like {@code  reactor.core.publisher.Mono}
      * @throws JdbdException throw when
@@ -456,7 +454,7 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <br/>
      *
      * @param savepoint  non-null
-     * @param optionFunc non-null,dialect option ,can always return null
+     *@param optionFunc dialect option,always support {@link Option#SQL_LOGGER}. see {@link Option#EMPTY_OPTION_FUNC}
      * @return the {@link Publisher} that completes successfully by
      * emitting an element(<strong>this</strong>), or with an error. Like {@code  reactor.core.publisher.Mono}
      * @throws JdbdException throw when
