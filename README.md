@@ -14,6 +14,10 @@ The Reactive Java Database Driver (JDBD) project brings reactive(non-blocking) p
 3. more practical
 4. more efficient
 
+#### the persistence frameworks that use jdbd-spi :
+
+1. [Army](https://github.com/QinArmy/army)
+
 ### How to start ?
 
 #### Maven
