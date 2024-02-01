@@ -105,7 +105,11 @@ public interface ResultStates extends ResultItem, OptionSpec {
 
     /**
      * Whether exists more result after this result or not .
-     *
+     *<ul>
+     *     <li>simple single statement always false</li>
+     *     <li>multi-result statement,for example stored procedure ,multi-statement ,last result is false,before last result is true</li>
+     *     <li>batch statement,for example,batch update/query  ,last batch item is false,before last batch item is true</li>
+     *</ul>
      * @return true : exists more result after this result
      */
     boolean hasMoreResult();
