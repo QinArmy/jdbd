@@ -104,12 +104,20 @@ public interface ResultStates extends ResultItem, OptionSpec {
     String message();
 
     /**
+     * <p>Test this result whether is one of batch result ot not.
+     *
+     * @return true : this result is one of batch result.
+     */
+    boolean isBatch();
+
+    /**
      * Whether exists more result after this result or not .
-     *<ul>
+     * <ul>
      *     <li>simple single statement always false</li>
      *     <li>multi-result statement,for example stored procedure ,multi-statement ,last result is false,before last result is true</li>
      *     <li>batch statement,for example,batch update/query  ,last batch item is false,before last batch item is true</li>
-     *</ul>
+     * </ul>
+     *
      * @return true : exists more result after this result
      */
     boolean hasMoreResult();
