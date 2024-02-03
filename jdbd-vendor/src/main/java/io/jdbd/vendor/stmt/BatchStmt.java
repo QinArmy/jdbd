@@ -24,7 +24,6 @@ package io.jdbd.vendor.stmt;
  * This is a base interface of :
  *     <ul>
  *         <li>{@link StaticBatchStmt}</li>
- *         <li>{@link StaticMultiStmt}</li>
  *         <li>{@link ParamBatchStmt}</li>
  *     </ul>
  * <br/>
