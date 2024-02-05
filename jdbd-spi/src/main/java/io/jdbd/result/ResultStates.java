@@ -50,6 +50,16 @@ public interface ResultStates extends ResultItem, OptionSpec {
     Consumer<ResultStates> IGNORE_STATES = states -> {
     };
 
+    int batchSize();
+
+    /**
+     * @return <ul>
+     * <li>If {@link #batchSize()} is 0, then 0</li>
+     * <li>Else batch No (based 1)</li>
+     * </ul>
+     */
+    int batchNo();
+
     /**
      * Whether support {@link #lastInsertedId()} method or not.
      * <p>If false ,then database usually support RETURNING clause,it better than lastInsertedId ,for example : PostgreSQL
@@ -103,12 +113,6 @@ public interface ResultStates extends ResultItem, OptionSpec {
      */
     String message();
 
-    /**
-     * <p>Test this result whether is one of batch result ot not.
-     *
-     * @return true : this result is one of batch result.
-     */
-    boolean isBatch();
 
     /**
      * Whether exists more result after this result or not .
