@@ -52,7 +52,7 @@ public interface StaticStatementSpec {
      *     <li>CREATE TABLE</li>
      *     <li>CALL Stored procedures that just produce one update result and no out parameter.</li>
      * </ul>
-     * <p>The result is a {@link ResultStates} instance whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#getResultNo()} always return 1 .
+     * <p>The result is a {@link ResultStates} instance whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#resultNo()} always return 1 .
      * <p>This method like {@code java.sql.Statement#executeUpdate(String)}
      * <p>This method is  similar to {@link BindSingleStatement#executeUpdate()}, except that don't support parameter.
      * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
@@ -112,9 +112,9 @@ public interface StaticStatementSpec {
     /**
      * <p>Execute a sql statement and server response just one query result,the result consist of :
      * <ol>
-     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#getResultNo()} always return 1</li>
-     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
-     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#resultNo()} always return 1</li>
+     *     <li>0-N data row,the {@link DataRow#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
+     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
      * </ol>
      * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
      * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.

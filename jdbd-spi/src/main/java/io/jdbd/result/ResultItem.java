@@ -51,7 +51,7 @@ public interface ResultItem {
      *
      * @return the number of this Query/Update result, based one. The first value is 1 .
      */
-    int getResultNo();
+    int resultNo();
 
 
     static boolean isRowOrStatesItem(ResultItem item) {

@@ -32,7 +32,7 @@ import java.util.function.Function;
  * </ul>
  * <br/>
  * <p>
- * The {@link #getResultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
+ * The {@link #resultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
  * See {@link #getRowMeta()}
  * <br/>
  *

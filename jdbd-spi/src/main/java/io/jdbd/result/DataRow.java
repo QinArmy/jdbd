@@ -42,7 +42,7 @@ import java.util.function.Supplier;
  *     </ul>
  * <br/>
  * <p>
- * The {@link #getResultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
+ * The {@link #resultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
  * See {@link #getRowMeta()}
  * <br/>
  * <p>
@@ -79,10 +79,10 @@ public interface DataRow extends ResultItem, ResultItem.ResultAccessSpec {
      *         </code>
      * </pre>
      *
-     * @return see {@link ResultRowMeta#getResultNo()}
+     * @return see {@link ResultRowMeta#resultNo()}
      */
     @Override
-    int getResultNo();
+    int resultNo();
 
     /**
      * <p>

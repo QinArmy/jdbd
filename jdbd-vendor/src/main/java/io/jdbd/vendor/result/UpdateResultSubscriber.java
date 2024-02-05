@@ -71,7 +71,7 @@ final class UpdateResultSubscriber implements Subscriber<ResultItem> {
         if (this.error != null) {
             return;
         }
-        if (!(item instanceof ResultStates) || ((ResultStates) item).hasColumn() || item.getResultNo() != 1) {
+        if (!(item instanceof ResultStates) || ((ResultStates) item).hasColumn() || item.resultNo() != 1) {
             this.error = new NonUpdateException("subscribe update,but server response non-update result");
             this.subscription.cancel();
             return;

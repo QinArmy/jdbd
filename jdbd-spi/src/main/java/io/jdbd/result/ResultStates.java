@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  *  The instance of this interface always is the last item of same query result in the {@link OrderedFlux}.
  * <br/>
  * <p>
- * The {@link #getResultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
+ * The {@link #resultNo()} of this interface always return same value with {@link ResultRowMeta} in same query result.
  * <br/>
  *
  * @see ResultRowMeta

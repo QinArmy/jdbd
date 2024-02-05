@@ -88,8 +88,8 @@ public interface MultiResultSpec {
      * Subscribe next query result,the result consist of :
      * <ol>
      *     <li>one {@link ResultRowMeta}</li>
-     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
-     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,the {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>0-N data row,the {@link DataRow#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
+     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,the {@link ResultStates#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
      * </ol>
      * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
      * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.

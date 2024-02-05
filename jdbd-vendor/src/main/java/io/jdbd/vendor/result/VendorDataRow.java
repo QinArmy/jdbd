@@ -247,7 +247,7 @@ public abstract class VendorDataRow implements DataRow {
         final StringBuilder builder = new StringBuilder(50);
         builder.append(getClass().getSimpleName())
                 .append("[ resultNo : ")
-                .append(getResultNo());
+                .append(resultNo());
 
         if (this instanceof CurrentRow) {
             builder.append(" , rowNumber : ")

@@ -35,8 +35,8 @@ import java.util.List;
  *     <li>The query result is represented by following sequence :
  *         <ol>
  *             <li>one {@link ResultRowMeta} instance.</li>
- *             <li>0-N {@link ResultRow} instance,the {@link ResultRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
- *             <li>one {@link ResultStates} instance,the {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()} and the {@link ResultStates#hasColumn()} always return true.</li>
+ *             <li>0-N {@link ResultRow} instance,the {@link ResultRow#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
+ *             <li>one {@link ResultStates} instance,the {@link ResultStates#resultNo()} return same with {@link ResultRowMeta#resultNo()} and the {@link ResultStates#hasColumn()} always return true.</li>
  *         </ol>
  *         in {@link OrderedFlux}.
  *     </li>

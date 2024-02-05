@@ -188,9 +188,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
         // drain queue
         for (ResultItem queueItem; currentSink != null && (queueItem = resultItemQueue.poll()) != null; ) {
 
-            if (queueItem.getResultNo() != currentSink.resultNo) {
+            if (queueItem.resultNo() != currentSink.resultNo) {
                 String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
-                        currentSink.resultNo, queueItem.getResultNo());
+                        currentSink.resultNo, queueItem.resultNo());
                 this.handleError(new JdbdException(m));
                 break;
             }
@@ -377,9 +377,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             if (this.error != null) {
                 return;
             }
-            if (item.getResultNo() != this.resultNo) {
+            if (item.resultNo() != this.resultNo) {
                 String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
-                        this.resultNo, item.getResultNo());
+                        this.resultNo, item.resultNo());
                 this.error = new JdbdException(m);
             } else if (!(item instanceof ResultStates) || ((ResultStates) item).hasColumn()) {
                 String m = String.format("error,resultNo[%s] expected update result,but receive query result.",
@@ -460,9 +460,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
                 this.receiveItem = true;
             }
 
-            if (item.getResultNo() != this.resultNo) {
+            if (item.resultNo() != this.resultNo) {
                 String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
-                        this.resultNo, item.getResultNo());
+                        this.resultNo, item.resultNo());
                 this.handleError(new JdbdException(m));
             } else if (item instanceof CurrentRow) {
                 final R r;
@@ -557,9 +557,9 @@ final class MultiResultSubscriber implements Subscriber<ResultItem> {
             if (!this.receiveItem) {
                 this.receiveItem = true;
             }
-            if (item.getResultNo() != this.resultNo) {
+            if (item.resultNo() != this.resultNo) {
                 String m = String.format("error,expected resultNo[%s],but receive resultNo[%s]",
-                        this.resultNo, item.getResultNo());
+                        this.resultNo, item.resultNo());
                 this.handleError(new JdbdException(m));
             } else {
                 this.sink.next(item);

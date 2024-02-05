@@ -91,7 +91,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *     <li>CREATE TABLE</li>
      *     <li>CALL Stored procedures that just produce one update result and no out parameter.</li>
      * </ul>
-     * <p>The result is a {@link ResultStates} instance whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#getResultNo()} always return 1 .
+     * <p>The result is a {@link ResultStates} instance whose {@link ResultStates#hasColumn()} always return false and {@link ResultStates#resultNo()} always return 1 .
      * <p><strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
      *
      * @return the {@link Publisher} emit just one {@link ResultStates} or {@link Throwable}, Like {@code reactor.core.publisher.Mono} .
@@ -170,13 +170,13 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>Execute a sql statement and server response just one query result,the result consist of :
      * <ol>
-     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#getResultNo()} always return 1</li>
-     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
-     *     <li>1-N {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#resultNo()} always return 1</li>
+     *     <li>0-N data row,the {@link DataRow#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
+     *     <li>1-N {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
      * </ol>
      * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for this result<br/>
      * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.
-     * <p><strong>NOTE</strong>: if use {@link #setFetchSize(int)},then will produce multi {@link ResultStates} instance and the {@link ResultStates#getResultNo()} always return 1 .
+     * <p><strong>NOTE</strong>: if use {@link #setFetchSize(int)},then will produce multi {@link ResultStates} instance and the {@link ResultStates#resultNo()} always return 1 .
      * <p>
      * <strong>NOTE</strong> : driver don't send message to database server before subscribing. Driver developer must guarantee this feature.
      * <br/>
@@ -197,7 +197,7 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
      *                       then will be invoked just once by driver,else will be invoked multi-times by driver. <br/>
      *                       <strong>NOTE</strong>:
      *                       <ul>
-     *                          <li>even if use {@link #setFetchSize(int)} the {@link ResultStates#getResultNo()} always return 1</li>
+     *                          <li>even if use {@link #setFetchSize(int)} the {@link ResultStates#resultNo()} always return 1</li>
      *                          <li>driver will invoke statesConsumer in an ordered / serial fashion. Typically ,statesConsumer run in {@code  io.netty.channel.EventLoop}</li>
      *                       </ul>
      * @param <R>            the row java type,it is returned by rowFunc.
@@ -295,9 +295,9 @@ public interface BindSingleStatement extends ParametrizedStatement, MultiResultS
     /**
      * <p>Execute a sql statement with batch parameter and server response multi query result,the result consist of :
      * <ol>
-     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#getResultNo()}</li>
-     *     <li>0-N data row,the {@link DataRow#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
-     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#getResultNo()} return same with {@link ResultRowMeta#getResultNo()}</li>
+     *     <li>one {@link ResultRowMeta},the {@link ResultRowMeta#resultNo()}</li>
+     *     <li>0-N data row,the {@link DataRow#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
+     *     <li>one {@link ResultStates},the {@link ResultStates#hasColumn()} always return true,he {@link ResultStates#resultNo()} return same with {@link ResultRowMeta#resultNo()}</li>
      * </ol>
      * To avoid creating {@link ResultRow} instance for improving performance ,driver create just one {@link CurrentRow} instance for each query result<br/>
      * and wrap {@link ResultRowMeta} to {@link CurrentRow#getRowMeta()},and {@link ResultStates} is optional, if you don't need.

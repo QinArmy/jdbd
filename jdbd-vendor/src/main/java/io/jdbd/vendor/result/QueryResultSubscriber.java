@@ -113,7 +113,7 @@ final class QueryResultSubscriber<R> implements Subscriber<ResultItem> {
             this.receiveItem = true;
         }
 
-        if (!this.batch && item.getResultNo() != 1) {
+        if (!this.batch && item.resultNo() != 1) {
             this.handleError(new NonQueryResultException("subscribe query result,but server response multi-result"));
         } else if (((++this.itemCount) & 31) == 0 && this.sink.isCancelled()) {
             this.disposable = true;
