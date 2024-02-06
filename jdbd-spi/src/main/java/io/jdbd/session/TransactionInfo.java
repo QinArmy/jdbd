@@ -19,7 +19,6 @@ package io.jdbd.session;
 import io.jdbd.lang.NonNull;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 /**
  * <p>
@@ -28,7 +27,7 @@ import java.util.Set;
  *
  * @since 1.0
  */
-public interface TransactionInfo extends TransactionOption {
+public interface TransactionInfo extends TransactionSpec {
 
 
     /**
@@ -39,7 +38,6 @@ public interface TransactionInfo extends TransactionOption {
      * @return non-null
      */
     @NonNull
-    @Override
     Isolation isolation();
 
     /**
@@ -61,10 +59,8 @@ public interface TransactionInfo extends TransactionOption {
     @Override
     <T> T valueOf(Option<T> option);
 
-    Set<Option<?>> optionSet();
-
-    static InfoBuilder infoBuilder(boolean inTransaction, Isolation isolation, boolean readOnly) {
-        return JdbdTransactionInfo.builder(inTransaction, isolation, readOnly);
+    static InfoBuilder builder(boolean inTransaction, Isolation isolation, boolean readOnly) {
+        return JdbdTransactionInfo.infoBuilder(inTransaction, isolation, readOnly);
     }
 
 

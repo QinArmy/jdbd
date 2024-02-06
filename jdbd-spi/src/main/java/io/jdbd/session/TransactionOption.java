@@ -40,39 +40,16 @@ import io.jdbd.lang.Nullable;
  *
  * @since 1.0
  */
-public interface TransactionOption extends OptionSpec {
+public interface TransactionOption extends TransactionSpec {
 
     /**
-     * <p>
-     * Transaction isolation level,if null,then use default transaction isolation level.
-     * <br/>
+     * <p>Transaction isolation level,if null,then use default transaction isolation level.
      *
      * @return nullable {@link Isolation}
      */
     @Nullable
     Isolation isolation();
 
-    /**
-     * @return true : transaction is read-only.
-     */
-    boolean isReadOnly();
-
-
-    /**
-     * <p>
-     * override {@link Object#toString()}
-     * <p>
-     * <br/>
-     *
-     * @return transaction info, contain
-     * <ul>
-     *     <li>implementation class name</li>
-     *     <li>transaction info</li>
-     *     <li>{@link System#identityHashCode(Object)}</li>
-     * </ul>
-     */
-    @Override
-    String toString();
 
 
     /**
