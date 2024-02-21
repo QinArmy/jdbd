@@ -28,7 +28,7 @@ for example: use jdbd-mysql
 <dependency>
     <groupId>io.jdbd.mysql</groupId>
     <artifactId>jdbd-mysql</artifactId>
-    <version>0.11.7</version>
+    <version>0.11.9</version>
 </dependency>
 ```
 
