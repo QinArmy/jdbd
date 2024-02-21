@@ -45,7 +45,7 @@ public interface PoolLocalDatabaseSession extends PoolDatabaseSession, LocalData
      * {@inheritDoc}
      */
     @Override
-    Publisher<PoolLocalDatabaseSession> logicallyClose();
+    Publisher<PoolLocalDatabaseSession> softClose();
 
 
 }

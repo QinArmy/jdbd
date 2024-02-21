@@ -18,10 +18,12 @@ package io.jdbd.session;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
+import io.jdbd.meta.DataType;
 import io.jdbd.meta.DatabaseMetaData;
 import io.jdbd.result.Cursor;
 import io.jdbd.result.ResultStates;
 import io.jdbd.statement.*;
+import io.jdbd.util.EscapeMode;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
 
@@ -473,13 +475,13 @@ public interface DatabaseSession extends StaticStatementSpec, DatabaseMetaSpec, 
      * <p>
      * <strong>NOTE</strong>: driver don't append space before literal.
      * <br/>
-     *
-     * @param text    nullable text
+     * @param type data type of value
+     * @param value    nullable value
      * @param builder target builder
      * @return <strong>this</strong>
      * @throws JdbdException throw when the implementation of this method need session is open and session have closed
      */
-    DatabaseSession appendLiteral(@Nullable String text, StringBuilder builder) throws JdbdException;
+    DatabaseSession appendLiteral(DataType type, @Nullable Object value, EscapeMode mode, StringBuilder builder) throws JdbdException;
 
     /**
      * <p>

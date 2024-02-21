@@ -95,6 +95,6 @@ public interface PoolDatabaseSession extends DatabaseSession {
      *                                   <li>server response error message,see {@link io.jdbd.result.ServerException}</li>
      *                               </ul>
      */
-    Publisher<? extends PoolDatabaseSession> logicallyClose();
+    Publisher<? extends PoolDatabaseSession> softClose();
 
 }

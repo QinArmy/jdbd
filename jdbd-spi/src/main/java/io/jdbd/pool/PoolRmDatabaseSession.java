@@ -46,5 +46,5 @@ public interface PoolRmDatabaseSession extends RmDatabaseSession, PoolDatabaseSe
      * {@inheritDoc}
      */
     @Override
-    Publisher<PoolRmDatabaseSession> logicallyClose();
+    Publisher<PoolRmDatabaseSession> softClose();
 }

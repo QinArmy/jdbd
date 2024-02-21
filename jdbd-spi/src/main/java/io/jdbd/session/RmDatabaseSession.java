@@ -18,6 +18,8 @@ package io.jdbd.session;
 
 import io.jdbd.JdbdException;
 import io.jdbd.lang.Nullable;
+import io.jdbd.meta.DataType;
+import io.jdbd.util.EscapeMode;
 import io.jdbd.util.NameMode;
 import org.reactivestreams.Publisher;
 
@@ -608,7 +610,7 @@ public interface RmDatabaseSession extends DatabaseSession {
      * {@inheritDoc}
      */
     @Override
-    RmDatabaseSession appendLiteral(@Nullable String text, StringBuilder builder) throws JdbdException;
+    RmDatabaseSession appendLiteral(DataType type, @Nullable Object value, EscapeMode mode, StringBuilder builder) throws JdbdException;
 
     /**
      * {@inheritDoc}
