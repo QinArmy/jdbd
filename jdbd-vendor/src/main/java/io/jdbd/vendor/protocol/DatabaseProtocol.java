@@ -163,7 +163,7 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
 
     Mono<Void> reset();
 
-    Mono<Void> logicallyClose();
+
 
     boolean supportMultiStmt();
 
@@ -188,5 +188,6 @@ public interface DatabaseProtocol extends OptionSpec, Closeable {
     @Override
     <T> Mono<T> close();
 
+    Mono<Void> softClose();
 
 }
