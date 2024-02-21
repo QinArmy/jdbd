@@ -720,7 +720,7 @@ public abstract class CommunicationTaskExecutor<T extends ITaskAdjutant> impleme
         }
 
         @Override
-        public final Mono<Void> logicallyClose() {
+        public final Mono<Void> softClose() {
             return this.taskExecutor.logicallyClose();
         }
 

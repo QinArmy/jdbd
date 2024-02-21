@@ -46,7 +46,7 @@ public interface ITaskAdjutant {
 
     void schedule(Runnable command, long delay, TimeUnit unit);
 
-    Mono<Void> logicallyClose();
+    Mono<Void> softClose();
 
     ByteBufAllocator allocator();
 
