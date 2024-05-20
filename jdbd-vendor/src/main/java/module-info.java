@@ -14,7 +14,7 @@ module jdbd.vendor {
     requires reactor.core;
     requires reactor.netty.core;
 
-    requires jdbd.spi;
+    requires transitive jdbd.spi;
 
     exports io.jdbd.vendor;
     exports io.jdbd.vendor.env;
