@@ -24,7 +24,7 @@ import io.jdbd.meta.DataType;
  * This interface is base interface of following :
  *     <ul>
  *         <li>{@link io.jdbd.type.LongParameter}</li>
- *         <li>{@link Statement#OUT_PARAMETER}</li>
+ *         <li>{@code void.class} representing out parameter</li>
  *     </ul>
  * <br/>
  *

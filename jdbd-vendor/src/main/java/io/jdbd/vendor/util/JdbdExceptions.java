@@ -278,8 +278,8 @@ public abstract class JdbdExceptions {
 
     public static JdbdException dontSupportOutParameter(Object indexOrName, Class<? extends Statement> stmtClass,
                                                         String database) {
-        String m = String.format("%s %s don't support %s at index/name %s.", database, stmtClass.getName(),
-                Statement.OUT_PARAMETER, indexOrName);
+        String m = String.format("%s %s don't support OUT PARAMETER at index/name %s.", database, stmtClass.getName(),
+                indexOrName);
         return new JdbdException(m);
     }
 

@@ -68,7 +68,7 @@ public interface ParametrizedStatement extends Statement {
      *                 <li>{@link Boolean}</li>
      *                 <li>{@link Number} , zero value : convert to {@link Boolean#FALSE} ; non-zero value : convert to {@link Boolean#TRUE}</li>
      *                 <li>{@link String},ignore case 'TRUE','T','ON','YES' :  convert to {@link Boolean#TRUE} ; ignore case 'FALSE','F','OFF','NO' :  convert to {@link Boolean#FALSE}; other : the executeXxx() method emit(not throw) {@link JdbdException}</li>
-     *                 <li>{@link Statement#OUT_PARAMETER}</li>
+     *                 <li>{@code void.class} representing out parameter</li>
      *             </ol>
      *              if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -81,7 +81,7 @@ public interface ParametrizedStatement extends Statement {
      *                <li>{@link Long}</li>
      *                <li>{@link java.util.BitSet} , convert to binary string</li>
      *                <li>{@link String} the string only '0' and '1'</li>
-     *                <li>{@link Statement#OUT_PARAMETER}</li>
+     *                <li>{@code void.class} representing out parameter</li>
      *            </ol>
      *             if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -109,7 +109,7 @@ public interface ParametrizedStatement extends Statement {
      *                    <li>{@link java.math.BigDecimal} , fractional part must be 0 </li>
      *                    <li>{@link String}</li>
      *                    <li>{@link Boolean} , true : 1 ; false : 0</li>
-     *                    <li>{@link Statement#OUT_PARAMETER}</li>
+     *                    <li>{@code void.class} representing out parameter</li>
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -126,7 +126,7 @@ public interface ParametrizedStatement extends Statement {
      *                    <li>{@link Double}, use {@link java.math.BigDecimal#BigDecimal(String)} constructor</li>
      *                    <li>{@link String}</li>
      *                    <li>{@link Boolean} , true : {@link java.math.BigDecimal#ONE} ; false : {@link java.math.BigDecimal#ZERO}</li>
-     *                    <li>{@link Statement#OUT_PARAMETER}</li>
+     *                    <li>{@code void.class} representing out parameter</li>
      *              </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -137,7 +137,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link Double}</li>
      *                  <li>{@link String}</li>
      *                  <li>{@link Boolean} , true : 1.0 ; false : 0.0</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *              </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -178,7 +178,7 @@ public interface ParametrizedStatement extends Statement {
      *                    <li>{@link java.time.YearMonth}</li>
      *                    <li>{@link java.time.MonthDay}</li>
      *                    <li>{@link java.util.BitSet}, convert to binary string</li>
-     *                    <li>{@link Statement#OUT_PARAMETER}</li>
+     *                    <li>{@code void.class} representing out parameter</li>
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -197,7 +197,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@code byte[]}</li>
      *                  <li>{@link Blob}</li>
      *                  <li>{@link BlobPath}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -207,7 +207,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link java.time.LocalTime}</li>
      *                  <li>{@link String}</li>
      *                  <li>{@link java.time.OffsetTime},if database don't support time with timezone,then convert, like MySQL,else (eg: PostgreSQL) overflow</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -216,7 +216,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@code null}</li>
      *                  <li>{@link java.time.OffsetTime}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -227,7 +227,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link java.time.YearMonth}</li>
      *                  <li>{@link java.time.MonthDay}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -238,7 +238,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link String}</li>
      *                  <li>{@link java.time.OffsetTime},if database don't support timestamp with timezone,then convert, like MySQL,else (eg: PostgreSQL) overflow</li>
      *                  <li>{@link java.time.ZonedDateTime},if database don't support timestamp with timezone,then convert, like MySQL,else (eg: PostgreSQL) overflow</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -248,7 +248,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link String}</li>
      *                  <li>{@link java.time.OffsetTime}</li>
      *                  <li>{@link java.time.ZonedDateTime}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -257,7 +257,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@code null}</li>
      *                  <li>{@link java.time.YearMonth}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -266,7 +266,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@code null}</li>
      *                  <li>{@link java.time.MonthDay}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -277,7 +277,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@link Short}</li>
      *                  <li>{@link Integer}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -286,7 +286,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@code null}</li>
      *                  <li>{@link java.time.Duration}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -295,7 +295,7 @@ public interface ParametrizedStatement extends Statement {
      *                  <li>{@code null}</li>
      *                  <li>{@link java.time.Period}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -303,7 +303,7 @@ public interface ParametrizedStatement extends Statement {
      *               <ol>
      *                  <li>{@code null}</li>
      *                  <li>{@link String}</li>
-     *                  <li>{@link Statement#OUT_PARAMETER}</li>
+     *                  <li>{@code void.class} representing out parameter</li>
      *               </ol>
      *               if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -316,7 +316,7 @@ public interface ParametrizedStatement extends Statement {
      *                    <li>{@link Long}</li>
      *                    <li>{@link java.math.BigInteger}</li>
      *                    <li>{@link String}</li>
-     *                    <li>{@link Statement#OUT_PARAMETER}</li>
+     *                    <li>{@code void.class} representing out parameter</li>
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -330,7 +330,7 @@ public interface ParametrizedStatement extends Statement {
      *                    <li>{@link Clob} WKT</li>
      *                    <li>{@link BlobPath} WKB</li>
      *                    <li>{@link TextPath} WKT</li>
-     *                    <li>{@link Statement#OUT_PARAMETER}</li>
+     *                    <li>{@code void.class} representing out parameter</li>
      *                </ol>
      *                if overflow ,the executeXxx() method emit(not throw) {@link JdbdException}
      *         </li>
@@ -355,7 +355,7 @@ public interface ParametrizedStatement extends Statement {
      *                          <li>{@link Point} spatial point type,spatial have two format : WKB and WKT, see the java doc of the implementation of this method. </li>
      *                          <li>{@link Parameter} :
      *                              <ol>
-     *                                  <li>{@link Statement#OUT_PARAMETER} that representing OUT parameter of stored procedure/function</li>
+     *                                  <li>{@code void.class} representing out parameter that representing OUT parameter of stored procedure/function</li>
      *                                  <li>{@link Blob} long binary</li>
      *                                  <li>{@link Clob} long string</li>
      *                                  <li>{@link BlobPath} long binary,if {@link BlobPath#isDeleteOnClose()} is true , driver will delete file on close,see {@link java.nio.file.StandardOpenOption#DELETE_ON_CLOSE}</li>

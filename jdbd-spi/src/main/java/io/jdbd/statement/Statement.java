@@ -53,11 +53,6 @@ import java.util.function.Function;
 public interface Statement extends SessionHolderSpec, OptionSpec {
 
 
-    /**
-     * <p>This instance representing out parameter of stored procedure
-     */
-    Object OUT_PARAMETER = JdbdOutParameter.OUT_PARAMETER;
-
 
     /**
      * <p>
