@@ -54,6 +54,12 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
 
 
     /**
+     * <p>This instance representing out parameter of stored procedure
+     */
+    Object OUT_PARAMETER = JdbdOutParameter.OUT_PARAMETER;
+
+
+    /**
      * <p>
      * Bind value to statement variable : <ul>
      * <li>statement variable is send with the statement.</li>
@@ -398,9 +404,9 @@ public interface Statement extends SessionHolderSpec, OptionSpec {
     boolean isSupportPath();
 
     /**
-     * This statement whether support {@link OutParameter} or not
+     * This statement whether support {@link #OUT_PARAMETER} or not
      *
-     * @return true : support {@link OutParameter}
+     * @return true : support {@link #OUT_PARAMETER}
      */
     boolean isSupportOutParameter();
 

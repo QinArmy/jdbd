@@ -16,22 +16,19 @@
 
 package io.jdbd.statement;
 
-import io.jdbd.meta.DataType;
-
 /**
- * <p>
- * This interface representing some special parameter.
- * This interface is base interface of following :
- *     <ul>
- *         <li>{@link io.jdbd.type.LongParameter}</li>
- *         <li>{@link Statement#OUT_PARAMETER}</li>
- *     </ul>
- * <br/>
+ * <p>This class representing out parameter of stored procedure
  *
- * @see ParametrizedStatement#bind(int, DataType, Object)
  * @since 1.0
  */
-public interface Parameter {
+enum JdbdOutParameter {
+
+    OUT_PARAMETER;
+
+    @Override
+    public String toString() {
+        return Statement.class.getSimpleName() + '.' + "OUT_PARAMETER";
+    }
 
 
 }
