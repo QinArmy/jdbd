@@ -46,7 +46,7 @@ public interface TableColumnMeta extends OptionSpec {
 
     int scale();
 
-    BooleanMode nullableMode();
+    BooleanMode notNullMode();
 
     BooleanMode autoincrementMode();
 
@@ -108,7 +108,7 @@ public interface TableColumnMeta extends OptionSpec {
      * <li>{@link #dataType()}</li>
      * <li>{@link #precision()}</li>
      * <li>{@link #scale()}</li>
-     * <li>{@link #nullableMode()}</li>
+     * <li>{@link #notNullMode()}</li>
      * <li>{@link #autoincrementMode()}</li>
      * <li>{@link #generatedMode()}</li>
      * <li>{@link #defaultValue()}</li>

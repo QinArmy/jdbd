@@ -36,5 +36,16 @@ public enum BooleanMode {
     /**
      * representing unknown
      */
-    UNKNOWN
+    UNKNOWN;
+
+    public final BooleanMode not() {
+        return switch (this) {
+            case TRUE -> FALSE;
+            case FALSE -> TRUE;
+            case UNKNOWN -> this;
+            default -> throw new IllegalStateException();
+        };
+    }
+
+
 }

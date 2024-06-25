@@ -29,7 +29,7 @@ public abstract class VendorOptions {
     public static final Option<Integer> POSITION = Option.from("POSITION", Integer.class);
     public static final Option<Integer> SCALE = Option.from("SCALE", Integer.class);
     public static final Option<DataType> DATA_TYPE = Option.from("DATA TYPE", DataType.class);
-    public static final Option<BooleanMode> NULLABLE_MODE = Option.from("NULLABLE MODE", BooleanMode.class);
+    public static final Option<BooleanMode> NOT_NULL_MODE = Option.from("NOT NULL MODE", BooleanMode.class);
     public static final Option<BooleanMode> AUTO_INCREMENT_MODE = Option.from("AUTO INCREMENT MODE", BooleanMode.class);
     public static final Option<BooleanMode> GENERATED_MODE = Option.from("GENERATED MODE", BooleanMode.class);
     public static final Option<String> DEFAULT_VALUE = Option.from("DEFAULT VALUE", String.class);

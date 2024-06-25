@@ -37,7 +37,7 @@ public final class VendorIndexColumnMeta extends JdbdOptionSpec implements Index
      *         <li>{@link VendorOptions#CARDINALITY},see {@link #cardinality()}</li>
      *         <li>{@link VendorOptions#SORTING},see {@link #sorting()}</li>
      *         <li>{@link VendorOptions#NULLS_SORTING},see {@link #nullsSorting()}</li>
-     *         <li>{@link VendorTableColumnMeta#nullableMode()},see {@link #nullableMode()}</li>
+     *         <li>{@link VendorTableColumnMeta#notNullMode()},see {@link #nullableMode()}</li>
      *         <li>{@link VendorOptions#VISIBLE},see {@link #visibleMode()}</li>
      *     </ul>
      * <br/>
@@ -77,7 +77,7 @@ public final class VendorIndexColumnMeta extends JdbdOptionSpec implements Index
 
     @Override
     public BooleanMode nullableMode() {
-        return nonNullOf(VendorOptions.NULLABLE_MODE);
+        return nonNullOf(VendorOptions.NOT_NULL_MODE);
     }
 
     @Override

@@ -41,7 +41,7 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
      *         <li>{@link VendorOptions#DATA_TYPE},see {@link #dataType()}</li>
      *         <li>{@link Option#PRECISION} column precision,see {@link #precision()}</li>
      *         <li>{@link VendorOptions#SCALE} column scale,see {@link #scale()}</li>
-     *         <li>{@link VendorOptions#NULLABLE_MODE},see {@link #nullableMode()}</li>
+     *         <li>{@link VendorOptions#NOT_NULL_MODE},see {@link #notNullMode()}</li>
      *         <li>{@link VendorOptions#AUTO_INCREMENT_MODE},see {@link #autoincrementMode()}</li>
      *         <li>{@link VendorOptions#GENERATED_MODE},see {@link #generatedMode()}</li>
      *         <li>{@link VendorOptions#DEFAULT_VALUE},see {@link #defaultValue()}</li>
@@ -119,8 +119,8 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
 
 
     @Override
-    public BooleanMode nullableMode() {
-        return nonNullOf(VendorOptions.NULLABLE_MODE);
+    public BooleanMode notNullMode() {
+        return nonNullOf(VendorOptions.NOT_NULL_MODE);
     }
 
     @Override
@@ -189,7 +189,7 @@ public final class VendorTableColumnMeta implements TableColumnMeta {
                 .append(" , scale : ")
                 .append(this.scale())
                 .append(" , nullableMode : ")
-                .append(this.nullableMode())
+                .append(this.notNullMode())
                 .append(" , autoincrementMode : ")
                 .append(this.autoincrementMode())
                 .append(" , generatedMode : ")
